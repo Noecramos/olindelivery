@@ -270,9 +270,32 @@ export default function StoreAdmin() {
                             {tab === 'settings' && (
                                 <div className="max-w-xl mx-auto text-center py-10">
                                     <h2 className="text-2xl font-bold mb-4">Status da Loja</h2>
-                                    <button className={`w-full py-4 text-xl font-bold rounded-2xl transition-all transform hover:scale-105 shadow-xl ${restaurant.isOpen ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
-                                        {restaurant.isOpen ? 'ABERTO PARA PEDIDOS' : 'FECHADO TEMPORARIAMENTE'}
+                                    <button
+                                        onClick={async () => {
+                                            const newStatus = !restaurant.isOpen;
+                                            // Optimistic UI
+                                            setRestaurant((prev: any) => ({ ...prev, isOpen: newStatus }));
+
+                                            try {
+                                                await fetch('/api/restaurants', {
+                                                    method: 'PUT',
+                                                    headers: { 'Content-Type': 'application/json' },
+                                                    body: JSON.stringify({ id: restaurant.id, isOpen: newStatus })
+                                                });
+                                            } catch (e) {
+                                                alert('Erro ao atualizar status');
+                                                setRestaurant((prev: any) => ({ ...prev, isOpen: !newStatus }));
+                                            }
+                                        }}
+                                        className={`w-full py-4 text-xl font-bold rounded-2xl transition-all transform hover:scale-105 shadow-xl ${restaurant.isOpen ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}
+                                    >
+                                        {restaurant.isOpen ? '🟢 LOJA ABERTA (Clique para Fechar)' : '🔴 LOJA FECHADA (Clique para Abrir)'}
                                     </button>
+                                    <p className="mt-4 text-gray-500 text-sm">
+                                        {restaurant.isOpen
+                                            ? 'Sua loja está visível para os clientes e aceitando novos pedidos.'
+                                            : 'Sua loja aparece como "Fechada" e não aceita novos pedidos.'}
+                                    </p>
                                 </div>
                             )}
                         </div>
