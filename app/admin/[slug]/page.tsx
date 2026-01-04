@@ -16,6 +16,7 @@ export default function StoreAdmin() {
     const [restaurant, setRestaurant] = useState<any>(null);
     const [orders, setOrders] = useState<any[]>([]);
     const [tab, setTab] = useState('dashboard'); // dashboard | products | categories | settings
+    const [showHistory, setShowHistory] = useState(false);
 
     // Fetch Restaurant Info
     useEffect(() => {
@@ -195,93 +196,101 @@ export default function StoreAdmin() {
 
                             {/* Recent Orders Cards */}
                             <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-                                <div className="p-6 border-b border-gray-100 bg-gray-50/50">
+                                <div className="p-6 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
                                     <h3 className="font-bold text-lg text-gray-900">Últimos Pedidos</h3>
+                                    <button
+                                        onClick={() => setShowHistory(!showHistory)}
+                                        className={`text-xs font-bold px-3 py-1 rounded-full transition-colors ${showHistory ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+                                    >
+                                        {showHistory ? 'Ocultar Histórico' : 'Ver Histórico'}
+                                    </button>
                                 </div>
                                 <div className="divide-y divide-gray-100">
-                                    {orders.filter(o => o.status !== 'sent').map(order => (
-                                        <div key={order.id} className="p-5 flex flex-wrap md:flex-nowrap items-center justify-between hover:bg-gray-50 transition-colors group">
-                                            <div className="flex items-center gap-5 mb-2 md:mb-0">
-                                                <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm shadow-inner">
-                                                    #{order.ticketNumber || '...'}
+                                    {orders
+                                        .filter(o => showHistory ? true : o.status !== 'sent')
+                                        .map(order => (
+                                            <div key={order.id} className={`p-5 flex flex-wrap md:flex-nowrap items-center justify-between transition-colors group ${order.status === 'sent' ? 'bg-gray-50 opacity-75 grayscale-[0.5]' : 'hover:bg-gray-50'}`}>
+                                                <div className="flex items-center gap-5 mb-2 md:mb-0">
+                                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-sm shadow-inner ${order.status === 'sent' ? 'bg-gray-200 text-gray-500' : 'bg-blue-50 text-blue-600'}`}>
+                                                        #{order.ticketNumber || '...'}
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-bold text-gray-900 text-lg">{order.customer.name}</p>
+                                                        <p className="text-sm text-gray-500 font-medium">
+                                                            {order.items.length} itens • {new Date(order.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                                        </p>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <p className="font-bold text-gray-900 text-lg">{order.customer.name}</p>
-                                                    <p className="text-sm text-gray-500 font-medium">
-                                                        {order.items.length} itens • {new Date(order.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                                                    </p>
+
+                                                <div className="flex items-center gap-6 w-full md:w-auto justify-between md:justify-end">
+                                                    <div className="text-right">
+                                                        <p className="text-xs text-gray-400 font-semibold uppercase">Pagamento</p>
+                                                        <p className="text-sm font-medium text-gray-700">
+                                                            {order.paymentMethod === 'money' ? `Dinheiro ` : (order.paymentMethod?.toUpperCase() || '-')}
+                                                            {order.changeFor && <span className="text-xs text-orange-500 block">(Troco p/ {order.changeFor})</span>}
+                                                        </p>
+                                                    </div>
+
+                                                    <div className="text-right">
+                                                        <p className="font-bold text-gray-900 text-lg">{order.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+                                                        <span className={`text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                                            order.status === 'preparing' ? 'bg-blue-100 text-blue-700' :
+                                                                order.status === 'sent' ? 'bg-gray-100 text-gray-600' :
+                                                                    'bg-green-100 text-green-700'
+                                                            }`}>
+                                                            {order.status === 'pending' ? 'Pendente' :
+                                                                order.status === 'preparing' ? 'Em Preparo' :
+                                                                    order.status === 'sent' ? 'Enviado' : order.status}
+                                                        </span>
+
+                                                        {/* Actions */}
+                                                        <div className="flex gap-2 justify-end mt-1">
+                                                            {order.status === 'pending' && (
+                                                                <button
+                                                                    onClick={async () => {
+                                                                        if (!confirm('Aprovar este pedido?')) return;
+                                                                        setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: 'preparing' } : o));
+                                                                        try {
+                                                                            await fetch('/api/orders', {
+                                                                                method: 'PUT',
+                                                                                headers: { 'Content-Type': 'application/json' },
+                                                                                body: JSON.stringify({ id: order.id, status: 'preparing' })
+                                                                            });
+                                                                        } catch (error) { fetchOrders(); }
+                                                                    }}
+                                                                    className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded-lg text-xs font-bold uppercase shadow-sm"
+                                                                >
+                                                                    Aprovar
+                                                                </button>
+                                                            )}
+                                                            {order.status === 'preparing' && (
+                                                                <button
+                                                                    onClick={async () => {
+                                                                        if (!confirm('Marcar como enviado?')) return;
+                                                                        setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: 'sent' } : o));
+                                                                        try {
+                                                                            await fetch('/api/orders', {
+                                                                                method: 'PUT',
+                                                                                headers: { 'Content-Type': 'application/json' },
+                                                                                body: JSON.stringify({ id: order.id, status: 'sent' })
+                                                                            });
+                                                                        } catch (error) { fetchOrders(); }
+                                                                    }}
+                                                                    className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs font-bold uppercase shadow-sm"
+                                                                >
+                                                                    Enviar
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-
-                                            <div className="flex items-center gap-6 w-full md:w-auto justify-between md:justify-end">
-                                                <div className="text-right">
-                                                    <p className="text-xs text-gray-400 font-semibold uppercase">Pagamento</p>
-                                                    <p className="text-sm font-medium text-gray-700">
-                                                        {order.paymentMethod === 'money' ? `Dinheiro ` : order.paymentMethod?.toUpperCase() || '-'}
-                                                        {order.changeFor && <span className="text-xs text-orange-500 block">(Troco p/ {order.changeFor})</span>}
-                                                    </p>
-                                                </div>
-
-                                                <div className="text-right">
-                                                    <p className="font-bold text-gray-900 text-lg">{order.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
-                                                    <span className={`text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}`}>
-                                                        {order.status === 'pending' ? 'Pendente' : (order.status === 'preparing' ? 'Em Preparo' : order.status)}
-                                                    </span>
-                                                    {order.status === 'pending' && (
-                                                        <button
-                                                            onClick={async () => {
-                                                                if (!confirm('Aprovar este pedido?')) return;
-
-                                                                // Optimistic Update
-                                                                setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: 'preparing' } : o));
-
-                                                                try {
-                                                                    const res = await fetch('/api/orders', {
-                                                                        method: 'PUT',
-                                                                        headers: { 'Content-Type': 'application/json' },
-                                                                        body: JSON.stringify({ id: order.id, status: 'preparing' })
-                                                                    });
-                                                                    if (!res.ok) throw new Error('Falha ao atualizar');
-                                                                } catch (error) {
-                                                                    alert('Erro ao aprovar pedido. Tente novamente.');
-                                                                    fetchOrders(); // Revert if failed
-                                                                }
-                                                            }}
-                                                            className="ml-3 px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded-lg text-xs font-bold uppercase shadow-sm transition-all"
-                                                        >
-                                                            Aprovar
-                                                        </button>
-                                                    )}
-                                                    {order.status === 'preparing' && (
-                                                        <button
-                                                            onClick={async () => {
-                                                                if (!confirm('Marcar como enviado? O pedido sairá da lista.')) return;
-
-                                                                // Optimistic Update
-                                                                setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: 'sent' } : o));
-
-                                                                try {
-                                                                    const res = await fetch('/api/orders', {
-                                                                        method: 'PUT',
-                                                                        headers: { 'Content-Type': 'application/json' },
-                                                                        body: JSON.stringify({ id: order.id, status: 'sent' })
-                                                                    });
-                                                                    if (!res.ok) throw new Error('Falha ao atualizar');
-                                                                } catch (error) {
-                                                                    alert('Erro ao enviar pedido. Tente novamente.');
-                                                                    fetchOrders(); // Revert
-                                                                }
-                                                            }}
-                                                            className="ml-3 px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs font-bold uppercase shadow-sm transition-all"
-                                                        >
-                                                            Enviar
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            </div>
+                                        ))}
+                                    {orders.filter(o => showHistory ? true : o.status !== 'sent').length === 0 && (
+                                        <div className="p-10 text-center text-gray-400">
+                                            {showHistory ? 'Nenhum pedido encontrado.' : 'Nenhum pedido pendente.'}
                                         </div>
-                                    ))}
-                                    {orders.length === 0 && <div className="p-10 text-center text-gray-400">Nenhum pedido hoje.</div>}
+                                    )}
                                 </div>
                             </div>
                         </div>
