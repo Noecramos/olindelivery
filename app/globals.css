@@ -342,12 +342,13 @@ h4 {
   letter-spacing: -0.02em;
 }
 
-display: flex;
-gap: 1rem;
-align-items: center;
-font-size: 0.95rem;
-font-weight: 500;
-opacity: 0.9;
+.header-meta {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  font-size: 0.95rem;
+  font-weight: 500;
+  opacity: 0.9;
 }
 
 /* Mobile App Aesthetic & Adjustments */
