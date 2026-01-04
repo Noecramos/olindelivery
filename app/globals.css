@@ -342,11 +342,102 @@ h4 {
   letter-spacing: -0.02em;
 }
 
-.header-meta {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
+display: flex;
+gap: 1rem;
+align-items: center;
+font-size: 0.95rem;
+font-weight: 500;
+opacity: 0.9;
+}
+
+/* Mobile App Aesthetic & Adjustments */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif !important;
+  /* Force Poppins */
+  background-color: #F8F9FA;
+}
+
+.mobile-container {
+  max-width: 480px;
+  margin: 0 auto;
+  background: #fff;
+  min-height: 100vh;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
+  padding-bottom: 80px;
+  /* Space for bottom nav if we had one */
+}
+
+/* Search Bar - Icon on Left */
+.search-input-modern {
+  background: #FAFAFA;
+  border: 1px solid #EBEBEB;
+  border-radius: 12px;
+  padding: 14px 14px 14px 48px;
+  /* High left padding for icon */
+  width: 100%;
+  outline: none;
   font-size: 0.95rem;
+  color: #333;
+  transition: all 0.2s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+}
+
+.search-input-modern:focus {
+  background: #fff;
+  border-color: #F6D55C;
+  box-shadow: 0 4px 15px rgba(246, 213, 92, 0.15);
+}
+
+/* Pill Tabs */
+.category-tab {
+  padding: 8px 20px;
+  border-radius: 25px;
+  font-size: 13px;
   font-weight: 500;
-  opacity: 0.9;
+  color: #666;
+  background: #FFF;
+  border: 1px solid #F0F0F0;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+}
+
+.category-tab.active {
+  background: #F6D55C;
+  color: #000;
+  font-weight: 600;
+  border-color: #F6D55C;
+  box-shadow: 0 4px 10px rgba(246, 213, 92, 0.2);
+}
+
+/* Item Card - The "Cards" user requested */
+.item-card-row {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 16px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid #f2f2f2;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  /* Stronger shadow */
+}
+
+.item-card-row:hover {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  border-color: transparent;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

@@ -35,27 +35,23 @@ function MarketplaceContent() {
         {/* Top Bar */}
         <div className="pt-10 px-6 pb-4 flex justify-between items-center bg-white sticky top-0 z-40">
           <div className="flex gap-2">
-            <span className="bg-gray-100 p-2 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            <span className="bg-gray-50 p-3 rounded-full cursor-pointer hover:bg-gray-100 transition-colors shadow-sm border border-gray-100">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </span>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600 font-bold border border-yellow-200">
-              N
-            </div>
-          </div>
+          {/* N Icon removed */}
         </div>
 
         {/* Greeting */}
-        <div className="px-6 mb-6">
-          <p className="text-gray-400 font-medium text-sm">Olá, Cliente,</p>
-          <h1 className="text-2xl font-bold text-gray-800">Boa Tarde!</h1>
+        <div className="px-6 mb-8 mt-2">
+          <p className="text-gray-400 font-medium text-sm mb-1">Entregar em <span className="text-[#F6D55C] font-bold">Casa</span></p>
+          <h1 className="text-3xl font-bold text-gray-800 tracking-tight">O que vamos<br />pedir hoje?</h1>
         </div>
 
         {/* Search */}
-        <div className="px-6 mb-8 relative">
-          <svg className="absolute left-10 top-3.5 text-gray-400" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          <input type="text" placeholder="Buscar comida..." className="search-input-modern" />
+        <div className="px-6 mb-10 relative">
+          <svg className="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input type="text" placeholder="Buscar restaurantes ou itens..." className="search-input-modern" />
         </div>
 
         {/* Best Sellers Section (Horizontal Scroll) */}
