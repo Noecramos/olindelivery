@@ -23,16 +23,23 @@ export async function GET(request: Request) {
             // Filter by approved unless showAll is true
             const all = rows
                 .filter((r: any) => showAll || r.get('approved') === 'TRUE')
-                .map((r: any) => ({
-                    id: r.get('id'),
-                    name: r.get('name'),
-                    slug: r.get('slug'),
-                    image: r.get('image'),
-                    isOpen: r.get('isOpen') === 'TRUE',
-                    approved: r.get('approved') === 'TRUE',
-                    phone: r.get('phone'),
-                    address: r.get('address')
-                }));
+                .map((r: any) => {
+                    const data: any = {
+                        id: r.get('id'),
+                        name: r.get('name'),
+                        slug: r.get('slug'),
+                        image: r.get('image'),
+                        isOpen: r.get('isOpen') === 'TRUE',
+                        approved: r.get('approved') === 'TRUE',
+                        phone: r.get('phone'),
+                        address: r.get('address')
+                    };
+                    // Only return password if Super Admin (requesting all)
+                    if (showAll) {
+                        data.password = r.get('password');
+                    }
+                    return data;
+                });
             return NextResponse.json(all);
         }
 
@@ -47,7 +54,8 @@ export async function GET(request: Request) {
                 banner: restaurant.get('banner'),
                 approved: restaurant.get('approved') === 'TRUE',
                 phone: restaurant.get('phone'),
-                address: restaurant.get('address')
+                address: restaurant.get('address'),
+                // Password is NOT returned for single public view
             });
         }
 
@@ -70,7 +78,7 @@ export async function POST(request: Request) {
             id: uuidv4(),
             slug: body.slug,
             name: body.name,
-            password: body.password || 'admin',
+            password: body.password || Math.random().toString(36).slice(-6), // Auto-generate 6-char password
             isOpen: 'TRUE',
             image: body.image || '',
             banner: body.banner || '',
@@ -120,5 +128,27 @@ export async function PUT(request: Request) {
         return NextResponse.json({ error: 'NotFound' }, { status: 404 });
     } catch (e) {
         return NextResponse.json({ error: 'Update failed' }, { status: 500 });
+    }
+}
+
+export async function DELETE(request: Request) {
+    try {
+        const { searchParams } = new URL(request.url);
+        const id = searchParams.get('id');
+
+        if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
+
+        const sheet = await getSheetByTitle('Restaurants');
+        const rows = await sheet.getRows();
+        const row = rows.find((r: any) => r.get('id') === id);
+
+        if (row) {
+            await row.delete();
+            return NextResponse.json({ success: true });
+        }
+
+        return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    } catch (e) {
+        return NextResponse.json({ error: 'Delete failed' }, { status: 500 });
     }
 }

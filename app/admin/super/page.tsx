@@ -34,6 +34,19 @@ export default function SuperAdmin() {
         }
     };
 
+    const deleteRestaurant = async (id: string) => {
+        if (!confirm('Tem certeza que deseja excluir este restaurante? Essa ação não pode ser desfeita.')) return;
+
+        try {
+            await fetch(`/api/restaurants?id=${id}`, {
+                method: 'DELETE',
+            });
+            fetchRestaurants();
+        } catch (e) {
+            alert('Erro ao excluir');
+        }
+    };
+
     if (!auth) {
         return (
             <div className="flex flex-col items-center justify-center min-h-screen bg-[#F5F5F7]">
@@ -60,7 +73,7 @@ export default function SuperAdmin() {
 
     return (
         <div className="min-h-screen bg-[#F5F5F7] p-8">
-            <div className="max-w-5xl mx-auto">
+            <div className="max-w-6xl mx-auto">
                 <header className="flex justify-between items-center mb-8">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900">Gestão de Restaurantes</h1>
@@ -74,7 +87,7 @@ export default function SuperAdmin() {
                         <thead className="bg-gray-50 border-b border-gray-100">
                             <tr>
                                 <th className="p-6 font-bold text-gray-500 text-sm uppercase">Restaurante</th>
-                                <th className="p-6 font-bold text-gray-500 text-sm uppercase">Slug</th>
+                                <th className="p-6 font-bold text-gray-500 text-sm uppercase">Acesso</th>
                                 <th className="p-6 font-bold text-gray-500 text-sm uppercase">Status</th>
                                 <th className="p-6 font-bold text-gray-500 text-sm uppercase text-right">Ação</th>
                             </tr>
@@ -86,20 +99,35 @@ export default function SuperAdmin() {
                                         <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
                                             {r.image && <img src={r.image} className="w-full h-full object-cover" />}
                                         </div>
-                                        {r.name}
+                                        <div>
+                                            {r.name}
+                                            <p className="text-xs text-gray-400 font-normal">{r.slug}</p>
+                                        </div>
                                     </td>
-                                    <td className="p-6 text-gray-500 font-medium text-sm">{r.slug}</td>
+                                    <td className="p-6">
+                                        <div className="text-sm">
+                                            <span className="text-gray-400 text-xs">Senha:</span>
+                                            <code className="bg-gray-100 px-2 py-1 rounded ml-2 font-mono text-gray-800">{r.password}</code>
+                                        </div>
+                                    </td>
                                     <td className="p-6">
                                         <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${r.approved ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
                                             {r.approved ? 'Aprovado' : 'Pendente'}
                                         </span>
                                     </td>
-                                    <td className="p-6 text-right">
+                                    <td className="p-6 text-right flex gap-2 justify-end">
                                         <button
                                             onClick={() => toggleApproval(r.id, r.approved)}
-                                            className={`px-4 py-2 rounded-lg font-bold text-xs uppercase tracking-wide transition-all ${r.approved ? 'bg-red-50 text-red-600 hover:bg-red-100' : 'bg-green-600 text-white hover:bg-green-700 shadow-lg'}`}
+                                            className={`px-4 py-2 rounded-lg font-bold text-xs uppercase tracking-wide transition-all ${r.approved ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-600 text-white hover:bg-green-700 shadow-lg'}`}
                                         >
                                             {r.approved ? 'Revogar' : 'Aprovar'}
+                                        </button>
+                                        <button
+                                            onClick={() => deleteRestaurant(r.id)}
+                                            className="px-4 py-2 rounded-lg font-bold text-xs uppercase tracking-wide transition-all bg-red-50 text-red-600 hover:bg-red-100"
+                                            title="Excluir Restaurante"
+                                        >
+                                            Excluir
                                         </button>
                                     </td>
                                 </tr>
