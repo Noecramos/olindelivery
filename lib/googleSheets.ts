@@ -16,7 +16,7 @@ const SCOPES = [
 
 const jwt = new JWT({
     email: SERVICE_EMAIL,
-    key: PRIVATE_KEY?.replace(/\\n/g, '\n'),
+    key: PRIVATE_KEY ? PRIVATE_KEY.replace(/\\n/g, '\n').replace(/"/g, '') : undefined,
     scopes: SCOPES,
 });
 
