@@ -9,6 +9,10 @@ export const metadata: Metadata = {
   title: "OlinDelivery",
   description: "Peça sua comida favorita pelo WhatsApp.",
   manifest: "/manifest.json",
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/splash-logo.png', // Using the high res image for apple touch icon equivalent
+  },
 };
 
 export const viewport = {

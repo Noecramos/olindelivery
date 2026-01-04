@@ -22,6 +22,25 @@ function MarketplaceContent() {
     }
   }, [searchParams, router]);
 
+  // Loading Splash Screen Logic
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading or wait for resources
+    const timer = setTimeout(() => setLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="fixed inset-0 bg-[#ea1d2c] flex flex-col items-center justify-center z-[9999]">
+        <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-lg p-4 animate-bounce">
+          <Image src="https://i.imgur.com/s8YrKSj.jpeg" alt="Logo" width={100} height={100} style={{ objectFit: 'contain' }} priority />
+        </div>
+      </div>
+    );
+  }
+
   useEffect(() => {
     fetch('/api/restaurants')
       .then(res => res.json())
