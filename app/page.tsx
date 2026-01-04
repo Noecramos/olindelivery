@@ -35,7 +35,14 @@ function MarketplaceContent() {
         {/* Top Bar */}
         {/* Top Bar */}
         <div className="pt-8 px-6 pb-4 flex justify-center items-center bg-white sticky top-0 z-40 bg-opacity-95 backdrop-blur-sm">
-          <span className="text-[#ea1d2c] font-bold text-2xl tracking-tighter">OlinDelivery</span>
+          <Image
+            src="https://i.imgur.com/s8YrKSj.jpeg"
+            alt="OlinDelivery Logo"
+            width={150}
+            height={50}
+            style={{ objectFit: 'contain' }}
+            priority
+          />
         </div>
 
         {/* Greeting */}
