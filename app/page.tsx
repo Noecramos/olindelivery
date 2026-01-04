@@ -33,13 +33,9 @@ function MarketplaceContent() {
     <div style={{ background: "#F2F4F8", minHeight: "100vh" }}>
       <main className="mobile-container relative bg-white pb-20">
         {/* Top Bar */}
-        <div className="pt-10 px-6 pb-4 flex justify-between items-center bg-white sticky top-0 z-40">
-          <div className="flex gap-2">
-            <span className="bg-gray-50 p-3 rounded-full cursor-pointer hover:bg-gray-100 transition-colors shadow-sm border border-gray-100">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-            </span>
-          </div>
-          {/* N Icon removed */}
+        {/* Top Bar */}
+        <div className="pt-8 px-6 pb-4 flex justify-center items-center bg-white sticky top-0 z-40 bg-opacity-95 backdrop-blur-sm">
+          <span className="text-[#ea1d2c] font-bold text-2xl tracking-tighter">OlinDelivery</span>
         </div>
 
         {/* Greeting */}
