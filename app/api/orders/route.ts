@@ -24,6 +24,8 @@ export async function GET(request: Request) {
                     createdAt: get('createdAt'),
                     status: get('status'),
                     total: parseFloat(get('total') || '0'),
+                    paymentMethod: get('paymentMethod'), // Added
+                    changeFor: get('changeFor'),         // Added
                     customer: {
                         name: get('customerName'),
                         phone: get('customerPhone'),
@@ -67,6 +69,8 @@ export async function POST(request: Request) {
             customerPhone: newOrder.customer.phone,
             customerAddress: newOrder.customer.address,
             total: newOrder.total,
+            paymentMethod: newOrder.paymentMethod, // Added
+            changeFor: newOrder.changeFor,         // Added
             items: JSON.stringify(newOrder.items)
         });
 

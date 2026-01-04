@@ -69,6 +69,7 @@ export default function StoreAdmin() {
     // Prepare Pie Chart Data (Status)
     const statusData = [
         { name: 'Entregue', value: orders.filter(o => o.status === 'delivered').length },
+        { name: 'Enviado', value: orders.filter(o => o.status === 'sent').length },
         { name: 'Pendente', value: orders.filter(o => o.status === 'pending').length },
         { name: 'Cancelado', value: orders.filter(o => o.status === 'cancelled').length },
         { name: 'Preparo', value: orders.filter(o => o.status === 'preparing').length },
@@ -186,7 +187,7 @@ export default function StoreAdmin() {
                                     <h3 className="font-bold text-lg text-gray-900">Últimos Pedidos</h3>
                                 </div>
                                 <div className="divide-y divide-gray-100">
-                                    {orders.map(order => (
+                                    {orders.filter(o => o.status !== 'sent').map(order => (
                                         <div key={order.id} className="p-5 flex flex-wrap md:flex-nowrap items-center justify-between hover:bg-gray-50 transition-colors group">
                                             <div className="flex items-center gap-5 mb-2 md:mb-0">
                                                 <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm shadow-inner">
@@ -229,9 +230,6 @@ export default function StoreAdmin() {
                                                                         body: JSON.stringify({ id: order.id, status: 'preparing' })
                                                                     });
                                                                     if (!res.ok) throw new Error('Falha ao atualizar');
-
-                                                                    // Do NOT immediately fetchOrders as Sheets API might be slow.
-                                                                    // Rely on optimistic update + background polling.
                                                                 } catch (error) {
                                                                     alert('Erro ao aprovar pedido. Tente novamente.');
                                                                     fetchOrders(); // Revert if failed
@@ -240,6 +238,31 @@ export default function StoreAdmin() {
                                                             className="ml-3 px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded-lg text-xs font-bold uppercase shadow-sm transition-all"
                                                         >
                                                             Aprovar
+                                                        </button>
+                                                    )}
+                                                    {order.status === 'preparing' && (
+                                                        <button
+                                                            onClick={async () => {
+                                                                if (!confirm('Marcar como enviado? O pedido sairá da lista.')) return;
+
+                                                                // Optimistic Update
+                                                                setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: 'sent' } : o));
+
+                                                                try {
+                                                                    const res = await fetch('/api/orders', {
+                                                                        method: 'PUT',
+                                                                        headers: { 'Content-Type': 'application/json' },
+                                                                        body: JSON.stringify({ id: order.id, status: 'sent' })
+                                                                    });
+                                                                    if (!res.ok) throw new Error('Falha ao atualizar');
+                                                                } catch (error) {
+                                                                    alert('Erro ao enviar pedido. Tente novamente.');
+                                                                    fetchOrders(); // Revert
+                                                                }
+                                                            }}
+                                                            className="ml-3 px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs font-bold uppercase shadow-sm transition-all"
+                                                        >
+                                                            Enviar
                                                         </button>
                                                     )}
                                                 </div>
