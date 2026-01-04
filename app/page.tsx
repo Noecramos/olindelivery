@@ -31,6 +31,14 @@ function MarketplaceContent() {
     return () => clearTimeout(timer);
   }, []);
 
+
+  useEffect(() => {
+    fetch('/api/restaurants')
+      .then(res => res.json())
+      .then(setRestaurants)
+      .catch(console.error);
+  }, []);
+
   if (loading) {
     return (
       <div className="fixed inset-0 bg-[#ea1d2c] flex flex-col items-center justify-center z-[9999]">
@@ -40,13 +48,6 @@ function MarketplaceContent() {
       </div>
     );
   }
-
-  useEffect(() => {
-    fetch('/api/restaurants')
-      .then(res => res.json())
-      .then(setRestaurants)
-      .catch(console.error);
-  }, []);
 
   return (
     <div style={{ background: "#F2F4F8", minHeight: "100vh" }}>
