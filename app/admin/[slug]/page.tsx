@@ -243,45 +243,42 @@ export default function StoreAdmin() {
                                                                     order.status === 'sent' ? 'Enviado' : order.status}
                                                         </span>
 
-                                                        {/* Actions */}
-                                                        <div className="flex gap-2 justify-end mt-1">
-                                                            {order.status === 'pending' && (
-                                                                <button
-                                                                    onClick={async () => {
-                                                                        if (!confirm('Aprovar este pedido?')) return;
-                                                                        setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: 'preparing' } : o));
-                                                                        try {
-                                                                            await fetch('/api/orders', {
-                                                                                method: 'PUT',
-                                                                                headers: { 'Content-Type': 'application/json' },
-                                                                                body: JSON.stringify({ id: order.id, status: 'preparing' })
-                                                                            });
-                                                                        } catch (error) { fetchOrders(); }
-                                                                    }}
-                                                                    className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded-lg text-xs font-bold uppercase shadow-sm"
-                                                                >
-                                                                    Aprovar
-                                                                </button>
-                                                            )}
-                                                            {order.status === 'preparing' && (
-                                                                <button
-                                                                    onClick={async () => {
-                                                                        if (!confirm('Marcar como enviado?')) return;
-                                                                        setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: 'sent' } : o));
-                                                                        try {
-                                                                            await fetch('/api/orders', {
-                                                                                method: 'PUT',
-                                                                                headers: { 'Content-Type': 'application/json' },
-                                                                                body: JSON.stringify({ id: order.id, status: 'sent' })
-                                                                            });
-                                                                        } catch (error) { fetchOrders(); }
-                                                                    }}
-                                                                    className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs font-bold uppercase shadow-sm"
-                                                                >
-                                                                    Enviar
-                                                                </button>
-                                                            )}
-                                                        </div>
+                                                        {order.status === 'pending' && (
+                                                            <button
+                                                                onClick={async () => {
+                                                                    if (!confirm('Aprovar este pedido?')) return;
+                                                                    setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: 'preparing' } : o));
+                                                                    try {
+                                                                        await fetch('/api/orders', {
+                                                                            method: 'PUT',
+                                                                            headers: { 'Content-Type': 'application/json' },
+                                                                            body: JSON.stringify({ id: order.id, status: 'preparing' })
+                                                                        });
+                                                                    } catch (error) { fetchOrders(); }
+                                                                }}
+                                                                className="ml-3 px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded-lg text-xs font-bold uppercase shadow-sm"
+                                                            >
+                                                                Aprovar
+                                                            </button>
+                                                        )}
+                                                        {order.status === 'preparing' && (
+                                                            <button
+                                                                onClick={async () => {
+                                                                    if (!confirm('Marcar como enviado?')) return;
+                                                                    setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: 'sent' } : o));
+                                                                    try {
+                                                                        await fetch('/api/orders', {
+                                                                            method: 'PUT',
+                                                                            headers: { 'Content-Type': 'application/json' },
+                                                                            body: JSON.stringify({ id: order.id, status: 'sent' })
+                                                                        });
+                                                                    } catch (error) { fetchOrders(); }
+                                                                }}
+                                                                className="ml-3 px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs font-bold uppercase shadow-sm"
+                                                            >
+                                                                Enviar
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>
