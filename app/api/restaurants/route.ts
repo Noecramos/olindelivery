@@ -33,7 +33,14 @@ export async function GET(request: Request) {
                         approved: r.get('approved') === 'TRUE',
                         phone: r.get('phone'),
                         address: r.get('address'),
-                        deliveryTime: r.get('deliveryTime') || '30-45 min'
+                        deliveryTime: r.get('deliveryTime') || '30-45 min',
+                        instagram: r.get('instagram'),
+                        zipCode: r.get('zipCode'),
+                        hours: r.get('hours'),
+                        responsibleName: r.get('responsibleName'),
+                        email: r.get('email'),
+                        whatsapp: r.get('whatsapp'),
+                        type: r.get('type')
                     };
                     // Only return password if Super Admin (requesting all)
                     if (showAll) {
@@ -57,6 +64,9 @@ export async function GET(request: Request) {
                 phone: restaurant.get('phone'),
                 address: restaurant.get('address'),
                 deliveryTime: restaurant.get('deliveryTime') || '30-45 min',
+                instagram: restaurant.get('instagram'),
+                whatsapp: restaurant.get('whatsapp'),
+                type: restaurant.get('type'),
                 // Password is NOT returned for single public view
             });
         }
@@ -85,9 +95,16 @@ export async function POST(request: Request) {
             image: body.image || '',
             banner: body.banner || '',
             approved: 'FALSE', // Default to pending
-            phone: body.phone || '',
+            phone: body.phone || body.whatsapp || '', // Fallback to whatsapp if phone not provided
             address: body.address || '',
-            deliveryTime: body.deliveryTime || '30-45 min'
+            deliveryTime: body.deliveryTime || '30-45 min',
+            instagram: body.instagram || '',
+            zipCode: body.zipCode || '',
+            hours: body.hours || '',
+            responsibleName: body.responsibleName || '',
+            email: body.email || '',
+            whatsapp: body.whatsapp || '',
+            type: body.type || 'Outro'
         };
 
         await sheet.addRow({
@@ -101,7 +118,14 @@ export async function POST(request: Request) {
             approved: newRestaurant.approved,
             phone: newRestaurant.phone,
             address: newRestaurant.address,
-            deliveryTime: newRestaurant.deliveryTime
+            deliveryTime: newRestaurant.deliveryTime,
+            instagram: newRestaurant.instagram,
+            zipCode: newRestaurant.zipCode,
+            hours: newRestaurant.hours,
+            responsibleName: newRestaurant.responsibleName,
+            email: newRestaurant.email,
+            whatsapp: newRestaurant.whatsapp,
+            type: newRestaurant.type
         });
 
         return NextResponse.json(newRestaurant);

@@ -21,13 +21,27 @@ export default function SuperAdmin() {
         }
     };
 
-    const toggleApproval = async (id: string, currentStatus: boolean) => {
+    const toggleApproval = async (restaurant: any) => {
+        const newStatus = !restaurant.approved;
         try {
             await fetch('/api/restaurants', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id, approved: !currentStatus })
+                body: JSON.stringify({ id: restaurant.id, approved: newStatus })
             });
+
+            if (newStatus) {
+                // Send WhatsApp
+                const phone = restaurant.whatsapp || restaurant.phone;
+                if (phone) {
+                    const cleanPhone = phone.replace(/\D/g, '');
+                    const message = `Olá, ${restaurant.responsibleName || 'Parceiro'}! %0A%0ASua loja *${restaurant.name}* foi aprovada no OlinDelivery! 🚀%0A%0AAcesse seu painel administrativo:%0ALink: https://olindelivery.noveimagem.com.br/admin/${restaurant.slug}%0A%0A*Suas Credenciais:*%0ALogin: ${restaurant.slug}%0ASenha: ${restaurant.password}%0A%0ABoas vendas!`;
+                    window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
+                } else {
+                    alert('Restaurante aprovado, mas sem WhatsApp cadastrado para enviar credenciais.');
+                }
+            }
+
             fetchRestaurants();
         } catch (e) {
             alert('Erro ao atualizar');
@@ -117,7 +131,7 @@ export default function SuperAdmin() {
                                     </td>
                                     <td className="p-6 text-right flex gap-2 justify-end">
                                         <button
-                                            onClick={() => toggleApproval(r.id, r.approved)}
+                                            onClick={() => toggleApproval(r)}
                                             className={`px-4 py-2 rounded-lg font-bold text-xs uppercase tracking-wide transition-all ${r.approved ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-600 text-white hover:bg-green-700 shadow-lg'}`}
                                         >
                                             {r.approved ? 'Revogar' : 'Aprovar'}

@@ -5,30 +5,71 @@ import { useRouter } from "next/navigation";
 
 export default function RegisterRestaurant() {
     const router = useRouter();
+
     const [form, setForm] = useState({
         name: "",
         slug: "",
-        banner: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80",
-        image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&q=80"
+        responsibleName: "",
+        email: "",
+        whatsapp: "",
+        instagram: "",
+        zipCode: "",
+        address: "",
+        hours: "",
+        type: "Lanchonete",
+        image: "", // Logo URL
     });
+
+    const [uploading, setUploading] = useState(false);
     const [loading, setLoading] = useState(false);
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || e.target.files.length === 0) return;
+
+        const file = e.target.files[0];
+        setUploading(true);
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const res = await fetch("/api/upload", {
+                method: "POST",
+                body: formData,
+            });
+            const data = await res.json();
+            if (data.success) {
+                setForm(prev => ({ ...prev, image: data.url }));
+            } else {
+                alert("Erro ao enviar arquivo.");
+            }
+        } catch (error) {
+            alert("Erro no upload.");
+        } finally {
+            setUploading(false);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
         try {
+            // Auto-generate slug if empty (though field is there)
+            const finalSlug = form.slug || form.name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+
+            const submitData = { ...form, slug: finalSlug };
+
             const res = await fetch('/api/restaurants', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(form)
+                body: JSON.stringify(submitData)
             });
 
             if (res.ok) {
-                alert('Solicitação enviada! Aguarde a aprovação do administrador.');
-                router.push('/');
+                alert('Cadastro enviado com sucesso! Aguarde a aprovação do administrador.');
+                router.push('/admin'); // Redirect to Admin Portal login
             } else {
-                alert('Erro ao cadastrar.');
+                alert('Erro ao cadastrar. Verifique os dados.');
             }
         } catch (error) {
             console.error(error);
@@ -40,42 +81,33 @@ export default function RegisterRestaurant() {
 
     return (
         <div className="min-h-screen bg-[#F5F5F7] flex items-center justify-center p-4">
-            <div className="card max-w-lg w-full p-8 shadow-xl bg-white rounded-3xl">
+            <div className="card max-w-2xl w-full p-8 shadow-xl bg-white rounded-3xl my-10">
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900">Parceiro OlinDelivery</h1>
-                    <p className="text-gray-500 mt-2">Cadastre seu restaurante e comece a vender hoje mesmo.</p>
+                    <h1 className="text-3xl font-bold text-gray-900">Cadastrar Loja</h1>
+                    <p className="text-gray-500 mt-2">Junte-se ao OlinDelivery e expanda seu negócio.</p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label htmlFor="restaurantName" className="text-sm font-bold text-gray-700 ml-1">Nome do Restaurante</label>
-                        <input
-                            id="restaurantName"
-                            name="restaurantName"
-                            className="w-full p-4 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-[#EA1D2C] outline-none transition-all"
-                            placeholder="Ex: Olin Burgers"
-                            value={form.name}
-                            onChange={e => {
-                                const val = e.target.value;
-                                setForm({
-                                    ...form,
-                                    name: val,
-                                    slug: val.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '')
-                                });
-                            }}
-                            required
-                        />
-                    </div>
-
-                    <div>
-                        <label htmlFor="restaurantSlug" className="text-sm font-bold text-gray-700 ml-1">Slug (Link da Loja)</label>
-                        <div className="flex items-center bg-gray-50 rounded-xl px-4 border border-transparent focus-within:border-[#EA1D2C] focus-within:bg-white transition-all">
-                            <span className="text-gray-400 text-sm">olindelivery.com/loja/</span>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Basic Info */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-1">Nome Fantasia</label>
                             <input
-                                id="restaurantSlug"
-                                name="restaurantSlug"
-                                className="w-full p-4 bg-transparent border-none outline-none font-medium text-gray-800"
-                                placeholder="olin-burgers"
+                                className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                placeholder="Ex: Olin Burgers"
+                                value={form.name}
+                                onChange={e => {
+                                    const val = e.target.value;
+                                    setForm({ ...form, name: val, slug: val.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '') });
+                                }}
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-1">Slug (Link URL)</label>
+                            <input
+                                className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                placeholder="ex: olin-burgers"
                                 value={form.slug}
                                 onChange={e => setForm({ ...form, slug: e.target.value })}
                                 required
@@ -83,17 +115,136 @@ export default function RegisterRestaurant() {
                         </div>
                     </div>
 
+                    {/* Contact Info */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-1">Nome do Responsável</label>
+                            <input
+                                className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                value={form.responsibleName}
+                                onChange={e => setForm({ ...form, responsibleName: e.target.value })}
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-1">Email</label>
+                            <input
+                                type="email"
+                                className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                value={form.email}
+                                onChange={e => setForm({ ...form, email: e.target.value })}
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-1">WhatsApp (com DDD)</label>
+                            <input
+                                className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                placeholder="5581999999999"
+                                value={form.whatsapp}
+                                onChange={e => setForm({ ...form, whatsapp: e.target.value.replace(/\D/g, '') })}
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-1">Instagram (Opcional)</label>
+                            <input
+                                className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                placeholder="@loja"
+                                value={form.instagram}
+                                onChange={e => setForm({ ...form, instagram: e.target.value })}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Address & Details */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-1">CEP</label>
+                            <input
+                                className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                placeholder="00000-000"
+                                value={form.zipCode}
+                                onChange={e => setForm({ ...form, zipCode: e.target.value })}
+                                required
+                            />
+                        </div>
+                        <div className="md:col-span-2">
+                            <label className="block text-sm font-bold text-gray-700 mb-1">Endereço Completo</label>
+                            <input
+                                className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                value={form.address}
+                                onChange={e => setForm({ ...form, address: e.target.value })}
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-1">Horário de Funcionamento</label>
+                            <input
+                                className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                placeholder="Ex: Seg-Sex 18h às 23h"
+                                value={form.hours}
+                                onChange={e => setForm({ ...form, hours: e.target.value })}
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-1">Tipo de Loja</label>
+                            <select
+                                className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                value={form.type}
+                                onChange={e => setForm({ ...form, type: e.target.value })}
+                            >
+                                <option value="Lanchonete">Lanchonete</option>
+                                <option value="Restaurante">Restaurante</option>
+                                <option value="Hamburgueria">Hamburgueria</option>
+                                <option value="Pizzaria">Pizzaria</option>
+                                <option value="Comida">Comida Caseira</option>
+                                <option value="Deposito Bebidas">Depósito de Bebidas</option>
+                                <option value="Outro">Outro</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    {/* Logo Upload */}
+                    <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-1">Logo da Loja</label>
+                        <div className="flex items-center gap-4">
+                            {form.image && (
+                                <img src={form.image} alt="Logo Preview" className="w-16 h-16 rounded-full object-cover border border-gray-200" />
+                            )}
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileUpload}
+                                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 cursor-pointer"
+                                required={!form.image}
+                            />
+                        </div>
+                        {uploading && <p className="text-xs text-blue-500 mt-1">Enviando imagem...</p>}
+                    </div>
+
                     <button
                         type="submit"
-                        disabled={loading}
-                        className="w-full bg-[#EA1D2C] hover:bg-[#C51623] text-white font-bold py-4 rounded-xl shadow-lg transform active:scale-95 transition-all text-lg mt-4"
+                        disabled={loading || uploading}
+                        className="w-full bg-[#EA1D2C] hover:bg-[#C51623] text-white font-bold py-4 rounded-xl shadow-lg transform active:scale-95 transition-all text-lg mt-4 disabled:opacity-50 disabled:scale-100"
                     >
-                        {loading ? 'Enviando...' : 'Cadastrar Restaurante'}
+                        {loading ? 'Enviando Cadastro...' : 'Enviar Cadastro'}
                     </button>
 
-                    <p className="text-xs text-center text-gray-400 mt-4">
-                        Ao cadastrar, você concorda com nossos termos. Seu restaurante passará por uma análise antes de ir ao ar.
-                    </p>
+                    <button
+                        type="button"
+                        onClick={() => router.push('/admin')}
+                        className="w-full bg-white border border-gray-200 text-gray-600 font-bold py-3 rounded-xl hover:bg-gray-50 transition-all"
+                    >
+                        Cancelar
+                    </button>
                 </form>
             </div>
         </div>

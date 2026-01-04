@@ -48,7 +48,7 @@ export async function getSheetByTitle(title: string) {
 
 function getHeadersForSheet(title: string) {
     switch (title) {
-        case 'Restaurants': return ['id', 'slug', 'name', 'password', 'isOpen', 'image', 'banner', 'approved', 'phone', 'address', 'deliveryTime'];
+        case 'Restaurants': return ['id', 'slug', 'name', 'password', 'isOpen', 'image', 'banner', 'approved', 'phone', 'address', 'deliveryTime', 'instagram', 'zipCode', 'hours', 'responsibleName', 'email', 'whatsapp', 'type'];
         case 'Categories': return ['id', 'restaurantId', 'description']; // Changed name to description as requested
         case 'Products': return ['id', 'restaurantId', 'categoryId', 'name', 'description', 'price', 'image', 'available'];
         case 'Orders': return ['id', 'ticketNumber', 'restaurantId', 'status', 'total', 'customerName', 'customerPhone', 'customerAddress', 'paymentMethod', 'changeFor', 'items', 'createdAt'];
