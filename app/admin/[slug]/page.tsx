@@ -49,15 +49,27 @@ export default function StoreAdmin() {
     };
 
     // Calculate chart data
-    const chartData = orders.map(o => ({
-        date: new Date(o.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
-        sales: o.total
-    })).reduce((acc: any[], curr) => {
+    // Calculate chart data
+    const chartData = orders.map(o => {
+        let dateObj = new Date(o.createdAt);
+        if (isNaN(dateObj.getTime())) {
+            // Fallback for potential simple date strings or errors
+            dateObj = new Date();
+        }
+        return {
+            date: dateObj.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
+            sales: o.total,
+            rawDate: dateObj
+        };
+    }).reduce((acc: any[], curr) => {
         const found = acc.find(x => x.date === curr.date);
         if (found) found.sales += curr.sales;
         else acc.push(curr);
         return acc;
-    }, []).slice(-7);
+    }, [])
+        .sort((a: any, b: any) => a.rawDate - b.rawDate)
+        .slice(-7)
+        .map(x => ({ date: x.date, sales: x.sales }));
 
     const topProducts = orders.flatMap(o => o.items).reduce((acc: any, item: any) => {
         acc[item.name] = (acc[item.name] || 0) + item.quantity;
