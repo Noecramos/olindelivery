@@ -14,13 +14,18 @@ export default function AdminPortal() {
             <div className="card w-full max-w-md bg-white p-8 rounded-3xl shadow-xl">
                 <h2 className="text-xl font-bold mb-4 text-gray-800">Já sou parceiro</h2>
                 <div className="space-y-4">
-                    <input
-                        type="text"
-                        placeholder="Identificador da Loja (Slug)"
-                        className="w-full p-4 bg-gray-50 rounded-xl border border-gray-100 outline-none focus:ring-2 focus:ring-[#EA1D2C]"
-                        value={slug}
-                        onChange={e => setSlug(e.target.value)}
-                    />
+                    <div>
+                        <label htmlFor="admin-slug" className="block text-sm font-bold text-gray-700 mb-1">Identificador da Loja</label>
+                        <input
+                            id="admin-slug"
+                            name="slug"
+                            type="text"
+                            placeholder="Ex: olin-burgers"
+                            className="w-full p-4 bg-gray-50 rounded-xl border border-gray-100 outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                            value={slug}
+                            onChange={e => setSlug(e.target.value)}
+                        />
+                    </div>
                     <Link href={`/admin/${slug}`}>
                         <button disabled={!slug} className="w-full bg-[#EA1D2C] hover:bg-[#C51623] text-white font-bold py-4 rounded-xl transition-all shadow-md disabled:opacity-50 mt-2">
                             Acessar Painel

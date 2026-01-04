@@ -91,8 +91,10 @@ export default function RegisterRestaurant() {
                     {/* Basic Info */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-1">Nome Fantasia</label>
+                            <label htmlFor="name" className="block text-sm font-bold text-gray-700 mb-1">Nome Fantasia</label>
                             <input
+                                id="name"
+                                name="name"
                                 className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
                                 placeholder="Ex: Olin Burgers"
                                 value={form.name}
@@ -104,8 +106,10 @@ export default function RegisterRestaurant() {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-1">Slug (Link URL)</label>
+                            <label htmlFor="slug" className="block text-sm font-bold text-gray-700 mb-1">Slug (Link URL)</label>
                             <input
+                                id="slug"
+                                name="slug"
                                 className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
                                 placeholder="ex: olin-burgers"
                                 value={form.slug}
@@ -118,8 +122,10 @@ export default function RegisterRestaurant() {
                     {/* Contact Info */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-1">Nome do Responsável</label>
+                            <label htmlFor="responsibleName" className="block text-sm font-bold text-gray-700 mb-1">Nome do Responsável</label>
                             <input
+                                id="responsibleName"
+                                name="responsibleName"
                                 className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
                                 value={form.responsibleName}
                                 onChange={e => setForm({ ...form, responsibleName: e.target.value })}
@@ -127,8 +133,10 @@ export default function RegisterRestaurant() {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-1">Email</label>
+                            <label htmlFor="email" className="block text-sm font-bold text-gray-700 mb-1">Email</label>
                             <input
+                                id="email"
+                                name="email"
                                 type="email"
                                 className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
                                 value={form.email}
@@ -140,8 +148,10 @@ export default function RegisterRestaurant() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-1">WhatsApp (com DDD)</label>
+                            <label htmlFor="whatsapp" className="block text-sm font-bold text-gray-700 mb-1">WhatsApp (com DDD)</label>
                             <input
+                                id="whatsapp"
+                                name="whatsapp"
                                 className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
                                 placeholder="5581999999999"
                                 value={form.whatsapp}
@@ -150,8 +160,10 @@ export default function RegisterRestaurant() {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-1">Instagram (Opcional)</label>
+                            <label htmlFor="instagram" className="block text-sm font-bold text-gray-700 mb-1">Instagram (Opcional)</label>
                             <input
+                                id="instagram"
+                                name="instagram"
                                 className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
                                 placeholder="@loja"
                                 value={form.instagram}
@@ -163,8 +175,10 @@ export default function RegisterRestaurant() {
                     {/* Address & Details */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-1">CEP</label>
+                            <label htmlFor="zipCode" className="block text-sm font-bold text-gray-700 mb-1">CEP</label>
                             <input
+                                id="zipCode"
+                                name="zipCode"
                                 className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
                                 placeholder="00000-000"
                                 value={form.zipCode}
@@ -173,8 +187,10 @@ export default function RegisterRestaurant() {
                             />
                         </div>
                         <div className="md:col-span-2">
-                            <label className="block text-sm font-bold text-gray-700 mb-1">Endereço Completo</label>
+                            <label htmlFor="address" className="block text-sm font-bold text-gray-700 mb-1">Endereço Completo</label>
                             <input
+                                id="address"
+                                name="address"
                                 className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
                                 value={form.address}
                                 onChange={e => setForm({ ...form, address: e.target.value })}
@@ -185,8 +201,10 @@ export default function RegisterRestaurant() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-1">Horário de Funcionamento</label>
+                            <label htmlFor="hours" className="block text-sm font-bold text-gray-700 mb-1">Horário de Funcionamento</label>
                             <input
+                                id="hours"
+                                name="hours"
                                 className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
                                 placeholder="Ex: Seg-Sex 18h às 23h"
                                 value={form.hours}
@@ -195,8 +213,10 @@ export default function RegisterRestaurant() {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-1">Tipo de Loja</label>
+                            <label htmlFor="type" className="block text-sm font-bold text-gray-700 mb-1">Tipo de Loja</label>
                             <select
+                                id="type"
+                                name="type"
                                 className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
                                 value={form.type}
                                 onChange={e => setForm({ ...form, type: e.target.value })}
@@ -214,12 +234,14 @@ export default function RegisterRestaurant() {
 
                     {/* Logo Upload */}
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">Logo da Loja</label>
+                        <label htmlFor="logo-upload" className="block text-sm font-bold text-gray-700 mb-1">Logo da Loja</label>
                         <div className="flex items-center gap-4">
                             {form.image && (
                                 <img src={form.image} alt="Logo Preview" className="w-16 h-16 rounded-full object-cover border border-gray-200" />
                             )}
                             <input
+                                id="logo-upload"
+                                name="logo"
                                 type="file"
                                 accept="image/*"
                                 onChange={handleFileUpload}

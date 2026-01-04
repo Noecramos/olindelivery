@@ -66,7 +66,10 @@ export default function SuperAdmin() {
             <div className="flex flex-col items-center justify-center min-h-screen bg-[#F5F5F7]">
                 <div className="card max-w-sm w-full p-8 shadow-xl bg-white rounded-2xl">
                     <h1 className="text-xl font-bold text-center mb-6">Super Admin</h1>
+                    <label htmlFor="master-password" className="block text-sm font-bold text-gray-700 mb-2">Senha de Acesso</label>
                     <input
+                        id="master-password"
+                        name="password"
                         type="password"
                         className="w-full p-3 bg-gray-50 rounded-xl mb-4 outline-none"
                         placeholder="Senha Mestra"
