@@ -6,8 +6,8 @@ export function StatusPieChart({ data }: { data: any[] }) {
     const COLORS = ['#00C49F', '#FFBB28', '#FF8042', '#0088FE'];
 
     return (
-        <div style={{ width: '100%', height: 300 }}>
-            <ResponsiveContainer>
+        <div style={{ width: '100%', height: 300, minWidth: 0 }}>
+            <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                     <Pie
                         data={data}
@@ -34,8 +34,8 @@ export function StatusPieChart({ data }: { data: any[] }) {
 export function SalesChart({ data }: { data: any[] }) {
     // ... existing LineChart code ...
     return (
-        <div style={{ width: '100%', height: 300 }}>
-            <ResponsiveContainer>
+        <div style={{ width: '100%', height: 300, minWidth: 0 }}>
+            <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={data}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
                     <XAxis dataKey="date" stroke="#9CA3AF" fontSize={12} tickLine={false} axisLine={false} />
@@ -53,8 +53,8 @@ export function SalesChart({ data }: { data: any[] }) {
 
 export function TopProductsChart({ data }: { data: any[] }) {
     return (
-        <div style={{ width: '100%', height: 300 }}>
-            <ResponsiveContainer>
+        <div style={{ width: '100%', height: 300, minWidth: 0 }}>
+            <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data} layout="vertical">
                     <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#E5E7EB" />
                     <XAxis type="number" hide />

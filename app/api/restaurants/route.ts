@@ -17,7 +17,10 @@ export async function GET(request: Request) {
         if (id) {
             restaurant = rows.find((r: any) => r.get('id') === id);
         } else if (slug) {
-            restaurant = rows.find((r: any) => r.get('slug') === slug);
+            restaurant = rows.find((r: any) => {
+                const dbSlug = r.get('slug');
+                return dbSlug === slug || dbSlug.replace(/-/g, '') === slug?.replace(/-/g, '');
+            });
         } else {
             // Return list for marketplace
             // Filter by approved unless showAll is true
