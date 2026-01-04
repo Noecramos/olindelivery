@@ -32,7 +32,8 @@ export async function GET(request: Request) {
                         isOpen: r.get('isOpen') === 'TRUE',
                         approved: r.get('approved') === 'TRUE',
                         phone: r.get('phone'),
-                        address: r.get('address')
+                        address: r.get('address'),
+                        deliveryTime: r.get('deliveryTime') || '30-45 min'
                     };
                     // Only return password if Super Admin (requesting all)
                     if (showAll) {
@@ -55,6 +56,7 @@ export async function GET(request: Request) {
                 approved: restaurant.get('approved') === 'TRUE',
                 phone: restaurant.get('phone'),
                 address: restaurant.get('address'),
+                deliveryTime: restaurant.get('deliveryTime') || '30-45 min',
                 // Password is NOT returned for single public view
             });
         }
@@ -84,7 +86,8 @@ export async function POST(request: Request) {
             banner: body.banner || '',
             approved: 'FALSE', // Default to pending
             phone: body.phone || '',
-            address: body.address || ''
+            address: body.address || '',
+            deliveryTime: body.deliveryTime || '30-45 min'
         };
 
         await sheet.addRow({
@@ -97,7 +100,8 @@ export async function POST(request: Request) {
             banner: newRestaurant.banner,
             approved: newRestaurant.approved,
             phone: newRestaurant.phone,
-            address: newRestaurant.address
+            address: newRestaurant.address,
+            deliveryTime: newRestaurant.deliveryTime
         });
 
         return NextResponse.json(newRestaurant);
@@ -120,6 +124,7 @@ export async function PUT(request: Request) {
         if (row) {
             if (typeof isOpen !== 'undefined') row.assign({ isOpen: isOpen ? 'TRUE' : 'FALSE' });
             if (typeof approved !== 'undefined') row.assign({ approved: approved ? 'TRUE' : 'FALSE' });
+            if (typeof body.deliveryTime !== 'undefined') row.assign({ deliveryTime: body.deliveryTime });
 
             await row.save();
             return NextResponse.json({ success: true });

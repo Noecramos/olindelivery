@@ -319,6 +319,37 @@ export default function StoreAdmin() {
                                             ? 'Sua loja está visível para os clientes e aceitando novos pedidos.'
                                             : 'Sua loja aparece como "Fechada" e não aceita novos pedidos.'}
                                     </p>
+
+                                    <div className="mt-10 text-left">
+                                        <label className="block text-gray-700 font-bold mb-2">Tempo de Entrega</label>
+                                        <div className="flex gap-2">
+                                            <input
+                                                type="text"
+                                                className="flex-1 p-3 bg-gray-50 rounded-xl border border-gray-200"
+                                                placeholder="Ex: 30-45 min"
+                                                value={restaurant.deliveryTime || ''}
+                                                onChange={(e) => setRestaurant({ ...restaurant, deliveryTime: e.target.value })}
+                                            />
+                                            <button
+                                                onClick={async () => {
+                                                    try {
+                                                        const res = await fetch('/api/restaurants', {
+                                                            method: 'PUT',
+                                                            headers: { 'Content-Type': 'application/json' },
+                                                            body: JSON.stringify({ id: restaurant.id, deliveryTime: restaurant.deliveryTime })
+                                                        });
+                                                        if (res.ok) alert('Tempo de entrega atualizado!');
+                                                        else alert('Erro ao salvar');
+                                                    } catch (e) {
+                                                        alert('Erro de conexão');
+                                                    }
+                                                }}
+                                                className="px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700"
+                                            >
+                                                Salvar
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             )}
                         </div>

@@ -6,9 +6,10 @@ interface HeaderProps {
     banner?: string;
     rating?: string;
     address?: string;
+    deliveryTime?: string;
 }
 
-export default function RestaurantHeader({ name = "OlinDelivery", image, banner, rating = "4.9", address }: HeaderProps) {
+export default function RestaurantHeader({ name = "OlinDelivery", image, banner, rating = "4.9", address, deliveryTime = "30-45 min" }: HeaderProps) {
     return (
         <div className="relative mb-8">
             {/* Banner Section */}
@@ -41,9 +42,8 @@ export default function RestaurantHeader({ name = "OlinDelivery", image, banner,
                                 <span className="text-lg">★</span> {rating}
                             </span>
                             <span>•</span>
-                            <span>Lanches</span>
                             <span>•</span>
-                            <span>30-45 min</span>
+                            <span>{deliveryTime}</span>
                         </div>
                         {address && (
                             <>

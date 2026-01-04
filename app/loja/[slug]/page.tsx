@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useCart } from "../../context/CartContext";
 import RestaurantHeader from "../../components/RestaurantHeader";
 import CategoryNav from "../../components/CategoryNav";
@@ -10,6 +10,7 @@ import FloatingCart from "../../components/FloatingCart";
 
 export default function StoreFront() {
     const { slug } = useParams();
+    const router = useRouter();
     const { addToCart, count, total } = useCart();
 
     const [restaurant, setRestaurant] = useState<any>(null);
@@ -58,16 +59,21 @@ export default function StoreFront() {
 
     return (
         <main style={{ paddingBottom: "100px", minHeight: "100vh" }}>
-            {/* Back Button */}
-            <button
-                onClick={() => window.history.back()}
-                className="fixed top-4 left-4 z-50 bg-white/90 backdrop-blur-md p-3 rounded-full shadow-lg text-gray-800 hover:bg-white transition-all border border-gray-200"
-                aria-label="Voltar"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M19 12H5M12 19l-7-7 7-7" />
-                </svg>
-            </button>
+            {/* Top Bar */}
+            <div className="fixed top-0 left-0 right-0 z-50 p-4 flex items-center justify-between pointer-events-none">
+                <button
+                    onClick={() => router.push('/')}
+                    className="bg-white/90 backdrop-blur-md p-3 rounded-full shadow-lg text-gray-800 hover:bg-white transition-all border border-gray-200 pointer-events-auto"
+                    aria-label="Voltar"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M19 12H5M12 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <div className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-gray-200 pointer-events-auto">
+                    <img src="https://i.imgur.com/s8YrKSj.jpeg" alt="OlinDelivery" className="h-6 w-auto object-contain" />
+                </div>
+            </div>
             {/* Pass dynamic data to header if needed, for now resizing to match */}
             <RestaurantHeader
                 name={restaurant.name}
@@ -75,6 +81,7 @@ export default function StoreFront() {
                 banner={restaurant.banner}
                 rating="4.9" // Dynamic in future
                 address={restaurant.address}
+                deliveryTime={restaurant.deliveryTime}
             />
 
             {!restaurant.isOpen && (
