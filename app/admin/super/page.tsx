@@ -24,18 +24,21 @@ export default function SuperAdmin() {
     const toggleApproval = async (restaurant: any) => {
         const newStatus = !restaurant.approved;
         try {
-            await fetch('/api/restaurants', {
+            const res = await fetch('/api/restaurants', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id: restaurant.id, approved: newStatus })
             });
+
+            const data = await res.json();
+            const finalPassword = data.password || restaurant.password;
 
             if (newStatus) {
                 // Send WhatsApp
                 const phone = restaurant.whatsapp || restaurant.phone;
                 if (phone) {
                     const cleanPhone = phone.replace(/\D/g, '');
-                    const message = `Olá, ${restaurant.responsibleName || 'Parceiro'}! %0A%0ASua loja *${restaurant.name}* foi aprovada no OlinDelivery! 🚀%0A%0AAcesse seu painel administrativo:%0ALink: https://olindelivery.noveimagem.com.br/admin/${restaurant.slug}%0A%0A*Suas Credenciais:*%0ALogin: ${restaurant.slug}%0ASenha: ${restaurant.password}%0A%0ABoas vendas!`;
+                    const message = `Olá, ${restaurant.responsibleName || 'Parceiro'}! %0A%0ASua loja *${restaurant.name}* foi aprovada no OlinDelivery! 🚀%0A%0AAcesse seu painel administrativo:%0ALink: https://olindelivery.noveimagem.com.br/admin/${restaurant.slug}%0A%0A*Suas Credenciais:*%0ALogin: ${restaurant.slug}%0ASenha: ${finalPassword}%0A%0ABoas vendas!`;
                     window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
                 } else {
                     alert('Restaurante aprovado, mas sem WhatsApp cadastrado para enviar credenciais.');

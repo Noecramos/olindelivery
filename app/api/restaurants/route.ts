@@ -149,12 +149,28 @@ export async function PUT(request: Request) {
         const row = rows.find((r: any) => r.get('id') === id);
 
         if (row) {
-            if (typeof isOpen !== 'undefined') row.assign({ isOpen: isOpen ? 'TRUE' : 'FALSE' });
-            if (typeof approved !== 'undefined') row.assign({ approved: approved ? 'TRUE' : 'FALSE' });
-            if (typeof body.deliveryTime !== 'undefined') row.assign({ deliveryTime: body.deliveryTime });
+            const updates: any = {};
+            let currentPassword = row.get('password');
 
+            if (typeof isOpen !== 'undefined') updates.isOpen = isOpen ? 'TRUE' : 'FALSE';
+
+            if (typeof approved !== 'undefined') {
+                const isApproving = approved === true || approved === 'TRUE';
+                updates.approved = isApproving ? 'TRUE' : 'FALSE';
+
+                // Generate password if approving and it doesn't exist
+                if (isApproving && !currentPassword) {
+                    currentPassword = Math.random().toString(36).slice(-6);
+                    updates.password = currentPassword;
+                }
+            }
+
+            if (typeof body.deliveryTime !== 'undefined') updates.deliveryTime = body.deliveryTime;
+
+            row.assign(updates);
             await row.save();
-            return NextResponse.json({ success: true });
+
+            return NextResponse.json({ success: true, password: currentPassword });
         }
 
         return NextResponse.json({ error: 'NotFound' }, { status: 404 });
