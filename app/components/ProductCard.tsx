@@ -1,0 +1,57 @@
+"use client";
+
+import Image from "next/image";
+
+interface ProductCardProps {
+    item: {
+        id: string | number;
+        name: string;
+        description: string;
+        price: number;
+        category: string;
+        image?: string;
+    };
+    onAdd: () => void;
+}
+
+export default function ProductCard({ item, onAdd }: ProductCardProps) {
+    return (
+        <div className="product-card" onClick={onAdd}>
+
+            {/* Image Section */}
+            <div className="product-image-wrapper">
+                {item.image ? (
+                    <Image
+                        src={item.image}
+                        alt={item.name}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover product-image-transition"
+                        style={{ objectFit: "cover" }}
+                    />
+                ) : (
+                    <div style={{ width: "100%", height: "100%", background: "#f2f2f2", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <span style={{ fontSize: "2rem", color: "#ccc" }}>🍔</span>
+                    </div>
+                )}
+            </div>
+
+            {/* Content Section */}
+            <div style={{ padding: "1rem", flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                <div style={{ marginBottom: "1rem" }}>
+                    <h3 className="font-medium truncate" style={{ color: "var(--text)", marginBottom: "0.5rem", fontSize: "1rem" }}>{item.name}</h3>
+                    <p className="line-clamp-2" style={{ color: "var(--text-secondary)", fontSize: "0.85rem", lineHeight: "1.4" }}>{item.description}</p>
+                </div>
+
+                <div className="flex justify-between items-center" style={{ marginTop: "auto" }}>
+                    <span style={{ color: "var(--primary)", fontWeight: "bold", fontSize: "1.1rem" }}>
+                        {item.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                    </span>
+                    <button className="add-btn">
+                        +
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
