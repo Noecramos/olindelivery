@@ -266,7 +266,17 @@ export default function StoreAdmin() {
                                                                         Novo Pedido #{order.ticketNumber || '...'}
                                                                     </div>
                                                                     <span className="text-xs text-gray-400 font-medium">
-                                                                        {new Date(order.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                                                        {(() => {
+                                                                            try {
+                                                                                // Handle timestamps (numbers) or ISO strings
+                                                                                let date = new Date(order.createdAt);
+                                                                                if (isNaN(date.getTime())) {
+                                                                                    // Try parsing DD/MM/YYYY format if that's what we have
+                                                                                    return 'Hoje';
+                                                                                }
+                                                                                return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                                                                            } catch (e) { return '-'; }
+                                                                        })()}
                                                                     </span>
                                                                 </div>
                                                                 <span className={`text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
@@ -328,9 +338,13 @@ export default function StoreAdmin() {
                                                                         <p className="text-xs font-bold text-gray-400 uppercase mb-1">Pagamento</p>
                                                                         <div className="flex items-center gap-2">
                                                                             <span className="font-bold text-gray-700 text-sm bg-white px-3 py-1 rounded-lg border border-gray-200 shadow-sm">
-                                                                                {order.paymentMethod === 'money' ? '💵 Dinheiro' :
-                                                                                    order.paymentMethod === 'pix' ? '💠 PIX' :
-                                                                                        order.paymentMethod === 'card' ? '💳 Cartão' : order.paymentMethod}
+                                                                                {(() => {
+                                                                                    const method = (order.paymentMethod || '').toLowerCase();
+                                                                                    if (method === 'money' || method === 'dinheiro') return '💵 Dinheiro';
+                                                                                    if (method === 'pix') return '💠 PIX';
+                                                                                    if (method === 'card' || method === 'cartao' || method === 'cartão') return '💳 Cartão';
+                                                                                    return method.toUpperCase() || '-';
+                                                                                })()}
                                                                             </span>
                                                                             {order.changeFor && (
                                                                                 <span className="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded-lg border border-orange-100">
