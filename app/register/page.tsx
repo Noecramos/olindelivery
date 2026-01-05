@@ -83,7 +83,7 @@ export default function RegisterRestaurant() {
         <div className="min-h-screen bg-[#F5F5F7] flex flex-col items-center justify-center py-8 px-4">
             <div className="w-full max-w-4xl">
                 {/* Header Banner - Same width as card */}
-                <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
+                <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2670&auto=format&fit=crop')" }}>
                     <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
                 </div>
 
@@ -96,7 +96,7 @@ export default function RegisterRestaurant() {
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {/* Basic Info */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 gap-4">
                             <div>
                                 <label htmlFor="name" className="block text-sm font-bold text-gray-700 mb-1">Nome Fantasia</label>
                                 <input
@@ -107,20 +107,8 @@ export default function RegisterRestaurant() {
                                     value={form.name}
                                     onChange={e => {
                                         const val = e.target.value;
-                                        setForm({ ...form, name: val, slug: val.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '') });
+                                        setForm({ ...form, name: val });
                                     }}
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="slug" className="block text-sm font-bold text-gray-700 mb-1">Slug (Link URL)</label>
-                                <input
-                                    id="slug"
-                                    name="slug"
-                                    className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
-                                    placeholder="ex: olin-burgers"
-                                    value={form.slug}
-                                    onChange={e => setForm({ ...form, slug: e.target.value })}
                                     required
                                 />
                             </div>

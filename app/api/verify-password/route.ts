@@ -23,7 +23,10 @@ export async function POST(request: Request) {
             // Check password
             // In a real app, this should be hashed. Here it's plain text as per project scope.
             const dbPassword = restaurant.get('password');
-            if (dbPassword === password) {
+            console.log(`Verifying for ${slug}: DB '${dbPassword}' vs Input '${password}'`);
+
+            // Robust comparison: trim and optional case-insensitivity if needed (keeping strict for now but safe guarding against spaces)
+            if (dbPassword && password && dbPassword.trim() === password.trim()) {
                 return NextResponse.json({ success: true });
             }
         }

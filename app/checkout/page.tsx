@@ -14,7 +14,8 @@ export default function CheckoutPage() {
         phone: "",
         address: "",
         paymentMethod: "pix",
-        changeFor: ""
+        changeFor: "",
+        observations: ""
     });
 
     if (cart.length === 0) {
@@ -47,6 +48,7 @@ export default function CheckoutPage() {
                 total,
                 paymentMethod: form.paymentMethod,
                 changeFor: form.paymentMethod === 'money' ? form.changeFor : '',
+                observations: form.observations,
                 status: 'pending'
             };
 
@@ -68,6 +70,7 @@ export default function CheckoutPage() {
                 `*Cliente:* ${form.name}\n` +
                 `*Endereço:* ${form.address}\n\n` +
                 `*Pedido:*\n${itemsList}\n\n` +
+                (form.observations ? `*Observações:* ${form.observations}\n\n` : '') +
                 `*Total:* ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
                 `*Pagamento:* ${paymentInfo}\n\n` +
                 `_Enviado via OlinDelivery_`;
@@ -87,7 +90,7 @@ export default function CheckoutPage() {
     return (
         <div className="min-h-screen bg-[#F5F5F7] flex flex-col">
             {/* Header Banner */}
-            <div className="h-48 md:h-64 w-full bg-cover bg-center relative" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
+            <div className="h-48 md:h-64 w-full bg-cover bg-center relative" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2670&auto=format&fit=crop')" }}>
                 <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
             </div>
 
@@ -155,6 +158,15 @@ export default function CheckoutPage() {
                                 rows={2}
                                 value={form.address}
                                 onChange={e => setForm({ ...form, address: e.target.value })}
+                            />
+                            <textarea
+                                id="observations"
+                                name="observations"
+                                className="w-full p-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                placeholder="Observações (ex: tirar cebola, levar troco para...)"
+                                rows={2}
+                                value={form.observations}
+                                onChange={e => setForm({ ...form, observations: e.target.value })}
                             />
                         </div>
 

@@ -56,7 +56,7 @@ function getHeadersForSheet(title: string) {
         case 'Restaurants': return ['id', 'slug', 'name', 'password', 'isOpen', 'image', 'banner', 'approved', 'phone', 'address', 'deliveryTime', 'instagram', 'zipCode', 'hours', 'responsibleName', 'email', 'whatsapp', 'type'];
         case 'Categories': return ['id', 'restaurantId', 'description'];
         case 'Products': return ['id', 'restaurantId', 'categoryId', 'name', 'description', 'price', 'image', 'available'];
-        case 'Orders': return ['id', 'ticketNumber', 'restaurantId', 'status', 'total', 'customerName', 'customerPhone', 'customerAddress', 'paymentMethod', 'changeFor', 'items', 'createdAt'];
+        case 'Orders': return ['id', 'ticketNumber', 'restaurantId', 'status', 'total', 'customerName', 'customerPhone', 'customerAddress', 'paymentMethod', 'changeFor', 'items', 'observations', 'createdAt'];
         case 'GlobalSettings': return ['key', 'value'];
         default: return null;
     }
