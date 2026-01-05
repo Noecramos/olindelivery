@@ -71,4 +71,6 @@ npm install google-spreadsheet google-auth-library
 - Google Sheets is suitable for testing/prototyping
 - For production with high volume, consider migrating to a proper database
 - The WhatsApp integration is already working in the checkout flow
-- Admin panel authentication is currently hardcoded (password: "admin")
+- ✅ Super Admin authentication is now managed via Google Sheets (GlobalSettings)
+- ✅ Integrated Resend API for secure Super Admin password resets
+- Admin panel design has been fully modernized across all modules
