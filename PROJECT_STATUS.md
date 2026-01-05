@@ -73,4 +73,5 @@ npm install google-spreadsheet google-auth-library
 - The WhatsApp integration is already working in the checkout flow
 - ✅ Super Admin authentication is now managed via Google Sheets (GlobalSettings)
 - ✅ Integrated Resend API for secure Super Admin password resets
-- Admin panel design has been fully modernized across all modules
+- Admin panel design has been fully modernized
+- ✅ Environment variables sync triggered
