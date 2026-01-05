@@ -82,6 +82,9 @@ export default function StoreFront() {
                 rating="4.9" // Dynamic in future
                 address={restaurant.address}
                 deliveryTime={restaurant.deliveryTime}
+                restaurantId={restaurant.id}
+                ratingSum={restaurant.ratingSum}
+                ratingCount={restaurant.ratingCount}
             />
 
             {!restaurant.isOpen && (

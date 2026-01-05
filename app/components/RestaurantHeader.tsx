@@ -1,4 +1,5 @@
 import Image from "next/image";
+import StarRating from "./StarRating";
 
 interface HeaderProps {
     name?: string;
@@ -7,9 +8,12 @@ interface HeaderProps {
     rating?: string;
     address?: string;
     deliveryTime?: string;
+    restaurantId?: string;
+    ratingSum?: number;
+    ratingCount?: number;
 }
 
-export default function RestaurantHeader({ name = "OlinDelivery", image, banner, rating = "4.9", address, deliveryTime = "30-45 min" }: HeaderProps) {
+export default function RestaurantHeader({ name = "OlinDelivery", image, banner, rating = "4.9", address, deliveryTime = "30-45 min", restaurantId, ratingSum, ratingCount }: HeaderProps) {
     return (
         <div className="relative mb-8">
             {/* Banner Section */}
@@ -38,9 +42,8 @@ export default function RestaurantHeader({ name = "OlinDelivery", image, banner,
                     <h1 className="text-3xl md:text-5xl font-extrabold mb-2 tracking-tight leading-tight">{name}</h1>
                     <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-3 text-sm md:text-base font-medium text-gray-600">
                         <div className="flex items-center gap-3">
-                            <span className="text-yellow-500 font-bold flex items-center gap-1">
-                                <span className="text-lg">★</span> {rating}
-                            </span>
+                            <StarRating restaurantId={restaurantId || ''} initialSum={ratingSum || 0} initialCount={ratingCount || 0} />
+                            <span></span>
                             <span>•</span>
                             <span>•</span>
                             <span>{deliveryTime}</span>
