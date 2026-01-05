@@ -20,7 +20,7 @@ export default function AdminPortal() {
                     <p className="text-gray-600 font-medium text-lg">Gerencie seu restaurante no OlinDelivery</p>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full px-4 md:px-8 lg:px-12 xl:px-16">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full">
                     {/* Left Column - Login */}
                     <div className="card bg-white p-8 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] animate-fade-in-up">
                         <h2 className="text-xl font-bold mb-4 text-gray-800 border-b border-gray-100 pb-2">Já sou parceiro</h2>

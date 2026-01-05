@@ -5,9 +5,13 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 export function StatusPieChart({ data }: { data: any[] }) {
     const COLORS = ['#00C49F', '#FFBB28', '#FF8042', '#0088FE'];
 
+    if (!data || data.length === 0) {
+        return <div className="text-center text-gray-400 py-10">Sem dados disponíveis</div>;
+    }
+
     return (
-        <div style={{ width: '100%', height: 300, minWidth: 0 }}>
-            <ResponsiveContainer width="100%" height="100%">
+        <div style={{ width: '100%', height: 300, minWidth: 0, minHeight: 300 }}>
+            <ResponsiveContainer width="100%" height="100%" minWidth={200} minHeight={200}>
                 <PieChart>
                     <Pie
                         data={data}
@@ -32,10 +36,13 @@ export function StatusPieChart({ data }: { data: any[] }) {
 }
 
 export function SalesChart({ data }: { data: any[] }) {
-    // ... existing LineChart code ...
+    if (!data || data.length === 0) {
+        return <div className="text-center text-gray-400 py-10">Sem dados disponíveis</div>;
+    }
+
     return (
-        <div style={{ width: '100%', height: 300, minWidth: 0 }}>
-            <ResponsiveContainer width="100%" height="100%">
+        <div style={{ width: '100%', height: 300, minWidth: 0, minHeight: 300 }}>
+            <ResponsiveContainer width="100%" height="100%" minWidth={200} minHeight={200}>
                 <LineChart data={data}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
                     <XAxis dataKey="date" stroke="#9CA3AF" fontSize={12} tickLine={false} axisLine={false} />
@@ -52,9 +59,13 @@ export function SalesChart({ data }: { data: any[] }) {
 }
 
 export function TopProductsChart({ data }: { data: any[] }) {
+    if (!data || data.length === 0) {
+        return <div className="text-center text-gray-400 py-10">Sem dados disponíveis</div>;
+    }
+
     return (
-        <div style={{ width: '100%', height: 300, minWidth: 0 }}>
-            <ResponsiveContainer width="100%" height="100%">
+        <div style={{ width: '100%', height: 300, minWidth: 0, minHeight: 300 }}>
+            <ResponsiveContainer width="100%" height="100%" minWidth={200} minHeight={200}>
                 <BarChart data={data} layout="vertical">
                     <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#E5E7EB" />
                     <XAxis type="number" hide />
