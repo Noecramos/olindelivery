@@ -358,7 +358,8 @@ export default function StoreAdmin() {
                                                                 )}
                                                             </div>
                                                         </div>
-                                                    )))}
+                                                    ))
+                                                }
                                                 {orders.filter(o => showHistory ? true : o.status !== 'sent').length === 0 && (
                                                     <div className="p-10 text-center text-gray-400">
                                                         {showHistory ? 'Nenhum pedido encontrado.' : 'Nenhum pedido pendente.'}
