@@ -258,29 +258,24 @@ export default function StoreAdmin() {
                                                 {orders
                                                     .filter(o => showHistory ? true : o.status !== 'sent')
                                                     .map(order => (
-                                                        <div key={order.id} className={`p-5 flex flex-col transition-colors group border-b border-gray-100 ${order.status === 'sent' ? 'bg-gray-50 opacity-75 grayscale-[0.5]' : 'hover:bg-gray-50'}`}>
-                                                            {/* Header Row: Ticket # + Status */}
+                                                        <div key={order.id} className={`p-5 flex flex-col transition-all duration-200 border-b border-gray-100 ${order.status === 'sent' ? 'bg-gray-50 opacity-60' : 'hover:bg-blue-50/30'}`}>
+                                                            {/* Header: Ticket, Time, Status */}
                                                             <div className="flex justify-between items-center mb-4">
-                                                                <div className="flex items-center gap-3">
-                                                                    <div className={`px-4 py-2 rounded-xl font-bold text-sm border ${order.status === 'sent' ? 'bg-gray-100 border-gray-200 text-gray-500' : 'bg-blue-50 border-blue-100 text-blue-600'}`}>
-                                                                        Novo Pedido #{order.ticketNumber || '...'}
-                                                                    </div>
-                                                                    <span className="text-xs text-gray-400 font-medium">
+                                                                <div className="flex items-center gap-2">
+                                                                    <span className="text-gray-900 font-extrabold text-lg">#{order.ticketNumber || '...'}</span>
+                                                                    <span className="text-gray-400 text-sm">•</span>
+                                                                    <span className="text-gray-500 text-sm font-medium">
                                                                         {(() => {
                                                                             try {
-                                                                                // Handle timestamps (numbers) or ISO strings
                                                                                 if (!order.createdAt) return 'Hoje';
                                                                                 let date = new Date(order.createdAt);
-                                                                                if (isNaN(date.getTime())) {
-                                                                                    // Try parsing DD/MM/YYYY format if that's what we have
-                                                                                    return 'Hoje';
-                                                                                }
+                                                                                if (isNaN(date.getTime())) return 'Hoje';
                                                                                 return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
                                                                             } catch (e) { return '-'; }
                                                                         })()}
                                                                     </span>
                                                                 </div>
-                                                                <span className={`text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                                                <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
                                                                     order.status === 'preparing' ? 'bg-blue-100 text-blue-700' :
                                                                         order.status === 'sent' ? 'bg-gray-100 text-gray-600' :
                                                                             'bg-green-100 text-green-700'
@@ -291,80 +286,68 @@ export default function StoreAdmin() {
                                                                 </span>
                                                             </div>
 
-                                                            {/* Client & Address Info */}
-                                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                                                                <div>
-                                                                    <p className="text-xs font-bold text-gray-400 uppercase mb-1">Cliente</p>
-                                                                    <p className="font-bold text-gray-800 text-lg">{order.customer.name}</p>
-                                                                    <p className="text-sm text-gray-500 font-medium flex items-center gap-1">
-                                                                        📱 {order.customer.phone}
-                                                                    </p>
+                                                            {/* Customer Info - Single Line if possible, or compact block */}
+                                                            <div className="mb-4 text-sm text-gray-700 space-y-1">
+                                                                <div className="flex flex-wrap gap-x-4">
+                                                                    <span className="font-bold text-gray-900">👤 {order.customer.name}</span>
+                                                                    <span className="text-gray-500">📞 {order.customer.phone}</span>
                                                                 </div>
-                                                                <div>
-                                                                    <p className="text-xs font-bold text-gray-400 uppercase mb-1">Endereço</p>
-                                                                    <p className="text-sm font-medium text-gray-800 bg-gray-50 p-3 rounded-lg border border-gray-100 leading-relaxed">
-                                                                        📍 {order.customer.address}
-                                                                    </p>
+                                                                <div className="flex items-start gap-1 text-gray-600">
+                                                                    <span className="shrink-0 mt-0.5">📍</span>
+                                                                    <span className="leading-snug">{order.customer.address}</span>
                                                                 </div>
                                                             </div>
 
-                                                            {/* Order Items & Total */}
-                                                            <div className="bg-gray-50/80 p-5 rounded-2xl border border-gray-100">
-                                                                <div className="mb-4">
-                                                                    <p className="text-xs font-bold text-gray-400 uppercase mb-2">Pedido</p>
-                                                                    <ul className="space-y-2">
-                                                                        {order.items.map((item: any, idx: number) => (
-                                                                            <li key={idx} className="text-sm text-gray-800 flex justify-between items-center border-b border-gray-200/50 pb-2 last:border-0 last:pb-0">
-                                                                                <span><span className="font-bold text-gray-900">{item.quantity}x</span> {item.name}</span>
-                                                                                <span className="text-gray-500 text-xs">{(item.price * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
-                                                                            </li>
-                                                                        ))}
-                                                                    </ul>
+                                                            {/* Items List - Compact */}
+                                                            <div className="mb-4 bg-white rounded-lg border border-gray-100 p-3 shadow-sm">
+                                                                <ul className="space-y-1">
+                                                                    {order.items.map((item: any, idx: number) => (
+                                                                        <li key={idx} className="text-sm flex justify-between items-center text-gray-800">
+                                                                            <span><span className="font-bold text-gray-900 bg-gray-100 px-1.5 rounded">{item.quantity}x</span> {item.name}</span>
+                                                                            <span className="text-gray-500 text-xs font-medium">{(item.price * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                                                                        </li>
+                                                                    ))}
+                                                                </ul>
+                                                            </div>
+
+                                                            {/* Observations - VERY VISIBLE */}
+                                                            {order.observations && (
+                                                                <div className="mb-4 p-3 bg-red-50 border border-red-100 rounded-lg text-red-700 text-sm font-bold flex items-start gap-2 animate-pulse">
+                                                                    <span>⚠️</span>
+                                                                    <span>OBS: {order.observations}</span>
                                                                 </div>
+                                                            )}
 
-                                                                {/* Observations */}
-                                                                {order.observations && (
-                                                                    <div className="mb-4">
-                                                                        <p className="text-xs font-bold text-gray-400 uppercase mb-1">Observações</p>
-                                                                        <div className="text-sm text-[#EA1D2C] font-bold p-3 bg-red-50 rounded-xl border border-red-100/50 flex items-start gap-2">
-                                                                            <span>⚠️</span>
-                                                                            <span>{order.observations}</span>
-                                                                        </div>
-                                                                    </div>
-                                                                )}
-
-                                                                {/* Total & Payment */}
-                                                                <div className="flex flex-col md:flex-row justify-between items-start md:items-end pt-4 border-t border-gray-200 mt-2 gap-4">
-                                                                    <div>
-                                                                        <p className="text-xs font-bold text-gray-400 uppercase mb-1">Pagamento</p>
-                                                                        <div className="flex items-center gap-2">
-                                                                            <span className="font-bold text-gray-700 text-sm bg-white px-3 py-1 rounded-lg border border-gray-200 shadow-sm">
-                                                                                {(() => {
-                                                                                    const method = (order.paymentMethod || '').toLowerCase().trim();
-                                                                                    if (method === 'money' || method === 'dinheiro') return '💵 Dinheiro';
-                                                                                    if (method === 'pix') return '💠 PIX';
-                                                                                    if (method === 'card' || method === 'cartao' || method === 'cartão') return '💳 Cartão';
-                                                                                    return method.toUpperCase() || '-';
-                                                                                })()}
+                                                            {/* Footer: Payment & Actions */}
+                                                            <div className="flex items-end justify-between border-t border-gray-100 pt-3">
+                                                                <div>
+                                                                    <p className="text-xs text-gray-400 uppercase font-bold mb-1">Pagamento</p>
+                                                                    <div className="flex flex-wrap items-center gap-2">
+                                                                        <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-bold border border-gray-200">
+                                                                            {(() => {
+                                                                                const method = (order.paymentMethod || '').toLowerCase().trim();
+                                                                                if (method === 'money' || method === 'dinheiro') return '💵 Dinheiro';
+                                                                                if (method === 'pix') return '💠 PIX';
+                                                                                if (method === 'card' || method === 'cartao' || method === 'cartão') return '💳 Cartão';
+                                                                                return method.toUpperCase() || '-';
+                                                                            })()}
+                                                                        </span>
+                                                                        {order.changeFor && (
+                                                                            <span className="bg-orange-50 text-orange-700 px-2 py-1 rounded text-xs font-bold border border-orange-100">
+                                                                                Troco: R$ {order.changeFor}
                                                                             </span>
-                                                                            {order.changeFor && (
-                                                                                <span className="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded-lg border border-orange-100">
-                                                                                    Troco p/ R$ {order.changeFor}
-                                                                                </span>
-                                                                            )}
-                                                                        </div>
+                                                                        )}
                                                                     </div>
-                                                                    <div className="text-right w-full md:w-auto">
-                                                                        <p className="text-xs font-bold text-gray-400 uppercase mb-1">Total</p>
-                                                                        <p className="text-2xl font-extrabold text-gray-900 leading-none">
-                                                                            {order.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                                                                        </p>
-                                                                    </div>
+                                                                </div>
+                                                                <div className="text-right">
+                                                                    <p className="text-2xl font-black text-gray-900 tracking-tight">
+                                                                        {order.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                                                    </p>
                                                                 </div>
                                                             </div>
 
                                                             {/* Actions */}
-                                                            <div className="mt-5 flex justify-end gap-3 pt-2">
+                                                            <div className="mt-4 flex gap-2">
                                                                 {order.status === 'pending' && (
                                                                     <button
                                                                         onClick={async () => {
@@ -378,9 +361,9 @@ export default function StoreAdmin() {
                                                                                 });
                                                                             } catch (error) { fetchOrders(); }
                                                                         }}
-                                                                        className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm font-bold uppercase shadow-lg shadow-green-200 transition-all hover:-translate-y-1 active:scale-95 flex items-center gap-2"
+                                                                        className="flex-1 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm font-bold uppercase shadow-sm transition-all active:scale-95"
                                                                     >
-                                                                        <span>✅</span> Aprovar Pedido
+                                                                        Aprovar
                                                                     </button>
                                                                 )}
                                                                 {order.status === 'preparing' && (
@@ -396,13 +379,14 @@ export default function StoreAdmin() {
                                                                                 });
                                                                             } catch (error) { fetchOrders(); }
                                                                         }}
-                                                                        className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-bold uppercase shadow-lg shadow-blue-200 transition-all hover:-translate-y-1 active:scale-95 flex items-center gap-2"
+                                                                        className="flex-1 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-bold uppercase shadow-sm transition-all active:scale-95"
                                                                     >
-                                                                        <span>🛵</span> Enviar Pedido
+                                                                        Enviar
                                                                     </button>
                                                                 )}
                                                             </div>
                                                         </div>
+
                                                     ))
                                                 }
                                                 {orders.filter(o => showHistory ? true : o.status !== 'sent').length === 0 && (
@@ -497,8 +481,8 @@ export default function StoreAdmin() {
                     <footer className="w-full text-center text-gray-500 text-xs py-8 mt-2">
                         © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:text-[#EA1D2C] transition-colors">www.noviapp.com.br</a> • OlindAki & OlinDelivery
                     </footer>
-                </div>
-            </main>
-        </div>
+                </div >
+            </main >
+        </div >
     );
 }
