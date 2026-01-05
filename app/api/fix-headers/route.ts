@@ -3,8 +3,14 @@ import { getSheetByTitle } from '@/lib/googleSheets';
 
 export async function GET() {
     try {
-        const rSheet = await getSheetByTitle('Restaurants');
-        await rSheet.setHeaderRow(['id', 'slug', 'name', 'password', 'isOpen', 'image', 'banner', 'approved', 'phone', 'address', 'deliveryTime', 'instagram', 'zipCode', 'hours', 'responsibleName', 'email', 'whatsapp', 'type']);
+        // Update Restaurants Sheet
+        const restaurantsSheet = await getSheetByTitle('Restaurants');
+        const restaurantHeaders = [
+            'id', 'slug', 'name', 'password', 'isOpen', 'image', 'banner', 'approved',
+            'phone', 'address', 'deliveryTime', 'instagram', 'whatsapp', 'type',
+            'zipCode', 'hours', 'responsibleName', 'email', 'ratingSum', 'ratingCount'
+        ];
+        await restaurantsSheet.setHeaderRow(restaurantHeaders);
 
         const oSheet = await getSheetByTitle('Orders');
         await oSheet.setHeaderRow(['id', 'ticketNumber', 'restaurantId', 'status', 'total', 'customerName', 'customerPhone', 'customerAddress', 'paymentMethod', 'changeFor', 'items', 'createdAt']);

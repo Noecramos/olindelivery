@@ -43,7 +43,9 @@ export async function GET(request: Request) {
                         responsibleName: r.get('responsibleName'),
                         email: r.get('email'),
                         whatsapp: r.get('whatsapp'),
-                        type: r.get('type')
+                        type: r.get('type'),
+                        ratingSum: parseInt(r.get('ratingSum') || '0'),
+                        ratingCount: parseInt(r.get('ratingCount') || '0')
                     };
                     // Only return password if Super Admin (requesting all)
                     if (showAll) {

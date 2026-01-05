@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
+import StarRating from "./components/StarRating";
 
 function MarketplaceContent() {
   const [restaurants, setRestaurants] = useState<any[]>([]);
@@ -156,9 +157,8 @@ function MarketplaceContent() {
                   <div className="flex-1">
                     <h3 className="font-bold text-gray-800 text-base">{rest.name}</h3>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="bg-yellow-100 text-yellow-700 text-[10px] font-bold px-2 py-0.5 rounded-full">★ 4.8</span>
+                      <StarRating restaurantId={rest.id} initialSum={rest.ratingSum} initialCount={rest.ratingCount} />
                       <span className="text-xs text-gray-400">• {rest.deliveryTime || '30-45m'}</span>
-                      <span className="text-xs text-gray-400">• 1.2km</span>
                     </div>
                   </div>
                   <div className="text-yellow-500 font-bold text-lg ml-2">
