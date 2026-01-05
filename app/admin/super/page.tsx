@@ -34,6 +34,9 @@ export default function SuperAdmin() {
             const finalPassword = data.password || restaurant.password;
 
             if (newStatus) {
+                // Update local state to show password immediately
+                setRestaurants(prev => prev.map(r => r.id === restaurant.id ? { ...r, approved: true, password: finalPassword } : r));
+
                 // Send WhatsApp
                 const phone = restaurant.whatsapp || restaurant.phone;
                 if (phone) {
@@ -41,11 +44,11 @@ export default function SuperAdmin() {
                     const message = `Olá, ${restaurant.responsibleName || 'Parceiro'}! %0A%0ASua loja *${restaurant.name}* foi aprovada no OlinDelivery! 🚀%0A%0AAcesse seu painel administrativo:%0ALink: https://olindelivery.noveimagem.com.br/admin/${restaurant.slug}%0A%0A*Suas Credenciais:*%0ALogin: ${restaurant.slug}%0ASenha: ${finalPassword}%0A%0ABoas vendas!`;
                     window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
                 } else {
-                    alert('Restaurante aprovado, mas sem WhatsApp cadastrado para enviar credenciais.');
+                    alert('Restaurante aprovado! Senha gerada: ' + finalPassword);
                 }
+            } else {
+                setRestaurants(prev => prev.map(r => r.id === restaurant.id ? { ...r, approved: false } : r));
             }
-
-            fetchRestaurants();
         } catch (e) {
             alert('Erro ao atualizar');
         }
@@ -107,7 +110,7 @@ export default function SuperAdmin() {
                         <thead className="bg-gray-50 border-b border-gray-100">
                             <tr>
                                 <th className="p-6 font-bold text-gray-500 text-sm uppercase">Restaurante</th>
-                                <th className="p-6 font-bold text-gray-500 text-sm uppercase">Acesso</th>
+                                <th className="p-6 font-bold text-gray-500 text-sm uppercase">Senha</th>
                                 <th className="p-6 font-bold text-gray-500 text-sm uppercase">Status</th>
                                 <th className="p-6 font-bold text-gray-500 text-sm uppercase text-right">Ação</th>
                             </tr>
@@ -127,7 +130,7 @@ export default function SuperAdmin() {
                                     <td className="p-6">
                                         <div className="text-sm">
                                             <span className="text-gray-400 text-xs">Senha:</span>
-                                            <code className="bg-gray-100 px-2 py-1 rounded ml-2 font-mono text-gray-800">{r.password}</code>
+                                            <code className="bg-gray-100 px-2 py-1 rounded ml-2 font-mono text-gray-800">{r.password || '-'}</code>
                                         </div>
                                     </td>
                                     <td className="p-6">

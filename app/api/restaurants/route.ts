@@ -93,7 +93,7 @@ export async function POST(request: Request) {
             id: uuidv4(),
             slug: body.slug,
             name: body.name,
-            password: body.password || Math.random().toString(36).slice(-6), // Auto-generate 6-char password
+            password: body.password || '', // Password generated only on approval
             isOpen: 'TRUE',
             image: body.image || '',
             banner: body.banner || '',
