@@ -69,39 +69,46 @@ export default function SuperAdmin() {
 
     if (!auth) {
         return (
-            <div className="min-h-screen bg-[#F5F5F7] flex flex-col">
-                {/* Header Banner */}
-                <div className="h-48 md:h-64 w-full bg-cover bg-center relative" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
-                </div>
-
-                <div className="flex-1 flex flex-col items-center justify-start px-4 md:px-8 lg:px-12 pt-8 z-10 pb-10">
-                    <div className="text-center mb-8">
-                        <h1 className="text-2xl font-bold text-gray-800 mb-1">Super Admin</h1>
-                        <p className="text-gray-600 text-sm font-medium">Gestão Global da Plataforma</p>
+            <div className="min-h-screen bg-gradient-to-br from-[#F5F5F7] to-[#E8E8EA] flex flex-col items-center justify-center py-8 px-4">
+                <div className="w-full max-w-lg">
+                    {/* Header Banner - Same width as card */}
+                    <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden shadow-lg" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-transparent" />
                     </div>
 
-                    <div className="card max-w-sm w-full p-8 shadow-[0_20px_50px_rgba(0,0,0,0.15)] bg-white rounded-3xl animate-fade-in-up">
-                        <label htmlFor="master-password" className="block text-sm font-bold text-gray-700 mb-2">Senha de Acesso</label>
-                        <input
-                            id="master-password"
-                            name="password"
-                            type="password"
-                            className="w-full p-3 bg-gray-50 rounded-xl mb-4 outline-none focus:ring-2 focus:ring-[#EA1D2C] transition-all"
-                            placeholder="Senha Mestra"
-                            value={password}
-                            onChange={e => setPassword(e.target.value)}
-                        />
-                        <button
-                            onClick={() => password === 'master' ? setAuth(true) : alert('Senha inválida')}
-                            className="w-full bg-gray-900 text-white font-bold py-3 rounded-xl hover:bg-black transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
-                        >
-                            Acessar
-                        </button>
+                    {/* Content Card */}
+                    <div className="bg-white rounded-b-3xl shadow-2xl p-8 md:p-10 animate-fade-in-up">
+                        <div className="text-center mb-8">
+                            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Super Admin</h1>
+                            <p className="text-gray-500 font-medium">Gestão Global da Plataforma</p>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div>
+                                <label htmlFor="master-password" className="block text-sm font-bold text-gray-700 mb-2">Senha Mestra</label>
+                                <input
+                                    id="master-password"
+                                    name="password"
+                                    type="password"
+                                    className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-[#EA1D2C] focus:ring-4 focus:ring-[#EA1D2C]/10 outline-none transition-all font-medium"
+                                    placeholder="••••••••"
+                                    value={password}
+                                    onChange={e => setPassword(e.target.value)}
+                                    onKeyPress={e => e.key === 'Enter' && (password === 'master' ? setAuth(true) : alert('Senha inválida'))}
+                                />
+                            </div>
+                            <button
+                                onClick={() => password === 'master' ? setAuth(true) : alert('Senha inválida')}
+                                className="w-full bg-gradient-to-r from-gray-900 to-black hover:from-black hover:to-gray-900 text-white font-bold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1"
+                            >
+                                Acessar Gerenciamento →
+                            </button>
+                        </div>
                     </div>
 
-                    <footer className="w-full text-center text-gray-400 text-xs py-6 mt-auto">
-                        © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:underline">www.noviapp.com.br</a> • OlindAki & OlinDelivery
+                    {/* Footer */}
+                    <footer className="w-full text-center text-gray-500 text-xs py-6 mt-4">
+                        © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:text-[#EA1D2C] transition-colors">www.noviapp.com.br</a>
                     </footer>
                 </div>
             </div>
@@ -109,81 +116,88 @@ export default function SuperAdmin() {
     }
 
     return (
-        <div className="min-h-screen bg-[#F5F5F7] flex flex-col">
-            {/* Header Banner */}
-            <div className="h-48 md:h-64 w-full bg-cover bg-center relative" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
-                <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent" />
-            </div>
+        <div className="min-h-screen bg-gradient-to-br from-[#F5F5F7] to-[#E8E8EA] flex flex-col items-center py-10 px-4">
+            <div className="w-full max-w-7xl">
+                {/* Header Banner - Same width as card */}
+                <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden shadow-xl" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent" />
+                    <div className="absolute bottom-4 left-6 md:left-8 text-white z-10">
+                        <h1 className="text-xl md:text-3xl font-extrabold tracking-tight">Gestão Global</h1>
+                        <p className="text-xs md:text-sm font-medium opacity-90">Controle total de parceiros OlinDelivery</p>
+                    </div>
+                    <button
+                        onClick={() => setAuth(false)}
+                        className="absolute bottom-4 right-6 bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-lg font-bold hover:bg-white hover:text-red-600 transition-all text-sm border border-white/30"
+                    >
+                        Sair
+                    </button>
+                </div>
 
-            <div className="flex-1 flex flex-col px-4 md:px-6 lg:px-8 pb-10 z-10">
-                <div className="max-w-7xl mx-auto w-full">
-                    <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8 pt-6">
-                        <div>
-                            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-800">Gestão de Restaurantes</h1>
-                            <p className="text-gray-600 font-medium">Aprovação e manutenção de parceiros</p>
-                        </div>
-                        <button onClick={() => setAuth(false)} className="bg-white text-red-600 px-6 py-2 rounded-xl font-bold hover:bg-gray-100 transition-all shadow-lg border border-gray-200">Sair</button>
-                    </header>
-
-                    <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                {/* Main Card Content */}
+                <div className="bg-white rounded-b-3xl shadow-2xl p-6 md:p-8 animate-fade-in-up">
+                    <div className="overflow-x-auto overflow-hidden rounded-2xl border border-gray-100 shadow-lg">
                         <table className="w-full text-left">
                             <thead className="bg-gray-50 border-b border-gray-100">
                                 <tr>
-                                    <th className="p-6 font-bold text-gray-500 text-sm uppercase">Restaurante</th>
-                                    <th className="p-6 font-bold text-gray-500 text-sm uppercase">Senha</th>
-                                    <th className="p-6 font-bold text-gray-500 text-sm uppercase">Status</th>
-                                    <th className="p-6 font-bold text-gray-500 text-sm uppercase text-right">Ação</th>
+                                    <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Restaurante</th>
+                                    <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Senha</th>
+                                    <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider text-center">Status</th>
+                                    <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider text-right">Ações</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100">
                                 {restaurants.map((r: any) => (
-                                    <tr key={r.id} className="hover:bg-gray-50 transition-colors">
-                                        <td className="p-6 font-bold text-gray-900 flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
-                                                {r.image && <img src={r.image} className="w-full h-full object-cover" />}
-                                            </div>
-                                            <div>
-                                                {r.name}
-                                                <p className="text-xs text-gray-400 font-normal">{r.slug}</p>
+                                    <tr key={r.id} className="hover:bg-gray-50/50 transition-colors group">
+                                        <td className="p-6">
+                                            <div className="flex items-center gap-4">
+                                                {r.image && <img src={r.image} className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md" />}
+                                                <div>
+                                                    <div className="font-bold text-gray-900 group-hover:text-[#EA1D2C] transition-colors">{r.name}</div>
+                                                    <div className="text-xs text-gray-500 font-medium">{r.responsibleName || r.slug}</div>
+                                                </div>
                                             </div>
                                         </td>
                                         <td className="p-6">
-                                            <div className="text-sm">
-                                                <span className="text-gray-400 text-xs">Senha:</span>
-                                                <code className="bg-gray-100 px-2 py-1 rounded ml-2 font-mono text-gray-800">{r.password || '-'}</code>
-                                            </div>
+                                            <code className="bg-gray-100 px-3 py-1 rounded-lg text-xs font-bold text-gray-600">{r.password || '---'}</code>
                                         </td>
-                                        <td className="p-6">
-                                            <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${r.approved ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
-                                                {r.approved ? 'Aprovado' : 'Pendente'}
+                                        <td className="p-6 text-center">
+                                            <span className={`px-4 py-1.5 rounded-full text-xs font-bold shadow-sm ${r.approved ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-amber-100 text-amber-700 border border-amber-200'}`}>
+                                                {r.approved ? 'ATIVO' : 'PENDENTE'}
                                             </span>
                                         </td>
-                                        <td className="p-6 text-right flex gap-2 justify-end">
-                                            <button
-                                                onClick={() => toggleApproval(r)}
-                                                className={`px-4 py-2 rounded-lg font-bold text-xs uppercase tracking-wide transition-all ${r.approved ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-600 text-white hover:bg-green-700 shadow-lg'}`}
-                                            >
-                                                {r.approved ? 'Revogar' : 'Aprovar'}
-                                            </button>
-                                            <button
-                                                onClick={() => deleteRestaurant(r.id)}
-                                                className="px-4 py-2 rounded-lg font-bold text-xs uppercase tracking-wide transition-all bg-red-50 text-red-600 hover:bg-red-100"
-                                                title="Excluir Restaurante"
-                                            >
-                                                Excluir
-                                            </button>
+                                        <td className="p-6 text-right">
+                                            <div className="flex justify-end gap-3 translate-x-2 group-hover:translate-x-0 transition-transform duration-300">
+                                                <button
+                                                    onClick={() => toggleApproval(r)}
+                                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-xl hover:-translate-y-0.5 ${r.approved ? 'bg-amber-500 hover:bg-amber-600 text-white' : 'bg-[#EA1D2C] hover:bg-[#C51623] text-white'}`}
+                                                >
+                                                    {r.approved ? 'Pausar' : 'Aprovar'}
+                                                </button>
+                                                <button
+                                                    onClick={() => deleteRestaurant(r.id)}
+                                                    className="p-2.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
+                                                    title="Excluir"
+                                                >
+                                                    <span className="text-lg">🗑️</span>
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}
+                                {restaurants.length === 0 && (
+                                    <tr>
+                                        <td colSpan={4} className="p-20 text-center text-gray-400 font-medium">Nenhum restaurante encontrado.</td>
+                                    </tr>
+                                )}
                             </tbody>
                         </table>
-                        {restaurants.length === 0 && <div className="p-10 text-center text-gray-400">Nenhum restaurante encontrado.</div>}
                     </div>
-
-                    <footer className="w-full text-center text-gray-400 text-xs py-6 mt-8">
-                        © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:underline">www.noviapp.com.br</a> • OlindAki & OlinDelivery
-                    </footer>
                 </div>
+
+                {/* Footer outside the card */}
+                <footer className="footer text-center text-gray-500 text-xs py-10 mt-2">
+                    © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:text-[#EA1D2C] transition-colors font-medium">www.noviapp.com.br</a> • OlindAki & OlinDelivery
+                </footer>
             </div>
         </div>
     );
