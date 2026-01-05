@@ -86,13 +86,14 @@ export default function RegisterRestaurant() {
                 <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
             </div>
 
-            <div className="flex-1 flex flex-col items-center px-4 pb-10 pt-8 z-10 relative">
+
+            <div className="flex-1 flex flex-col items-center px-4 md:px-8 lg:px-12 pb-10 pt-8 z-10 relative">
                 <div className="text-center mb-6">
                     <h1 className="text-3xl font-bold text-gray-800">Cadastrar Loja</h1>
                     <p className="text-gray-600 mt-2 font-medium">Junte-se ao OlinDelivery e expanda seu negócio.</p>
                 </div>
 
-                <div className="card max-w-2xl w-full p-8 shadow-[0_20px_50px_rgba(0,0,0,0.15)] bg-white rounded-3xl animate-fade-in-up">
+                <div className="card max-w-4xl w-full p-8 shadow-[0_20px_50px_rgba(0,0,0,0.15)] bg-white rounded-3xl animate-fade-in-up">
                     <div className="text-center mb-8 hidden">
                         {/* Hidden because moved up */}
                     </div>

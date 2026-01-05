@@ -75,7 +75,7 @@ export default function SuperAdmin() {
                     <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
                 </div>
 
-                <div className="flex-1 flex flex-col items-center justify-start px-4 pt-8 z-10 pb-10">
+                <div className="flex-1 flex flex-col items-center justify-start px-4 md:px-8 lg:px-12 pt-8 z-10 pb-10">
                     <div className="text-center mb-8">
                         <h1 className="text-2xl font-bold text-gray-800 mb-1">Super Admin</h1>
                         <p className="text-gray-600 text-sm font-medium">Gestão Global da Plataforma</p>

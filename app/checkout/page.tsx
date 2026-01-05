@@ -91,12 +91,13 @@ export default function CheckoutPage() {
                 <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
             </div>
 
-            <div className="flex-1 flex flex-col items-center px-4 pb-10 pt-8 z-10 relative">
+
+            <div className="flex-1 flex flex-col items-center px-4 md:px-8 lg:px-12 pb-10 pt-8 z-10 relative">
                 <div className="text-center mb-6">
                     <h1 className="text-2xl font-bold text-gray-800">Finalizar Pedido</h1>
                 </div>
 
-                <div className="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden glass">
+                <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden glass">
                     <div className="p-6 space-y-6">
                         {/* Order Items */}
                         <div className="space-y-3">

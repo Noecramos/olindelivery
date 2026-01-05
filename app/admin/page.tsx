@@ -14,13 +14,13 @@ export default function AdminPortal() {
             </div>
 
             {/* Content Container */}
-            <div className="flex-1 flex flex-col items-center px-4 pb-10 pt-8">
+            <div className="flex-1 flex flex-col items-center px-4 md:px-8 lg:px-12 pb-10 pt-8">
                 <div className="text-center mb-6">
                     <h1 className="font-bold text-gray-800 text-3xl">Portal do Parceiro</h1>
                     <p className="text-gray-600 font-medium">Gerencie seu restaurante no OlinDelivery</p>
                 </div>
 
-                <div className="card w-full max-w-lg bg-white p-8 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] animate-fade-in-up">
+                <div className="card w-full max-w-2xl bg-white p-8 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] animate-fade-in-up">
                     <h2 className="text-xl font-bold mb-4 text-gray-800 border-b border-gray-100 pb-2">Já sou parceiro</h2>
                     <div className="space-y-4">
                         <div>
