@@ -32,9 +32,7 @@ export default function RootLayout({
     <html lang="pt-BR" suppressHydrationWarning>
       <body className={inter.className}>
         <CartProvider>
-          <div className="container">
-            {children}
-          </div>
+          {children}
         </CartProvider>
       </body>
     </html>
