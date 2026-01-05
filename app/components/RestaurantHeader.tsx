@@ -30,7 +30,7 @@ export default function RestaurantHeader({ name = "OlinDelivery", image, banner,
                 {/* Logo */}
                 <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white shadow-xl overflow-hidden bg-white flex-shrink-0">
                     <Image
-                        src={image || "/logo.jpg"}
+                        src={image || "https://i.imgur.com/iWSJGep.png"}
                         alt={name || "Logo"}
                         width={160}
                         height={160}

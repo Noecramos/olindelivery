@@ -71,7 +71,7 @@ export default function StoreFront() {
                     </svg>
                 </button>
                 <div className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-gray-200 pointer-events-auto">
-                    <img src="https://i.imgur.com/s8YrKSj.jpeg" alt="OlinDelivery" className="h-6 w-auto object-contain" />
+                    <img src="https://i.imgur.com/iWSJGep.png" alt="OlinDelivery" className="h-6 w-auto object-contain" />
                 </div>
             </div>
             {/* Pass dynamic data to header if needed, for now resizing to match */}
