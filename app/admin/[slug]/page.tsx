@@ -175,11 +175,11 @@ export default function StoreAdmin() {
 
                 {/* Scrollable Content */}
                 <div className="flex-1 overflow-y-auto">
-                    <div className="w-full space-y-8 flex flex-col min-h-full">
+                    <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-6 space-y-8 flex flex-col min-h-full">
 
                         <div className="flex-1">
                             {tab === 'dashboard' && (
-                                <div className="space-y-6 animate-fade-in px-4 md:px-6 lg:px-8 py-4">
+                                <div className="space-y-6 animate-fade-in">
                                     <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-6">
                                         <div>
                                             <h1 className="text-3xl font-bold tracking-tight text-gray-800">Visão Geral</h1>
@@ -327,78 +327,76 @@ export default function StoreAdmin() {
 
                             {/* Other Tabs handled generically with centered containers */}
                             {(tab !== 'dashboard') && (
-                                <div className="px-4 md:px-6 lg:px-8 py-4">
-                                    <div className="animate-fade-in bg-white p-8 rounded-3xl shadow-sm border border-gray-100 min-h-[500px]">
-                                        {tab === 'products' && (
-                                            <>
-                                                <h2 className="text-2xl font-bold mb-6">Meus Produtos</h2>
-                                                <ProductForm restaurantId={restaurant.id} onSave={() => alert('Salvo!')} />
-                                            </>
-                                        )}
-                                        {tab === 'categories' && (
-                                            <>
-                                                <h2 className="text-2xl font-bold mb-6">Categorias do Menu</h2>
-                                                <CategoryForm restaurantId={restaurant.id} onSave={() => alert('Salvo!')} />
-                                            </>
-                                        )}
-                                        {tab === 'settings' && (
-                                            <div className="max-w-xl mx-auto text-center py-10">
-                                                <h2 className="text-2xl font-bold mb-4">Status da Loja</h2>
-                                                <button
-                                                    onClick={async () => {
-                                                        const newStatus = !restaurant.isOpen;
-                                                        setRestaurant((prev: any) => ({ ...prev, isOpen: newStatus }));
-                                                        try {
-                                                            await fetch('/api/restaurants', {
-                                                                method: 'PUT',
-                                                                headers: { 'Content-Type': 'application/json' },
-                                                                body: JSON.stringify({ id: restaurant.id, isOpen: newStatus })
-                                                            });
-                                                        } catch (e) {
-                                                            alert('Erro ao atualizar status');
-                                                            setRestaurant((prev: any) => ({ ...prev, isOpen: !newStatus }));
-                                                        }
-                                                    }}
-                                                    className={`w-full py-4 text-xl font-bold rounded-2xl transition-all transform hover:scale-105 shadow-xl ${restaurant.isOpen ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}
-                                                >
-                                                    {restaurant.isOpen ? '🟢 LOJA ABERTA (Clique para Fechar)' : '🔴 LOJA FECHADA (Clique para Abrir)'}
-                                                </button>
-                                                <p className="mt-4 text-gray-500 text-sm">
-                                                    {restaurant.isOpen
-                                                        ? 'Sua loja está visível para os clientes e aceitando novos pedidos.'
-                                                        : 'Sua loja aparece como "Fechada" e não aceita novos pedidos.'}
-                                                </p>
-                                                <div className="mt-10 text-left">
-                                                    <label className="block text-gray-700 font-bold mb-2">Tempo de Entrega</label>
-                                                    <div className="flex gap-2">
-                                                        <input
-                                                            type="text"
-                                                            className="flex-1 p-3 bg-gray-50 rounded-xl border border-gray-200"
-                                                            placeholder="Ex: 30-45 min"
-                                                            value={restaurant.deliveryTime || ''}
-                                                            onChange={(e) => setRestaurant({ ...restaurant, deliveryTime: e.target.value })}
-                                                        />
-                                                        <button
-                                                            onClick={async () => {
-                                                                try {
-                                                                    const res = await fetch('/api/restaurants', {
-                                                                        method: 'PUT',
-                                                                        headers: { 'Content-Type': 'application/json' },
-                                                                        body: JSON.stringify({ id: restaurant.id, deliveryTime: restaurant.deliveryTime })
-                                                                    });
-                                                                    if (res.ok) alert('Tempo de entrega atualizado!');
-                                                                    else alert('Erro ao salvar');
-                                                                } catch (e) { alert('Erro de conexão'); }
-                                                            }}
-                                                            className="px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700"
-                                                        >
-                                                            Salvar
-                                                        </button>
-                                                    </div>
+                                <div className="animate-fade-in bg-white p-8 rounded-3xl shadow-sm border border-gray-100 min-h-[500px]">
+                                    {tab === 'products' && (
+                                        <>
+                                            <h2 className="text-2xl font-bold mb-6">Meus Produtos</h2>
+                                            <ProductForm restaurantId={restaurant.id} onSave={() => alert('Salvo!')} />
+                                        </>
+                                    )}
+                                    {tab === 'categories' && (
+                                        <>
+                                            <h2 className="text-2xl font-bold mb-6">Categorias do Menu</h2>
+                                            <CategoryForm restaurantId={restaurant.id} onSave={() => alert('Salvo!')} />
+                                        </>
+                                    )}
+                                    {tab === 'settings' && (
+                                        <div className="max-w-xl mx-auto text-center py-10">
+                                            <h2 className="text-2xl font-bold mb-4">Status da Loja</h2>
+                                            <button
+                                                onClick={async () => {
+                                                    const newStatus = !restaurant.isOpen;
+                                                    setRestaurant((prev: any) => ({ ...prev, isOpen: newStatus }));
+                                                    try {
+                                                        await fetch('/api/restaurants', {
+                                                            method: 'PUT',
+                                                            headers: { 'Content-Type': 'application/json' },
+                                                            body: JSON.stringify({ id: restaurant.id, isOpen: newStatus })
+                                                        });
+                                                    } catch (e) {
+                                                        alert('Erro ao atualizar status');
+                                                        setRestaurant((prev: any) => ({ ...prev, isOpen: !newStatus }));
+                                                    }
+                                                }}
+                                                className={`w-full py-4 text-xl font-bold rounded-2xl transition-all transform hover:scale-105 shadow-xl ${restaurant.isOpen ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}
+                                            >
+                                                {restaurant.isOpen ? '🟢 LOJA ABERTA (Clique para Fechar)' : '🔴 LOJA FECHADA (Clique para Abrir)'}
+                                            </button>
+                                            <p className="mt-4 text-gray-500 text-sm">
+                                                {restaurant.isOpen
+                                                    ? 'Sua loja está visível para os clientes e aceitando novos pedidos.'
+                                                    : 'Sua loja aparece como "Fechada" e não aceita novos pedidos.'}
+                                            </p>
+                                            <div className="mt-10 text-left">
+                                                <label className="block text-gray-700 font-bold mb-2">Tempo de Entrega</label>
+                                                <div className="flex gap-2">
+                                                    <input
+                                                        type="text"
+                                                        className="flex-1 p-3 bg-gray-50 rounded-xl border border-gray-200"
+                                                        placeholder="Ex: 30-45 min"
+                                                        value={restaurant.deliveryTime || ''}
+                                                        onChange={(e) => setRestaurant({ ...restaurant, deliveryTime: e.target.value })}
+                                                    />
+                                                    <button
+                                                        onClick={async () => {
+                                                            try {
+                                                                const res = await fetch('/api/restaurants', {
+                                                                    method: 'PUT',
+                                                                    headers: { 'Content-Type': 'application/json' },
+                                                                    body: JSON.stringify({ id: restaurant.id, deliveryTime: restaurant.deliveryTime })
+                                                                });
+                                                                if (res.ok) alert('Tempo de entrega atualizado!');
+                                                                else alert('Erro ao salvar');
+                                                            } catch (e) { alert('Erro de conexão'); }
+                                                        }}
+                                                        className="px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700"
+                                                    >
+                                                        Salvar
+                                                    </button>
                                                 </div>
                                             </div>
-                                        )}
-                                    </div>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 
