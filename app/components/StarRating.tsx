@@ -8,7 +8,7 @@ export default function StarRating({ restaurantId, initialSum, initialCount }: {
     const [hover, setHover] = useState(0);
     const [loading, setLoading] = useState(false);
 
-    const average = stats.count > 0 ? (stats.sum / stats.count).toFixed(1) : 'New';
+    const average = stats.count > 0 ? (stats.sum / stats.count).toFixed(1) : 'Novo';
 
     const handleRate = async (star: number, e: React.MouseEvent) => {
         e.preventDefault();
@@ -41,12 +41,12 @@ export default function StarRating({ restaurantId, initialSum, initialCount }: {
     };
 
     return (
-        <div className="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded-full" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+        <div className="flex items-center gap-1 bg-yellow-50 px-3 py-1.5 rounded-full" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
             <div className="flex">
                 {[1, 2, 3, 4, 5].map((star) => (
                     <span
                         key={star}
-                        className={`cursor-pointer text-sm transition-colors ${star <= (hover || userRating || Math.round(stats.count > 0 ? stats.sum / stats.count : 0)) ? 'text-yellow-500' : 'text-gray-300'}`}
+                        className={`cursor-pointer text-xl transition-colors ${star <= (hover || userRating || Math.round(stats.count > 0 ? stats.sum / stats.count : 0)) ? 'text-yellow-500' : 'text-gray-300'}`}
                         onMouseEnter={() => setHover(star)}
                         onMouseLeave={() => setHover(0)}
                         onClick={(e) => handleRate(star, e)}
@@ -55,10 +55,10 @@ export default function StarRating({ restaurantId, initialSum, initialCount }: {
                     </span>
                 ))}
             </div>
-            <span className="text-[10px] font-bold text-yellow-700 ml-1">
+            <span className="text-sm font-bold text-yellow-700 ml-2">
                 {average}
             </span>
-            <span className="text-[8px] text-gray-400">
+            <span className="text-[10px] text-gray-400">
                 ({stats.count})
             </span>
         </div>

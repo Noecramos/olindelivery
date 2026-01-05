@@ -133,12 +133,12 @@ function MarketplaceContent() {
         {/* Main List (Restaurants) */}
         <div className="px-6 space-y-4">
           <h2 className="font-bold text-lg text-gray-800">Restaurantes</h2>
-          {restaurants.filter(r => r.isOpen && r.name.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 ? (
+          {restaurants.filter(r => (r.name || '').toLowerCase().includes(searchTerm.toLowerCase())).length === 0 ? (
             <div className="p-8 text-center text-gray-400 bg-gray-50 rounded-xl">
               Nenhum restaurante encontrado.
             </div>
           ) : (
-            restaurants.filter(r => r.isOpen && r.name.toLowerCase().includes(searchTerm.toLowerCase())).map(rest => (
+            restaurants.filter(r => (r.name || '').toLowerCase().includes(searchTerm.toLowerCase())).map(rest => (
               <Link key={rest.id} href={`/loja/${rest.slug}`}>
                 <div className="item-card-row group">
                   <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-gray-100 shadow-inner">
