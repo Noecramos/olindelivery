@@ -110,7 +110,11 @@ export default function SuperAdmin() {
             const res = await fetch('/api/admin/super-reset', { method: 'POST' });
             const data = await res.json();
             if (res.ok) {
-                alert(data.message);
+                if (data.tempPassword) {
+                    alert(`${data.message}\n\nCOMO O E-MAIL NÃO FOI CONFIGURADO, SUA NOVA SENHA É: ${data.tempPassword}\n\nPor favor, anote-a agora.`);
+                } else {
+                    alert(data.message);
+                }
             } else {
                 alert(data.error || 'Erro ao resetar senha');
             }
