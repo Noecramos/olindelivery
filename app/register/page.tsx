@@ -80,22 +80,18 @@ export default function RegisterRestaurant() {
     };
 
     return (
-        <div className="min-h-screen bg-[#F5F5F7] flex flex-col">
-            {/* Header Banner */}
-            <div className="h-48 md:h-64 w-full bg-cover bg-center relative" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
-                <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
-            </div>
-
-
-            <div className="flex-1 flex flex-col items-center px-4 md:px-8 lg:px-12 pb-10 pt-8 z-10 relative">
-                <div className="text-center mb-6">
-                    <h1 className="text-3xl font-bold text-gray-800">Cadastrar Loja</h1>
-                    <p className="text-gray-600 mt-2 font-medium">Junte-se ao OlinDelivery e expanda seu negócio.</p>
+        <div className="min-h-screen bg-[#F5F5F7] flex flex-col items-center justify-center py-8 px-4">
+            <div className="w-full max-w-4xl">
+                {/* Header Banner - Same width as card */}
+                <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
                 </div>
 
-                <div className="card max-w-4xl w-full p-8 shadow-[0_20px_50px_rgba(0,0,0,0.15)] bg-white rounded-3xl animate-fade-in-up">
-                    <div className="text-center mb-8 hidden">
-                        {/* Hidden because moved up */}
+                {/* Content Card */}
+                <div className="bg-white rounded-b-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] p-8 animate-fade-in-up">
+                    <div className="text-center mb-8">
+                        <h1 className="text-3xl font-bold text-gray-800">Cadastrar Loja</h1>
+                        <p className="text-gray-600 mt-2 font-medium">Junte-se ao OlinDelivery e expanda seu negócio.</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
@@ -281,7 +277,8 @@ export default function RegisterRestaurant() {
                     </form>
                 </div>
 
-                <footer className="w-full text-center text-gray-400 text-xs py-6 mt-auto">
+                {/* Footer */}
+                <footer className="w-full text-center text-gray-400 text-xs py-6 mt-4">
                     © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:underline">www.noviapp.com.br</a> • OlindAki & OlinDelivery
                 </footer>
             </div>
