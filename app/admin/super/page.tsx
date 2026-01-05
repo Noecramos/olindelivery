@@ -95,14 +95,19 @@ export default function SuperAdmin() {
     }
 
     return (
-        <div className="min-h-screen bg-[#F5F5F7] p-8">
-            <div className="max-w-6xl mx-auto">
-                <header className="flex justify-between items-center mb-8">
+        <div className="min-h-screen bg-[#F5F5F7] flex flex-col">
+            {/* Header Banner */}
+            <div className="h-64 md:h-80 w-full bg-[length:100%_100%] bg-center relative" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
+                <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent" />
+            </div>
+
+            <div className="flex-1 flex flex-col px-4 md:px-8 pb-10 z-10 -mt-24 max-w-7xl w-full mx-auto">
+                <header className="flex justify-between items-end mb-8 text-white drop-shadow-lg">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900">Gestão de Restaurantes</h1>
-                        <p className="text-gray-500">Aprovação e manutenção de parceiros</p>
+                        <h1 className="text-4xl font-extrabold tracking-tight">Gestão de Restaurantes</h1>
+                        <p className="text-gray-100 font-medium">Aprovação e manutenção de parceiros</p>
                     </div>
-                    <button onClick={() => setAuth(false)} className="text-red-500 font-bold hover:underline">Sair</button>
+                    <button onClick={() => setAuth(false)} className="bg-white text-red-600 px-6 py-2 rounded-xl font-bold hover:bg-gray-100 transition-all shadow-lg">Sair</button>
                 </header>
 
                 <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">

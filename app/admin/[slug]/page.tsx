@@ -106,26 +106,36 @@ export default function StoreAdmin() {
 
     if (!auth) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-screen bg-[#F5F5F7]">
-                <div className="card max-w-sm w-full p-8 shadow-xl bg-white/80 backdrop-blur-md rounded-2xl">
-                    <div className="text-center mb-6">
-                        {restaurant.image && <img src={restaurant.image} className="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-white shadow-md" />}
-                        <h2 className="text-xl font-bold text-gray-800">{restaurant.name}</h2>
-                        <p className="text-sm text-gray-500">Área Administrativa</p>
+            <div className="min-h-screen bg-[#F5F5F7] flex flex-col">
+                {/* Header Banner */}
+                <div className="h-64 w-full bg-[length:100%_100%] bg-center relative" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
+                </div>
+
+                <div className="flex-1 flex flex-col items-center justify-start -mt-32 px-4 z-10 pb-10">
+                    <div className="text-center mb-8 drop-shadow-md">
+                        <h1 className="text-2xl font-bold text-white mb-1">{restaurant.name}</h1>
+                        <p className="text-white/90 text-sm font-medium">Área Administrativa</p>
                     </div>
 
-                    <input
-                        id="adminPassword"
-                        name="adminPassword"
-                        type="password"
-                        className="w-full p-3 bg-gray-50 border-none rounded-xl mb-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                        placeholder="Senha de Acesso"
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                    />
-                    <button onClick={handleLogin} className="w-full bg-[#EA1D2C] hover:bg-[#C51623] text-white font-bold py-3 rounded-xl transition-all shadow-md">
-                        Entrar
-                    </button>
+                    <div className="card max-w-sm w-full p-8 shadow-[0_20px_50px_rgba(0,0,0,0.15)] bg-white rounded-3xl animate-fade-in-up">
+                        <div className="text-center mb-6">
+                            {restaurant.image && <img src={restaurant.image} className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-gray-100 shadow-sm object-cover" />}
+                        </div>
+
+                        <input
+                            id="adminPassword"
+                            name="adminPassword"
+                            type="password"
+                            className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xl mb-4 focus:ring-2 focus:ring-[#EA1D2C] outline-none transition-all"
+                            placeholder="Senha de Acesso"
+                            value={password}
+                            onChange={e => setPassword(e.target.value)}
+                        />
+                        <button onClick={handleLogin} className="w-full bg-[#EA1D2C] hover:bg-[#C51623] text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-1">
+                            Entrar
+                        </button>
+                    </div>
                 </div>
             </div>
         );

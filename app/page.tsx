@@ -44,8 +44,8 @@ function MarketplaceContent() {
   if (loading) {
     return (
       <div className="fixed inset-0 bg-[#ea1d2c] flex flex-col items-center justify-center z-[9999]">
-        <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-lg p-4 animate-bounce">
-          <Image src="https://i.imgur.com/iWSJGep.png" alt="Logo" width={100} height={100} style={{ objectFit: 'contain' }} priority />
+        <div className="w-72 h-32 bg-white rounded-2xl flex items-center justify-center shadow-lg p-4 animate-bounce">
+          <Image src="https://i.imgur.com/yGLHWLL.png" alt="Logo" width={240} height={100} style={{ objectFit: 'contain' }} priority />
         </div>
       </div>
     );
