@@ -13,14 +13,14 @@ export default function AdminPortal() {
                 <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
             </div>
 
-            {/* Content Container */}
-            <div className="flex-1 flex flex-col px-4 md:px-8 lg:px-16 xl:px-24 pb-10 pt-8">
-                <div className="text-center mb-8">
+            {/* Content Container - FULL WIDTH */}
+            <div className="flex-1 flex flex-col pb-10 pt-8">
+                <div className="text-center mb-8 px-4">
                     <h1 className="font-bold text-gray-800 text-3xl md:text-4xl">Portal do Parceiro</h1>
                     <p className="text-gray-600 font-medium text-lg">Gerencie seu restaurante no OlinDelivery</p>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full px-4 md:px-8 lg:px-12 xl:px-16">
                     {/* Left Column - Login */}
                     <div className="card bg-white p-8 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] animate-fade-in-up">
                         <h2 className="text-xl font-bold mb-4 text-gray-800 border-b border-gray-100 pb-2">Já sou parceiro</h2>
@@ -57,9 +57,11 @@ export default function AdminPortal() {
                     </div>
                 </div>
 
-                <Link href="/admin/super" className="mt-8 text-center text-gray-400 hover:text-gray-600 text-sm font-medium transition-colors">Acesso Administrativo (Super Admin)</Link>
+                <div className="px-4">
+                    <Link href="/admin/super" className="mt-8 block text-center text-gray-400 hover:text-gray-600 text-sm font-medium transition-colors">Acesso Administrativo (Super Admin)</Link>
+                </div>
 
-                <footer className="w-full text-center text-gray-400 text-xs py-6 mt-auto">
+                <footer className="w-full text-center text-gray-400 text-xs py-6 mt-auto px-4">
                     © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:underline">www.noviapp.com.br</a> • OlindAki & OlinDelivery
                 </footer>
             </div>
