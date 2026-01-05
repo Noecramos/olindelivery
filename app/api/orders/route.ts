@@ -73,7 +73,8 @@ export async function POST(request: Request) {
             paymentMethod: newOrder.paymentMethod,
             changeFor: newOrder.changeFor,
             observations: newOrder.observations || '',         // Added
-            items: JSON.stringify(newOrder.items)
+            items: JSON.stringify(newOrder.items),
+            createdAt: newOrder.createdAt
         });
 
         return NextResponse.json(newOrder);

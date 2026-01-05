@@ -269,6 +269,7 @@ export default function StoreAdmin() {
                                                                         {(() => {
                                                                             try {
                                                                                 // Handle timestamps (numbers) or ISO strings
+                                                                                if (!order.createdAt) return 'Hoje';
                                                                                 let date = new Date(order.createdAt);
                                                                                 if (isNaN(date.getTime())) {
                                                                                     // Try parsing DD/MM/YYYY format if that's what we have
@@ -339,7 +340,7 @@ export default function StoreAdmin() {
                                                                         <div className="flex items-center gap-2">
                                                                             <span className="font-bold text-gray-700 text-sm bg-white px-3 py-1 rounded-lg border border-gray-200 shadow-sm">
                                                                                 {(() => {
-                                                                                    const method = (order.paymentMethod || '').toLowerCase();
+                                                                                    const method = (order.paymentMethod || '').toLowerCase().trim();
                                                                                     if (method === 'money' || method === 'dinheiro') return '💵 Dinheiro';
                                                                                     if (method === 'pix') return '💠 PIX';
                                                                                     if (method === 'card' || method === 'cartao' || method === 'cartão') return '💳 Cartão';
