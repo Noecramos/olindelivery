@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getSheetByTitle } from '@/lib/googleSheets';
 
-// Note: To actually send emails, you would typically use a service like Resend or SendGrid.
-// For now, this logic generates the password and prepares for email sending.
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function POST() {
     try {
@@ -10,7 +10,6 @@ export async function POST() {
         const newMasterPassword = Math.random().toString(36).slice(-8).toUpperCase();
 
         // 2. Save to Google Sheets (GlobalSettings sheet)
-        // Note: You must have a sheet named 'GlobalSettings' with 'key' and 'value' columns
         try {
             const sheet = await getSheetByTitle('GlobalSettings');
             const rows = await sheet.getRows();
@@ -24,19 +23,17 @@ export async function POST() {
             }
         } catch (sheetError) {
             console.error('Error saving to GlobalSettings sheet:', sheetError);
-            // Fallback: If sheet doesn't exist, we might want to inform the user or create it.
-            // But for simplicity in this project context, we assume the sheet setup.
         }
 
-        // 3. Send real email via Resend API (using fetch to avoid npm issues)
+        // 3. Send real email via Resend API
         const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
         if (!RESEND_API_KEY) {
-            console.error('RESEND_API_KEY not found in environment variables.');
+            console.error('RESEND_API_KEY is missing in process.env');
             return NextResponse.json({
                 success: true,
                 message: 'Senha gerada no banco de dados, mas o e-mail não pôde ser enviado por falta de configuração (RESEND_API_KEY).',
-                tempPassword: newMasterPassword // Show only if failed to send email
+                tempPassword: newMasterPassword
             });
         }
 
@@ -67,13 +64,17 @@ export async function POST() {
             if (!res.ok) {
                 const errorData = await res.json();
                 console.error('Resend API Error:', errorData);
-                throw new Error('Failed to send email via Resend');
+                return NextResponse.json({
+                    success: true,
+                    message: `Senha gerada, mas Resend retornou erro: ${errorData.message || 'Erro desconhecido'}`,
+                    tempPassword: newMasterPassword
+                });
             }
-        } catch (mailError) {
+        } catch (mailError: any) {
             console.error('Mail sending error:', mailError);
             return NextResponse.json({
                 success: true,
-                message: 'Senha gerada, mas houve um erro ao enviar o e-mail.',
+                message: `Senha gerada, mas houve um erro técnico no envio: ${mailError.message}`,
                 tempPassword: newMasterPassword
             });
         }
@@ -82,8 +83,8 @@ export async function POST() {
             success: true,
             message: 'Uma nova senha foi gerada e enviada para noecramos@gmail.com.'
         });
-    } catch (e) {
+    } catch (e: any) {
         console.error('Reset master password error:', e);
-        return NextResponse.json({ error: 'Falha ao resetar senha mestra' }, { status: 500 });
+        return NextResponse.json({ error: 'Falha ao resetar senha mestra: ' + e.message }, { status: 500 });
     }
 }
