@@ -83,14 +83,14 @@ export default function RegisterRestaurant() {
         <div className="min-h-screen bg-[#F5F5F7] flex flex-col items-center justify-center py-8 px-4">
             <div className="w-full max-w-4xl">
                 {/* Header Banner - Same width as card */}
-                <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2670&auto=format&fit=crop')" }}>
+                <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
                     <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
                 </div>
 
                 {/* Content Card */}
                 <div className="bg-white rounded-b-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] p-8 animate-fade-in-up">
                     <div className="text-center mb-8">
-                        <h1 className="text-3xl font-bold text-gray-800">Cadastrar Nova Loja</h1>
+                        <h1 className="text-3xl font-bold text-gray-800">Cadastrar Loja</h1>
                         <p className="text-gray-600 mt-2 font-medium">Junte-se ao OlinDelivery e expanda seu negócio.</p>
                     </div>
 
