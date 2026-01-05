@@ -347,6 +347,7 @@ export default function StoreAdmin() {
                                                             </div>
 
                                                             {/* Actions */}
+                                                            {/* Actions */}
                                                             <div className="mt-4 flex gap-2">
                                                                 {order.status === 'pending' && (
                                                                     <button
@@ -361,7 +362,7 @@ export default function StoreAdmin() {
                                                                                 });
                                                                             } catch (error) { fetchOrders(); }
                                                                         }}
-                                                                        className="flex-1 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm font-bold uppercase shadow-sm transition-all active:scale-95"
+                                                                        className="flex-1 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-xs font-bold uppercase shadow-sm transition-all active:scale-95"
                                                                     >
                                                                         Aprovar
                                                                     </button>
@@ -379,7 +380,7 @@ export default function StoreAdmin() {
                                                                                 });
                                                                             } catch (error) { fetchOrders(); }
                                                                         }}
-                                                                        className="flex-1 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-bold uppercase shadow-sm transition-all active:scale-95"
+                                                                        className="flex-1 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs font-bold uppercase shadow-sm transition-all active:scale-95"
                                                                     >
                                                                         Enviar
                                                                     </button>
