@@ -21,8 +21,12 @@ export async function POST() {
             } else {
                 await sheet.addRow({ key: 'master_password', value: newMasterPassword });
             }
-        } catch (sheetError) {
+        } catch (sheetError: any) {
             console.error('Error saving to GlobalSettings sheet:', sheetError);
+            return NextResponse.json({
+                error: 'Não foi possível salvar a nova senha no banco de dados. Verifique suas permissões no Google Sheets.',
+                details: sheetError.message
+            }, { status: 500 });
         }
 
         // 3. Send real email via Resend API

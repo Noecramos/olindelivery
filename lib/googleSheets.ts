@@ -38,10 +38,15 @@ export async function getSheetByTitle(title: string) {
     if (!sheet) {
         // Auto-create sheet if missing (Self-healing)
         sheet = await doc.addSheet({ title });
+    }
 
-        // Initialize headers based on sheet type
-        const headers = getHeadersForSheet(title);
-        if (headers) await sheet.setHeaderRow(headers);
+    // Always ensure headers are set if they are missing
+    const headers = getHeadersForSheet(title);
+    if (headers) {
+        const currentHeaders = await sheet.loadHeaderRow().then(() => sheet.headerValues).catch(() => []);
+        if (currentHeaders.length === 0) {
+            await sheet.setHeaderRow(headers);
+        }
     }
     return sheet;
 }
@@ -49,9 +54,10 @@ export async function getSheetByTitle(title: string) {
 function getHeadersForSheet(title: string) {
     switch (title) {
         case 'Restaurants': return ['id', 'slug', 'name', 'password', 'isOpen', 'image', 'banner', 'approved', 'phone', 'address', 'deliveryTime', 'instagram', 'zipCode', 'hours', 'responsibleName', 'email', 'whatsapp', 'type'];
-        case 'Categories': return ['id', 'restaurantId', 'description']; // Changed name to description as requested
+        case 'Categories': return ['id', 'restaurantId', 'description'];
         case 'Products': return ['id', 'restaurantId', 'categoryId', 'name', 'description', 'price', 'image', 'available'];
         case 'Orders': return ['id', 'ticketNumber', 'restaurantId', 'status', 'total', 'customerName', 'customerPhone', 'customerAddress', 'paymentMethod', 'changeFor', 'items', 'createdAt'];
+        case 'GlobalSettings': return ['key', 'value'];
         default: return null;
     }
 }
