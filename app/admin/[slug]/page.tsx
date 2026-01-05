@@ -346,7 +346,7 @@ export default function StoreAdmin() {
                                                                     )}
                                                                 </div>
 
-                                                                {/* Apple Buttons */}
+                                                                {/* Apple Buttons - Small & Clean */}
                                                                 <div className="flex items-center gap-2">
                                                                     {order.status === 'pending' && (
                                                                         <button
@@ -361,7 +361,7 @@ export default function StoreAdmin() {
                                                                                     });
                                                                                 } catch (error) { fetchOrders(); }
                                                                             }}
-                                                                            className="px-6 py-2.5 bg-black text-white hover:bg-gray-800 rounded-full text-xs font-bold uppercase tracking-wide shadow-lg transition-all active:scale-95"
+                                                                            className="px-4 py-1.5 bg-black text-white hover:bg-gray-800 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-md transition-all active:scale-95"
                                                                         >
                                                                             Aprovar
                                                                         </button>
@@ -379,7 +379,7 @@ export default function StoreAdmin() {
                                                                                     });
                                                                                 } catch (error) { fetchOrders(); }
                                                                             }}
-                                                                            className="px-6 py-2.5 bg-blue-600 text-white hover:bg-blue-700 rounded-full text-xs font-bold uppercase tracking-wide shadow-lg shadow-blue-200 transition-all active:scale-95"
+                                                                            className="px-4 py-1.5 bg-blue-600 text-white hover:bg-blue-700 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-md shadow-blue-200 transition-all active:scale-95"
                                                                         >
                                                                             Enviar
                                                                         </button>
