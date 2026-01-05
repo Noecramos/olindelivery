@@ -80,13 +80,13 @@ export default function RegisterRestaurant() {
     };
 
     return (
-        <div className="min-h-screen bg-[#F5F5F7]">
+        <div className="min-h-screen bg-[#F5F5F7] flex flex-col">
             {/* Header Banner */}
-            <div className="h-48 md:h-[22rem] w-full bg-[length:100%_100%] bg-center relative" style={{ backgroundImage: "url('https://i.imgur.com/7Z4y7Qk.png')" }}>
+            <div className="h-48 md:h-[22rem] w-full bg-[length:100%_100%] bg-center relative" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
                 <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
             </div>
 
-            <div className="flex flex-col items-center -mt-32 px-4 pb-20 z-10 relative">
+            <div className="flex-1 flex flex-col items-center -mt-32 px-4 pb-10 z-10 relative">
                 <div className="text-center mb-6">
                     <h1 className="text-3xl font-bold text-white drop-shadow-md">Cadastrar Loja</h1>
                     <p className="text-gray-100 mt-2 font-medium drop-shadow-md">Junte-se ao OlinDelivery e expanda seu negócio.</p>
@@ -279,6 +279,10 @@ export default function RegisterRestaurant() {
                         </button>
                     </form>
                 </div>
+
+                <footer className="w-full text-center text-gray-400 text-xs py-6 mt-auto">
+                    © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:underline">www.noviapp.com.br</a> • OlindAki & OlinDelivery
+                </footer>
             </div>
         </div>
     );

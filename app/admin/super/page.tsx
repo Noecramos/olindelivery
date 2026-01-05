@@ -69,26 +69,40 @@ export default function SuperAdmin() {
 
     if (!auth) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-screen bg-[#F5F5F7]">
-                <div className="card max-w-sm w-full p-8 shadow-xl bg-white rounded-2xl">
-                    <h1 className="text-xl font-bold text-center mb-6">Super Admin</h1>
-                    <label htmlFor="master-password" className="block text-sm font-bold text-gray-700 mb-2">Senha de Acesso</label>
-                    <input
-                        id="master-password"
-                        name="password"
-                        type="password"
-                        className="w-full p-3 bg-gray-50 rounded-xl mb-4 outline-none"
-                        placeholder="Senha Mestra"
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                    />
-                    <button
-                        onClick={() => password === 'master' ? setAuth(true) : alert('Senha inválida')}
-                        className="w-full bg-gray-900 text-white font-bold py-3 rounded-xl hover:bg-black transition-all"
-                    >
-                        Acessar
-                    </button>
-                    <p className="text-xs text-center text-gray-400 mt-4">Gestão Global da Plataforma</p>
+            <div className="min-h-screen bg-[#F5F5F7] flex flex-col">
+                {/* Header Banner */}
+                <div className="h-64 w-full bg-[length:100%_100%] bg-center relative" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
+                </div>
+
+                <div className="flex-1 flex flex-col items-center justify-start -mt-32 px-4 z-10 pb-10">
+                    <div className="text-center mb-8 drop-shadow-md">
+                        <h1 className="text-2xl font-bold text-white mb-1">Super Admin</h1>
+                        <p className="text-white/90 text-sm font-medium">Gestão Global da Plataforma</p>
+                    </div>
+
+                    <div className="card max-w-sm w-full p-8 shadow-[0_20px_50px_rgba(0,0,0,0.15)] bg-white rounded-3xl animate-fade-in-up">
+                        <label htmlFor="master-password" className="block text-sm font-bold text-gray-700 mb-2">Senha de Acesso</label>
+                        <input
+                            id="master-password"
+                            name="password"
+                            type="password"
+                            className="w-full p-3 bg-gray-50 rounded-xl mb-4 outline-none focus:ring-2 focus:ring-[#EA1D2C] transition-all"
+                            placeholder="Senha Mestra"
+                            value={password}
+                            onChange={e => setPassword(e.target.value)}
+                        />
+                        <button
+                            onClick={() => password === 'master' ? setAuth(true) : alert('Senha inválida')}
+                            className="w-full bg-gray-900 text-white font-bold py-3 rounded-xl hover:bg-black transition-all shadow-lg hover:shadow-xl hover:-translate-y-1"
+                        >
+                            Acessar
+                        </button>
+                    </div>
+
+                    <footer className="w-full text-center text-gray-400 text-xs py-6 mt-auto">
+                        © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:underline">www.noviapp.com.br</a> • OlindAki & OlinDelivery
+                    </footer>
                 </div>
             </div>
         );
