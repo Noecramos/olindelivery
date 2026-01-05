@@ -7,45 +7,57 @@ export default function AdminPortal() {
     const [slug, setSlug] = useState("");
 
     return (
-        <div style={{ minHeight: "100vh", background: "#f8f9fa", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-            <h1 className="font-bold" style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>Portal do Parceiro</h1>
-            <p className="text-gray-500 mb-8">Gerencie seu restaurante no OlinDelivery</p>
+        <div className="min-h-screen bg-[#F5F5F7] flex flex-col">
+            {/* Header Banner */}
+            <div className="h-64 w-full bg-cover bg-center relative" style={{ backgroundImage: "url('https://i.imgur.com/yGLHWLL.png')" }}>
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent" />
+            </div>
 
-            <div className="card w-full max-w-md bg-white p-8 rounded-3xl shadow-xl">
-                <h2 className="text-xl font-bold mb-4 text-gray-800">Já sou parceiro</h2>
-                <div className="space-y-4">
-                    <div>
-                        <label htmlFor="admin-slug" className="block text-sm font-bold text-gray-700 mb-1">Identificador da Loja</label>
-                        <input
-                            id="admin-slug"
-                            name="slug"
-                            type="text"
-                            placeholder="Ex: olin-burgers"
-                            className="w-full p-4 bg-gray-50 rounded-xl border border-gray-100 outline-none focus:ring-2 focus:ring-[#EA1D2C]"
-                            value={slug}
-                            onChange={e => setSlug(e.target.value)}
-                        />
+            {/* Content Container - Overlapping Banner */}
+            <div className="flex-1 flex flex-col items-center -mt-32 px-4 pb-10 z-10">
+                <div className="text-center mb-6">
+                    <h1 className="font-bold text-white text-3xl drop-shadow-md">Portal do Parceiro</h1>
+                    <p className="text-gray-100 font-medium drop-shadow-md">Gerencie seu restaurante no OlinDelivery</p>
+                </div>
+
+                <div className="card w-full max-w-lg bg-white p-8 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] animate-fade-in-up">
+                    <h2 className="text-xl font-bold mb-4 text-gray-800 border-b border-gray-100 pb-2">Já sou parceiro</h2>
+                    <div className="space-y-4">
+                        <div>
+                            <label htmlFor="admin-slug" className="block text-sm font-bold text-gray-700 mb-1">Identificador da Loja</label>
+                            <input
+                                id="admin-slug"
+                                name="slug"
+                                type="text"
+                                placeholder="Ex: olin-burgers"
+                                className="w-full p-4 bg-gray-50 rounded-xl border border-gray-100 outline-none focus:ring-2 focus:ring-[#EA1D2C] transition-all"
+                                value={slug}
+                                onChange={e => setSlug(e.target.value)}
+                            />
+                        </div>
+                        <Link href={`/admin/${slug}`}>
+                            <button disabled={!slug} className="w-full bg-[#EA1D2C] hover:bg-[#C51623] text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 disabled:opacity-50 disabled:translate-y-0 mt-2">
+                                Acessar Painel
+                            </button>
+                        </Link>
                     </div>
-                    <Link href={`/admin/${slug}`}>
-                        <button disabled={!slug} className="w-full bg-[#EA1D2C] hover:bg-[#C51623] text-white font-bold py-4 rounded-xl transition-all shadow-md disabled:opacity-50 mt-2">
-                            Acessar Painel
+
+                    <div className="my-8 flex items-center gap-4">
+                        <div className="flex-1 h-px bg-gray-200" />
+                        <span className="text-sm text-gray-400 font-medium">OU</span>
+                        <div className="flex-1 h-px bg-gray-200" />
+                    </div>
+
+                    <h2 className="text-xl font-bold mb-4 text-gray-800">Quero vender no OlinDelivery</h2>
+                    <Link href="/register">
+                        <button className="w-full bg-gray-900 hover:bg-black text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-1">
+                            Cadastrar Loja
                         </button>
                     </Link>
                 </div>
 
-                <div className="my-8 border-t border-gray-100 relative">
-                    <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-2 text-sm text-gray-400">OU</span>
-                </div>
-
-                <h2 className="text-xl font-bold mb-4 text-gray-800">Quero vender no OlinDelivery</h2>
-                <Link href="/register">
-                    <button className="w-full bg-gray-900 hover:bg-black text-white font-bold py-4 rounded-xl transition-all shadow-md">
-                        Cadastrar Loja
-                    </button>
-                </Link>
+                <Link href="/admin/super" className="mt-8 text-gray-400 hover:text-gray-600 text-sm font-medium transition-colors">Acesso Administrativo (Super Admin)</Link>
             </div>
-
-            <Link href="/admin/super" className="mt-8 text-gray-300 hover:text-gray-500 text-sm">Acesso Administrativo (Super Admin)</Link>
         </div>
     );
 }
