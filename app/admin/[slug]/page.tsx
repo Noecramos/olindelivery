@@ -258,13 +258,12 @@ export default function StoreAdmin() {
                                                 {orders
                                                     .filter(o => showHistory ? true : o.status !== 'sent')
                                                     .map(order => (
-                                                        <div key={order.id} className={`p-5 flex flex-col transition-all duration-200 border-b border-gray-100 ${order.status === 'sent' ? 'bg-gray-50 opacity-60' : 'hover:bg-blue-50/30'}`}>
-                                                            {/* Header: Ticket, Time, Status */}
-                                                            <div className="flex justify-between items-center mb-4">
-                                                                <div className="flex items-center gap-2">
-                                                                    <span className="text-gray-900 font-extrabold text-lg">#{order.ticketNumber || '...'}</span>
-                                                                    <span className="text-gray-400 text-sm">•</span>
-                                                                    <span className="text-gray-500 text-sm font-medium">
+                                                        <div key={order.id} className={`p-6 bg-white flex flex-col transition-all duration-300 rounded-[2rem] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] mb-6 ${order.status === 'sent' ? 'opacity-60 grayscale' : ''}`}>
+                                                            {/* Apple Style Header: Ticket & Status */}
+                                                            <div className="flex justify-between items-start mb-6">
+                                                                <div className="flex flex-col">
+                                                                    <span className="text-gray-900 font-extrabold text-3xl tracking-tight">#{order.ticketNumber || '...'}</span>
+                                                                    <span className="text-gray-400 text-sm font-medium mt-1">
                                                                         {(() => {
                                                                             try {
                                                                                 if (!order.createdAt) return 'Hoje';
@@ -272,10 +271,10 @@ export default function StoreAdmin() {
                                                                                 if (isNaN(date.getTime())) return 'Hoje';
                                                                                 return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
                                                                             } catch (e) { return '-'; }
-                                                                        })()}
+                                                                        })()} • Pedido
                                                                     </span>
                                                                 </div>
-                                                                <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                                                <span className={`px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider shadow-sm ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
                                                                     order.status === 'preparing' ? 'bg-blue-100 text-blue-700' :
                                                                         order.status === 'sent' ? 'bg-gray-100 text-gray-600' :
                                                                             'bg-green-100 text-green-700'
@@ -286,105 +285,106 @@ export default function StoreAdmin() {
                                                                 </span>
                                                             </div>
 
-                                                            {/* Customer Info - Single Line if possible, or compact block */}
-                                                            <div className="mb-4 text-sm text-gray-700 space-y-1">
-                                                                <div className="flex flex-wrap gap-x-4">
-                                                                    <span className="font-bold text-gray-900">👤 {order.customer.name}</span>
-                                                                    <span className="text-gray-500">📞 {order.customer.phone}</span>
+                                                            {/* Customer Section - Clean & Human */}
+                                                            <div className="flex items-start gap-4 mb-6">
+                                                                <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-xl shrink-0">
+                                                                    👤
                                                                 </div>
-                                                                <div className="flex items-start gap-1 text-gray-600">
-                                                                    <span className="shrink-0 mt-0.5">📍</span>
-                                                                    <span className="leading-snug">{order.customer.address}</span>
+                                                                <div>
+                                                                    <p className="font-bold text-gray-900 text-base leading-tight">{order.customer.name}</p>
+                                                                    <p className="text-gray-500 text-sm mt-0.5">{order.customer.phone}</p>
+                                                                    <p className="text-gray-500 text-sm mt-1 leading-snug">{order.customer.address}</p>
                                                                 </div>
                                                             </div>
 
-                                                            {/* Items List - Compact */}
-                                                            <div className="mb-4 bg-white rounded-lg border border-gray-100 p-3 shadow-sm">
-                                                                <ul className="space-y-1">
-                                                                    {order.items.map((item: any, idx: number) => (
-                                                                        <li key={idx} className="text-sm flex justify-between items-center text-gray-800">
-                                                                            <span><span className="font-bold text-gray-900 bg-gray-100 px-1.5 rounded">{item.quantity}x</span> {item.name}</span>
-                                                                            <span className="text-gray-500 text-xs font-medium">{(item.price * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
-                                                                        </li>
-                                                                    ))}
-                                                                </ul>
+                                                            {/* Items - Minimalist List */}
+                                                            <div className="mb-6 space-y-3">
+                                                                {order.items.map((item: any, idx: number) => (
+                                                                    <div key={idx} className="flex justify-between items-center text-sm group">
+                                                                        <div className="flex items-center gap-3">
+                                                                            <span className="flex items-center justify-center bg-gray-50 text-gray-900 font-bold w-6 h-6 rounded-md text-xs border border-gray-100">
+                                                                                {item.quantity}
+                                                                            </span>
+                                                                            <span className="text-gray-700 font-medium">{item.name}</span>
+                                                                        </div>
+                                                                        <span className="text-gray-400 text-xs tabular-nums">
+                                                                            {(item.price * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                                                        </span>
+                                                                    </div>
+                                                                ))}
                                                             </div>
 
-                                                            {/* Observations - VERY VISIBLE */}
+                                                            {/* Observations - Standout but Clean */}
                                                             {order.observations && (
-                                                                <div className="mb-4 p-3 bg-red-50 border border-red-100 rounded-lg text-red-700 text-sm font-bold flex items-start gap-2 animate-pulse">
-                                                                    <span>⚠️</span>
-                                                                    <span>OBS: {order.observations}</span>
+                                                                <div className="mb-6 p-4 bg-red-50/50 border border-red-100 rounded-2xl flex gap-3 text-red-600 text-sm leading-relaxed">
+                                                                    <span className="shrink-0 text-lg">⚠️</span>
+                                                                    <span className="font-medium">{order.observations}</span>
                                                                 </div>
                                                             )}
 
-                                                            {/* Footer: Payment & Actions */}
-                                                            <div className="flex items-end justify-between border-t border-gray-100 pt-3">
-                                                                <div>
-                                                                    <p className="text-xs text-gray-400 uppercase font-bold mb-1">Pagamento</p>
-                                                                    <div className="flex flex-wrap items-center gap-2">
-                                                                        <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-bold border border-gray-200">
+                                                            <div className="flex items-center justify-between border-t border-gray-50 pt-5 mt-auto">
+                                                                <div className="flex flex-col">
+                                                                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Total a Pagar</span>
+                                                                    <div className="flex items-center gap-2">
+                                                                        <span className="text-2xl font-black text-gray-900 tracking-tight">
+                                                                            {order.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                                                        </span>
+                                                                        <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-[10px] font-bold border border-gray-200 uppercase tracking-wide">
                                                                             {(() => {
                                                                                 const method = (order.paymentMethod || '').toLowerCase().trim();
-                                                                                if (method === 'money' || method === 'dinheiro') return '💵 Dinheiro';
-                                                                                if (method === 'pix') return '💠 PIX';
-                                                                                if (method === 'card' || method === 'cartao' || method === 'cartão') return '💳 Cartão';
-                                                                                return method.toUpperCase() || '-';
+                                                                                if (method === 'money' || method === 'dinheiro') return 'Dinheiro';
+                                                                                if (method === 'pix') return 'PIX';
+                                                                                if (method === 'card' || method === 'cartao' || method === 'cartão') return 'Cartão';
+                                                                                return method || '-';
                                                                             })()}
                                                                         </span>
-                                                                        {order.changeFor && (
-                                                                            <span className="bg-orange-50 text-orange-700 px-2 py-1 rounded text-xs font-bold border border-orange-100">
-                                                                                Troco: R$ {order.changeFor}
-                                                                            </span>
-                                                                        )}
                                                                     </div>
+                                                                    {order.changeFor && (
+                                                                        <span className="text-xs text-orange-600 font-medium mt-1">
+                                                                            Troco para R$ {order.changeFor}
+                                                                        </span>
+                                                                    )}
                                                                 </div>
-                                                                <div className="text-right">
-                                                                    <p className="text-2xl font-black text-gray-900 tracking-tight">
-                                                                        {order.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                                                                    </p>
-                                                                </div>
-                                                            </div>
 
-                                                            {/* Actions */}
-                                                            {/* Actions */}
-                                                            <div className="mt-4 flex gap-2">
-                                                                {order.status === 'pending' && (
-                                                                    <button
-                                                                        onClick={async () => {
-                                                                            if (!confirm('Aprovar este pedido?')) return;
-                                                                            setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: 'preparing' } : o));
-                                                                            try {
-                                                                                await fetch('/api/orders', {
-                                                                                    method: 'PUT',
-                                                                                    headers: { 'Content-Type': 'application/json' },
-                                                                                    body: JSON.stringify({ id: order.id, status: 'preparing' })
-                                                                                });
-                                                                            } catch (error) { fetchOrders(); }
-                                                                        }}
-                                                                        className="flex-1 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-xs font-bold uppercase shadow-sm transition-all active:scale-95"
-                                                                    >
-                                                                        Aprovar
-                                                                    </button>
-                                                                )}
-                                                                {order.status === 'preparing' && (
-                                                                    <button
-                                                                        onClick={async () => {
-                                                                            if (!confirm('Marcar como enviado?')) return;
-                                                                            setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: 'sent' } : o));
-                                                                            try {
-                                                                                await fetch('/api/orders', {
-                                                                                    method: 'PUT',
-                                                                                    headers: { 'Content-Type': 'application/json' },
-                                                                                    body: JSON.stringify({ id: order.id, status: 'sent' })
-                                                                                });
-                                                                            } catch (error) { fetchOrders(); }
-                                                                        }}
-                                                                        className="flex-1 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs font-bold uppercase shadow-sm transition-all active:scale-95"
-                                                                    >
-                                                                        Enviar
-                                                                    </button>
-                                                                )}
+                                                                {/* Apple Buttons */}
+                                                                <div className="flex items-center gap-2">
+                                                                    {order.status === 'pending' && (
+                                                                        <button
+                                                                            onClick={async () => {
+                                                                                if (!confirm('Aprovar este pedido?')) return;
+                                                                                setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: 'preparing' } : o));
+                                                                                try {
+                                                                                    await fetch('/api/orders', {
+                                                                                        method: 'PUT',
+                                                                                        headers: { 'Content-Type': 'application/json' },
+                                                                                        body: JSON.stringify({ id: order.id, status: 'preparing' })
+                                                                                    });
+                                                                                } catch (error) { fetchOrders(); }
+                                                                            }}
+                                                                            className="px-6 py-2.5 bg-black text-white hover:bg-gray-800 rounded-full text-xs font-bold uppercase tracking-wide shadow-lg transition-all active:scale-95"
+                                                                        >
+                                                                            Aprovar
+                                                                        </button>
+                                                                    )}
+                                                                    {order.status === 'preparing' && (
+                                                                        <button
+                                                                            onClick={async () => {
+                                                                                if (!confirm('Marcar como enviado?')) return;
+                                                                                setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: 'sent' } : o));
+                                                                                try {
+                                                                                    await fetch('/api/orders', {
+                                                                                        method: 'PUT',
+                                                                                        headers: { 'Content-Type': 'application/json' },
+                                                                                        body: JSON.stringify({ id: order.id, status: 'sent' })
+                                                                                    });
+                                                                                } catch (error) { fetchOrders(); }
+                                                                            }}
+                                                                            className="px-6 py-2.5 bg-blue-600 text-white hover:bg-blue-700 rounded-full text-xs font-bold uppercase tracking-wide shadow-lg shadow-blue-200 transition-all active:scale-95"
+                                                                        >
+                                                                            Enviar
+                                                                        </button>
+                                                                    )}
+                                                                </div>
                                                             </div>
                                                         </div>
 
