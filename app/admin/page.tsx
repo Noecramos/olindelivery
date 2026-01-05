@@ -9,15 +9,15 @@ export default function AdminPortal() {
     return (
         <div className="min-h-screen bg-[#F5F5F7] flex flex-col">
             {/* Header Banner */}
-            <div className="h-48 md:h-[22rem] w-full bg-[length:100%_100%] bg-center relative" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
+            <div className="h-48 md:h-64 w-full bg-[length:100%_100%] bg-center relative" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
                 <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
             </div>
 
-            {/* Content Container - Overlapping Banner */}
-            <div className="flex-1 flex flex-col items-center -mt-32 px-4 pb-10 z-10">
+            {/* Content Container */}
+            <div className="flex-1 flex flex-col items-center px-4 pb-10 pt-8">
                 <div className="text-center mb-6">
-                    <h1 className="font-bold text-white text-3xl drop-shadow-md">Portal do Parceiro</h1>
-                    <p className="text-gray-100 font-medium drop-shadow-md">Gerencie seu restaurante no OlinDelivery</p>
+                    <h1 className="font-bold text-gray-800 text-3xl">Portal do Parceiro</h1>
+                    <p className="text-gray-600 font-medium">Gerencie seu restaurante no OlinDelivery</p>
                 </div>
 
                 <div className="card w-full max-w-lg bg-white p-8 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] animate-fade-in-up">

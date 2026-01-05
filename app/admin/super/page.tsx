@@ -71,14 +71,14 @@ export default function SuperAdmin() {
         return (
             <div className="min-h-screen bg-[#F5F5F7] flex flex-col">
                 {/* Header Banner */}
-                <div className="h-64 w-full bg-[length:100%_100%] bg-center relative" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
+                <div className="h-48 md:h-64 w-full bg-[length:100%_100%] bg-center relative" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
                     <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
                 </div>
 
-                <div className="flex-1 flex flex-col items-center justify-start -mt-32 px-4 z-10 pb-10">
-                    <div className="text-center mb-8 drop-shadow-md">
-                        <h1 className="text-2xl font-bold text-white mb-1">Super Admin</h1>
-                        <p className="text-white/90 text-sm font-medium">Gestão Global da Plataforma</p>
+                <div className="flex-1 flex flex-col items-center justify-start px-4 pt-8 z-10 pb-10">
+                    <div className="text-center mb-8">
+                        <h1 className="text-2xl font-bold text-gray-800 mb-1">Super Admin</h1>
+                        <p className="text-gray-600 text-sm font-medium">Gestão Global da Plataforma</p>
                     </div>
 
                     <div className="card max-w-sm w-full p-8 shadow-[0_20px_50px_rgba(0,0,0,0.15)] bg-white rounded-3xl animate-fade-in-up">
@@ -111,17 +111,17 @@ export default function SuperAdmin() {
     return (
         <div className="min-h-screen bg-[#F5F5F7] flex flex-col">
             {/* Header Banner */}
-            <div className="h-64 md:h-80 w-full bg-[length:100%_100%] bg-center relative" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
+            <div className="h-48 md:h-64 w-full bg-[length:100%_100%] bg-center relative" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
                 <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent" />
             </div>
 
-            <div className="flex-1 flex flex-col px-4 md:px-8 pb-10 z-10 -mt-24 max-w-7xl w-full mx-auto">
-                <header className="flex justify-between items-end mb-8 text-white drop-shadow-lg">
+            <div className="flex-1 flex flex-col px-4 md:px-8 lg:px-12 pb-10 z-10">
+                <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8 pt-6">
                     <div>
-                        <h1 className="text-4xl font-extrabold tracking-tight">Gestão de Restaurantes</h1>
-                        <p className="text-gray-100 font-medium">Aprovação e manutenção de parceiros</p>
+                        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-800">Gestão de Restaurantes</h1>
+                        <p className="text-gray-600 font-medium">Aprovação e manutenção de parceiros</p>
                     </div>
-                    <button onClick={() => setAuth(false)} className="bg-white text-red-600 px-6 py-2 rounded-xl font-bold hover:bg-gray-100 transition-all shadow-lg">Sair</button>
+                    <button onClick={() => setAuth(false)} className="bg-white text-red-600 px-6 py-2 rounded-xl font-bold hover:bg-gray-100 transition-all shadow-lg border border-gray-200">Sair</button>
                 </header>
 
                 <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">

@@ -108,14 +108,14 @@ export default function StoreAdmin() {
         return (
             <div className="min-h-screen bg-[#F5F5F7] flex flex-col">
                 {/* Header Banner */}
-                <div className="h-64 w-full bg-[length:100%_100%] bg-center relative" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
+                <div className="h-48 md:h-64 w-full bg-[length:100%_100%] bg-center relative" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
                     <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
                 </div>
 
-                <div className="flex-1 flex flex-col items-center justify-start -mt-32 px-4 z-10 pb-10">
-                    <div className="text-center mb-8 drop-shadow-md">
-                        <h1 className="text-2xl font-bold text-white mb-1">{restaurant.name}</h1>
-                        <p className="text-white/90 text-sm font-medium">Área Administrativa</p>
+                <div className="flex-1 flex flex-col items-center justify-start px-4 pt-8 z-10 pb-10">
+                    <div className="text-center mb-8">
+                        <h1 className="text-2xl font-bold text-gray-800 mb-1">{restaurant.name}</h1>
+                        <p className="text-gray-600 text-sm font-medium">Área Administrativa</p>
                     </div>
 
                     <div className="card max-w-sm w-full p-8 shadow-[0_20px_50px_rgba(0,0,0,0.15)] bg-white rounded-3xl animate-fade-in-up">
@@ -174,18 +174,18 @@ export default function StoreAdmin() {
                 </div>
 
                 {/* Scrollable Content */}
-                <div className="flex-1 overflow-y-auto p-4 md:p-8 -mt-20 z-10 relative">
-                    <div className="max-w-6xl mx-auto space-y-8 flex flex-col min-h-full">
+                <div className="flex-1 overflow-y-auto p-4 md:p-8">
+                    <div className="w-full space-y-8 flex flex-col min-h-full">
 
                         <div className="flex-1">
                             {tab === 'dashboard' && (
                                 <div className="space-y-6 animate-fade-in">
-                                    <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-6 text-white drop-shadow-md">
+                                    <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-6">
                                         <div>
-                                            <h1 className="text-3xl font-bold tracking-tight">Visão Geral</h1>
-                                            <p className="text-gray-100 text-sm font-medium">Acompanhe o desempenho da sua loja em tempo real.</p>
+                                            <h1 className="text-3xl font-bold tracking-tight text-gray-800">Visão Geral</h1>
+                                            <p className="text-gray-600 text-sm font-medium">Acompanhe o desempenho da sua loja em tempo real.</p>
                                         </div>
-                                        <span className="text-xs text-green-700 bg-white/90 backdrop-blur px-4 py-2 rounded-full font-bold flex items-center gap-2 shadow-lg">
+                                        <span className="text-xs text-green-700 bg-white backdrop-blur px-4 py-2 rounded-full font-bold flex items-center gap-2 shadow-lg">
                                             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
                                             Atualização em Tempo Real
                                         </span>
