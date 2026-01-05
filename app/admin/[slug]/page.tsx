@@ -44,9 +44,23 @@ export default function StoreAdmin() {
         return () => clearInterval(interval);
     }, [auth, restaurant]);
 
-    const handleLogin = () => {
-        if (password === 'admin') setAuth(true);
-        else alert('Senha incorreta');
+    const handleLogin = async () => {
+        try {
+            const res = await fetch('/api/verify-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ slug, password })
+            });
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+                setAuth(true);
+            } else {
+                alert('Senha incorreta');
+            }
+        } catch (error) {
+            alert('Erro ao verificar senha');
+        }
     };
 
     // Calculate chart data
