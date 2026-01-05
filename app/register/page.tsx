@@ -90,7 +90,7 @@ export default function RegisterRestaurant() {
                 {/* Content Card */}
                 <div className="bg-white rounded-b-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] p-8 animate-fade-in-up">
                     <div className="text-center mb-8">
-                        <h1 className="text-3xl font-bold text-gray-800">Cadastrar Loja</h1>
+                        <h1 className="text-3xl font-bold text-gray-800">Cadastrar Nova Loja</h1>
                         <p className="text-gray-600 mt-2 font-medium">Junte-se ao OlinDelivery e expanda seu negócio.</p>
                     </div>
 
