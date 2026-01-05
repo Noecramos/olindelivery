@@ -167,6 +167,11 @@ export async function PUT(request: Request) {
                 }
             }
 
+            if (body.resetPassword === true) {
+                currentPassword = Math.random().toString(36).slice(-6).toUpperCase();
+                updates.password = currentPassword;
+            }
+
             if (typeof body.deliveryTime !== 'undefined') updates.deliveryTime = body.deliveryTime;
 
             row.assign(updates);

@@ -54,6 +54,25 @@ export default function SuperAdmin() {
         }
     };
 
+    const resetPassword = async (restaurant: any) => {
+        if (!confirm(`Deseja realmente resetar a senha de ${restaurant.name}?`)) return;
+        try {
+            const res = await fetch('/api/restaurants', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: restaurant.id, resetPassword: true })
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+                setRestaurants(prev => prev.map(r => r.id === restaurant.id ? { ...r, password: data.password } : r));
+                alert(`Nova senha de ${restaurant.name}: ${data.password}`);
+            }
+        } catch (e) {
+            alert('Erro ao resetar senha');
+        }
+    };
+
     const deleteRestaurant = async (id: string) => {
         if (!confirm('Tem certeza que deseja excluir este restaurante? Essa ação não pode ser desfeita.')) return;
 
@@ -172,6 +191,13 @@ export default function SuperAdmin() {
                                                     className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-xl hover:-translate-y-0.5 ${r.approved ? 'bg-amber-500 hover:bg-amber-600 text-white' : 'bg-[#EA1D2C] hover:bg-[#C51623] text-white'}`}
                                                 >
                                                     {r.approved ? 'Pausar' : 'Aprovar'}
+                                                </button>
+                                                <button
+                                                    onClick={() => resetPassword(r)}
+                                                    className="p-2.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                                                    title="Resetar Senha"
+                                                >
+                                                    <span className="text-lg">🔑</span>
                                                 </button>
                                                 <button
                                                     onClick={() => deleteRestaurant(r.id)}

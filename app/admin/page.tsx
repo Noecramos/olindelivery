@@ -62,7 +62,7 @@ export default function AdminPortal() {
                             </h2>
                             <div className="flex-1 flex flex-col justify-between">
                                 <p className="text-gray-600 mb-6 leading-relaxed font-medium">
-                                    Cadastre seu restaurante na maior plataforma de delivery de Olinda e comece a vender hoje mesmo com taxas justas e suporte local!
+                                    Cadastre seu restaurante na maior plataforma de delivery de Olinda e comece a vender hoje mesmo!
                                 </p>
                                 <div className="mt-auto">
                                     <Link href="/register" className="block">
@@ -75,12 +75,7 @@ export default function AdminPortal() {
                         </div>
                     </div>
 
-                    <div className="text-center mt-10 pt-6 border-t border-gray-100">
-                        <Link href="/admin/super" className="text-gray-500 hover:text-[#EA1D2C] text-sm font-semibold transition-colors duration-300 inline-flex items-center gap-2">
-                            <span>🔐</span>
-                            Acesso Administrativo (Super Admin)
-                        </Link>
-                    </div>
+
                 </div>
 
                 {/* Footer */}
