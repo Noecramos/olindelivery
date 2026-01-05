@@ -258,68 +258,98 @@ export default function StoreAdmin() {
                                                 {orders
                                                     .filter(o => showHistory ? true : o.status !== 'sent')
                                                     .map(order => (
-                                                        <div key={order.id} className={`p-5 flex flex-col transition-colors group ${order.status === 'sent' ? 'bg-gray-50 opacity-75 grayscale-[0.5]' : 'hover:bg-gray-50'}`}>
-                                                            <div className="flex flex-wrap md:flex-nowrap items-start justify-between gap-4">
-                                                                <div className="flex items-center gap-5">
-                                                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-sm shadow-inner shrink-0 ${order.status === 'sent' ? 'bg-gray-200 text-gray-500' : 'bg-blue-50 text-blue-600'}`}>
-                                                                        #{order.ticketNumber || '...'}
+                                                        <div key={order.id} className={`p-5 flex flex-col transition-colors group border-b border-gray-100 ${order.status === 'sent' ? 'bg-gray-50 opacity-75 grayscale-[0.5]' : 'hover:bg-gray-50'}`}>
+                                                            {/* Header Row: Ticket # + Status */}
+                                                            <div className="flex justify-between items-center mb-4">
+                                                                <div className="flex items-center gap-3">
+                                                                    <div className={`px-4 py-2 rounded-xl font-bold text-sm border ${order.status === 'sent' ? 'bg-gray-100 border-gray-200 text-gray-500' : 'bg-blue-50 border-blue-100 text-blue-600'}`}>
+                                                                        Novo Pedido #{order.ticketNumber || '...'}
                                                                     </div>
-                                                                    <div>
-                                                                        <p className="font-bold text-gray-900 text-lg">{order.customer.name}</p>
-                                                                        <p className="text-sm text-gray-500 font-medium">
-                                                                            {new Date(order.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} • {order.customer.phone}
-                                                                        </p>
-                                                                    </div>
+                                                                    <span className="text-xs text-gray-400 font-medium">
+                                                                        {new Date(order.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                                                    </span>
                                                                 </div>
+                                                                <span className={`text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                                                    order.status === 'preparing' ? 'bg-blue-100 text-blue-700' :
+                                                                        order.status === 'sent' ? 'bg-gray-100 text-gray-600' :
+                                                                            'bg-green-100 text-green-700'
+                                                                    }`}>
+                                                                    {order.status === 'pending' ? 'Pendente' :
+                                                                        order.status === 'preparing' ? 'Em Preparo' :
+                                                                            order.status === 'sent' ? 'Enviado' : order.status}
+                                                                </span>
+                                                            </div>
 
-                                                                <div className="flex items-center gap-4">
-                                                                    <div className="text-right">
-                                                                        <p className="text-xs text-gray-400 font-semibold uppercase">Pagamento</p>
-                                                                        <p className="text-sm font-medium text-gray-700">
-                                                                            {order.paymentMethod === 'money' ? `Dinheiro ` : (order.paymentMethod?.toUpperCase() || '-')}
-                                                                            {order.changeFor && <span className="text-xs text-orange-500 block">(Troco p/ R$ {order.changeFor})</span>}
-                                                                        </p>
-                                                                    </div>
-                                                                    <div className="text-right">
-                                                                        <p className="font-bold text-gray-900 text-lg">{order.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
-                                                                        <span className={`text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                                                                            order.status === 'preparing' ? 'bg-blue-100 text-blue-700' :
-                                                                                order.status === 'sent' ? 'bg-gray-100 text-gray-600' :
-                                                                                    'bg-green-100 text-green-700'
-                                                                            }`}>
-                                                                            {order.status === 'pending' ? 'Pendente' :
-                                                                                order.status === 'preparing' ? 'Em Preparo' :
-                                                                                    order.status === 'sent' ? 'Enviado' : order.status}
-                                                                        </span>
-                                                                    </div>
+                                                            {/* Client & Address Info */}
+                                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                                                                <div>
+                                                                    <p className="text-xs font-bold text-gray-400 uppercase mb-1">Cliente</p>
+                                                                    <p className="font-bold text-gray-800 text-lg">{order.customer.name}</p>
+                                                                    <p className="text-sm text-gray-500 font-medium flex items-center gap-1">
+                                                                        📱 {order.customer.phone}
+                                                                    </p>
+                                                                </div>
+                                                                <div>
+                                                                    <p className="text-xs font-bold text-gray-400 uppercase mb-1">Endereço</p>
+                                                                    <p className="text-sm font-medium text-gray-800 bg-gray-50 p-3 rounded-lg border border-gray-100 leading-relaxed">
+                                                                        📍 {order.customer.address}
+                                                                    </p>
                                                                 </div>
                                                             </div>
 
-                                                            {/* Order Details (Items & Observations) */}
-                                                            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-50/50 p-4 rounded-2xl border border-gray-100">
-                                                                <div>
-                                                                    <p className="text-xs font-bold text-gray-400 uppercase mb-2">Itens do Pedido</p>
-                                                                    <ul className="space-y-1">
+                                                            {/* Order Items & Total */}
+                                                            <div className="bg-gray-50/80 p-5 rounded-2xl border border-gray-100">
+                                                                <div className="mb-4">
+                                                                    <p className="text-xs font-bold text-gray-400 uppercase mb-2">Pedido</p>
+                                                                    <ul className="space-y-2">
                                                                         {order.items.map((item: any, idx: number) => (
-                                                                            <li key={idx} className="text-sm text-gray-700">
-                                                                                <span className="font-bold">{item.quantity}x</span> {item.name}
+                                                                            <li key={idx} className="text-sm text-gray-800 flex justify-between items-center border-b border-gray-200/50 pb-2 last:border-0 last:pb-0">
+                                                                                <span><span className="font-bold text-gray-900">{item.quantity}x</span> {item.name}</span>
+                                                                                <span className="text-gray-500 text-xs">{(item.price * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
                                                                             </li>
                                                                         ))}
                                                                     </ul>
                                                                 </div>
-                                                                <div>
-                                                                    <p className="text-xs font-bold text-gray-400 uppercase mb-2">Observações & Endereço</p>
-                                                                    <p className="text-sm text-gray-700 mb-1"><span className="font-semibold">Endereço:</span> {order.customer.address}</p>
-                                                                    {order.observations && (
-                                                                        <p className="text-sm text-[#EA1D2C] font-bold p-2 bg-red-50 rounded-lg">
-                                                                            📝 {order.observations}
+
+                                                                {/* Observations */}
+                                                                {order.observations && (
+                                                                    <div className="mb-4">
+                                                                        <p className="text-xs font-bold text-gray-400 uppercase mb-1">Observações</p>
+                                                                        <div className="text-sm text-[#EA1D2C] font-bold p-3 bg-red-50 rounded-xl border border-red-100/50 flex items-start gap-2">
+                                                                            <span>⚠️</span>
+                                                                            <span>{order.observations}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                )}
+
+                                                                {/* Total & Payment */}
+                                                                <div className="flex flex-col md:flex-row justify-between items-start md:items-end pt-4 border-t border-gray-200 mt-2 gap-4">
+                                                                    <div>
+                                                                        <p className="text-xs font-bold text-gray-400 uppercase mb-1">Pagamento</p>
+                                                                        <div className="flex items-center gap-2">
+                                                                            <span className="font-bold text-gray-700 text-sm bg-white px-3 py-1 rounded-lg border border-gray-200 shadow-sm">
+                                                                                {order.paymentMethod === 'money' ? '💵 Dinheiro' :
+                                                                                    order.paymentMethod === 'pix' ? '💠 PIX' :
+                                                                                        order.paymentMethod === 'card' ? '💳 Cartão' : order.paymentMethod}
+                                                                            </span>
+                                                                            {order.changeFor && (
+                                                                                <span className="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded-lg border border-orange-100">
+                                                                                    Troco p/ R$ {order.changeFor}
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="text-right w-full md:w-auto">
+                                                                        <p className="text-xs font-bold text-gray-400 uppercase mb-1">Total</p>
+                                                                        <p className="text-2xl font-extrabold text-gray-900 leading-none">
+                                                                            {order.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                                                         </p>
-                                                                    )}
+                                                                    </div>
                                                                 </div>
                                                             </div>
 
                                                             {/* Actions */}
-                                                            <div className="mt-4 flex justify-end gap-2">
+                                                            <div className="mt-5 flex justify-end gap-3 pt-2">
                                                                 {order.status === 'pending' && (
                                                                     <button
                                                                         onClick={async () => {
@@ -333,9 +363,9 @@ export default function StoreAdmin() {
                                                                                 });
                                                                             } catch (error) { fetchOrders(); }
                                                                         }}
-                                                                        className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-xs font-bold uppercase shadow-md transition-all active:scale-95"
+                                                                        className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm font-bold uppercase shadow-lg shadow-green-200 transition-all hover:-translate-y-1 active:scale-95 flex items-center gap-2"
                                                                     >
-                                                                        Aprovar Pedido
+                                                                        <span>✅</span> Aprovar Pedido
                                                                     </button>
                                                                 )}
                                                                 {order.status === 'preparing' && (
@@ -351,9 +381,9 @@ export default function StoreAdmin() {
                                                                                 });
                                                                             } catch (error) { fetchOrders(); }
                                                                         }}
-                                                                        className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-xs font-bold uppercase shadow-md transition-all active:scale-95"
+                                                                        className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-bold uppercase shadow-lg shadow-blue-200 transition-all hover:-translate-y-1 active:scale-95 flex items-center gap-2"
                                                                     >
-                                                                        Enviar Pedido
+                                                                        <span>🛵</span> Enviar Pedido
                                                                     </button>
                                                                 )}
                                                             </div>
