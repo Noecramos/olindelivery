@@ -82,7 +82,7 @@ export default function RegisterRestaurant() {
     return (
         <div className="min-h-screen bg-[#F5F5F7]">
             {/* Header Banner */}
-            <div className="h-48 md:h-[22rem] w-full bg-[length:100%_100%] bg-center relative" style={{ backgroundImage: "url('https://i.imgur.com/yGLHWLL.png')" }}>
+            <div className="h-48 md:h-[22rem] w-full bg-[length:100%_100%] bg-center relative" style={{ backgroundImage: "url('https://i.imgur.com/7Z4y7Qk.png')" }}>
                 <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
             </div>
 
