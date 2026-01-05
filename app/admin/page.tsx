@@ -21,14 +21,14 @@ export default function AdminPortal() {
                         <p className="text-gray-600 font-medium text-lg">Gerencie seu restaurante no OlinDelivery</p>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full items-stretch">
                         {/* Left Column - Login */}
-                        <div className="bg-gradient-to-br from-gray-50 to-white p-6 rounded-2xl border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                        <div className="bg-gradient-to-br from-gray-50 to-white p-6 rounded-2xl border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col h-full">
                             <h2 className="text-xl font-bold mb-6 text-gray-800 flex items-center gap-2">
                                 <span className="text-2xl">🏪</span>
                                 Já sou parceiro
                             </h2>
-                            <div className="space-y-4">
+                            <div className="space-y-4 flex-1 flex flex-col justify-between">
                                 <div>
                                     <label htmlFor="admin-slug" className="block text-sm font-bold text-gray-700 mb-2">Identificador da Loja</label>
                                     <input
@@ -36,34 +36,42 @@ export default function AdminPortal() {
                                         name="slug"
                                         type="text"
                                         placeholder="Ex: olin-burgers"
-                                        className="w-full p-4 bg-white rounded-xl border-2 border-gray-200 outline-none focus:border-[#EA1D2C] focus:ring-4 focus:ring-[#EA1D2C]/10 transition-all"
+                                        className="w-full p-4 bg-white rounded-xl border-2 border-gray-200 outline-none focus:border-[#EA1D2C] focus:ring-4 focus:ring-[#EA1D2C]/10 transition-all font-medium"
                                         value={slug}
                                         onChange={e => setSlug(e.target.value)}
                                     />
                                 </div>
-                                <Link href={`/admin/${slug}`} className="block">
-                                    <button
-                                        disabled={!slug}
-                                        className="w-full bg-gradient-to-r from-[#EA1D2C] to-[#C51623] hover:from-[#C51623] hover:to-[#A01419] text-white font-bold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-md"
-                                    >
-                                        Acessar Painel →
-                                    </button>
-                                </Link>
+                                <div className="mt-6">
+                                    <Link href={`/admin/${slug}`} className="block">
+                                        <button
+                                            disabled={!slug}
+                                            className="w-full bg-gradient-to-r from-[#EA1D2C] to-[#C51623] hover:from-[#C51623] hover:to-[#A01419] text-white font-bold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-md"
+                                        >
+                                            Acessar Painel →
+                                        </button>
+                                    </Link>
+                                </div>
                             </div>
                         </div>
 
                         {/* Right Column - Register */}
-                        <div className="bg-gradient-to-br from-gray-50 to-white p-6 rounded-2xl border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                        <div className="bg-gradient-to-br from-gray-50 to-white p-6 rounded-2xl border border-gray-200 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col h-full">
                             <h2 className="text-xl font-bold mb-6 text-gray-800 flex items-center gap-2">
                                 <span className="text-2xl">✨</span>
-                                Quero vender no OlinDelivery
+                                Quero vender
                             </h2>
-                            <p className="text-gray-600 mb-6 leading-relaxed">Cadastre sua loja e comece a vender hoje mesmo!</p>
-                            <Link href="/register" className="block">
-                                <button className="w-full bg-gradient-to-r from-gray-900 to-black hover:from-black hover:to-gray-900 text-white font-bold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1">
-                                    Cadastrar Loja →
-                                </button>
-                            </Link>
+                            <div className="flex-1 flex flex-col justify-between">
+                                <p className="text-gray-600 mb-6 leading-relaxed font-medium">
+                                    Cadastre seu restaurante na maior plataforma de delivery de Olinda e comece a vender hoje mesmo com taxas justas e suporte local!
+                                </p>
+                                <div className="mt-auto">
+                                    <Link href="/register" className="block">
+                                        <button className="w-full bg-gradient-to-r from-gray-900 to-black hover:from-black hover:to-gray-900 text-white font-bold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1">
+                                            Cadastrar Agora →
+                                        </button>
+                                    </Link>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
