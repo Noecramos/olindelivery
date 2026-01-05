@@ -86,6 +86,39 @@ export default function SuperAdmin() {
         }
     };
 
+    const handleLogin = async () => {
+        try {
+            const res = await fetch('/api/admin/verify-super', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password })
+            });
+            if (res.ok) {
+                setAuth(true);
+            } else {
+                alert('Senha inválida');
+            }
+        } catch (e) {
+            alert('Erro ao verificar senha');
+        }
+    };
+
+    const handleResetPassword = async () => {
+        if (!confirm('Deseja resetar a senha mestra? Uma nova senha será enviada para o e-mail cadastrado.')) return;
+
+        try {
+            const res = await fetch('/api/admin/super-reset', { method: 'POST' });
+            const data = await res.json();
+            if (res.ok) {
+                alert(data.message);
+            } else {
+                alert(data.error || 'Erro ao resetar senha');
+            }
+        } catch (e) {
+            alert('Erro de conexão');
+        }
+    };
+
     if (!auth) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-[#F5F5F7] to-[#E8E8EA] flex flex-col items-center justify-center py-8 px-4">
@@ -113,11 +146,19 @@ export default function SuperAdmin() {
                                     placeholder="••••••••"
                                     value={password}
                                     onChange={e => setPassword(e.target.value)}
-                                    onKeyPress={e => e.key === 'Enter' && (password === 'master' ? setAuth(true) : alert('Senha inválida'))}
+                                    onKeyPress={e => e.key === 'Enter' && handleLogin()}
                                 />
+                                <div className="mt-2 text-right">
+                                    <button
+                                        onClick={handleResetPassword}
+                                        className="text-xs text-gray-400 hover:text-[#EA1D2C] transition-colors font-medium"
+                                    >
+                                        Esqueci minha senha
+                                    </button>
+                                </div>
                             </div>
                             <button
-                                onClick={() => password === 'master' ? setAuth(true) : alert('Senha inválida')}
+                                onClick={handleLogin}
                                 className="w-full bg-gradient-to-r from-gray-900 to-black hover:from-black hover:to-gray-900 text-white font-bold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:-translate-y-1"
                             >
                                 Acessar Gerenciamento →
