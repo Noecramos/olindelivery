@@ -156,9 +156,9 @@ function MarketplaceContent() {
                   </div>
                   <div className="flex-1">
                     <h3 className="font-bold text-gray-800 text-base">{rest.name}</h3>
-                    <div className="flex items-center gap-2 mt-1">
+                    <div className="flex flex-col items-start gap-1 mt-1">
                       <StarRating restaurantId={rest.id} initialSum={rest.ratingSum} initialCount={rest.ratingCount} />
-                      <span className="text-xs text-gray-400">• {rest.deliveryTime || '30-45m'}</span>
+                      <span className="text-xs text-gray-400 font-medium ml-1">{rest.deliveryTime || '30-45m'}</span>
                     </div>
                   </div>
                   <div className="text-yellow-500 font-bold text-lg ml-2">
