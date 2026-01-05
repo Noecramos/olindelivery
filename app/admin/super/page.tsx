@@ -164,6 +164,10 @@ export default function SuperAdmin() {
                     </table>
                     {restaurants.length === 0 && <div className="p-10 text-center text-gray-400">Nenhum restaurante encontrado.</div>}
                 </div>
+
+                <footer className="w-full text-center text-gray-400 text-xs py-6 mt-8">
+                    © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:underline">www.noviapp.com.br</a> • OlindAki & OlinDelivery
+                </footer>
             </div>
         </div>
     );

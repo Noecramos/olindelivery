@@ -57,6 +57,10 @@ export default function AdminPortal() {
                 </div>
 
                 <Link href="/admin/super" className="mt-8 text-gray-400 hover:text-gray-600 text-sm font-medium transition-colors">Acesso Administrativo (Super Admin)</Link>
+
+                <footer className="w-full text-center text-gray-400 text-xs py-6 mt-auto">
+                    © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:underline">www.noviapp.com.br</a> • OlindAki & OlinDelivery
+                </footer>
             </div>
         </div>
     );
