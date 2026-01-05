@@ -18,8 +18,9 @@ export default function RestaurantHeader({ name = "OlinDelivery", image, banner,
         <div className="relative mb-8">
             {/* Banner Section */}
             <div className="h-48 md:h-64 lg:h-72 w-full relative">
-                <div className="absolute inset-0 bg-cover bg-center" style={{
-                    backgroundImage: `url('${banner || 'https://i.imgur.com/yGLHWLL.png'}')`
+                <div className="absolute inset-0 bg-center" style={{
+                    backgroundImage: `url('${banner || 'https://i.imgur.com/yGLHWLL.png'}')`,
+                    backgroundSize: '100% 100%'
                 }} />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
             </div>
