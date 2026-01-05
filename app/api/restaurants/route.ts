@@ -158,9 +158,9 @@ export async function PUT(request: Request) {
                 const isApproving = approved === true || approved === 'TRUE';
                 updates.approved = isApproving ? 'TRUE' : 'FALSE';
 
-                // Generate password if approving and it doesn't exist
-                if (isApproving && !currentPassword) {
-                    currentPassword = Math.random().toString(36).slice(-6);
+                // Always generate a new random password when approving
+                if (isApproving) {
+                    currentPassword = Math.random().toString(36).slice(-6).toUpperCase();
                     updates.password = currentPassword;
                 }
             }
