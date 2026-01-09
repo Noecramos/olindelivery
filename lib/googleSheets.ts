@@ -44,8 +44,13 @@ export async function getSheetByTitle(title: string) {
     const headers = getHeadersForSheet(title);
     if (headers) {
         const currentHeaders = await sheet.loadHeaderRow().then(() => sheet.headerValues).catch(() => []);
-        if (currentHeaders.length === 0) {
-            await sheet.setHeaderRow(headers);
+
+        // Check if we are missing any expected headers
+        const isMissingHeaders = headers.some(h => !currentHeaders.includes(h));
+
+        if (currentHeaders.length === 0 || isMissingHeaders) {
+            console.log(`Updating headers for ${title}...`);
+            await sheet.setHeaderRow(headers as any);
         }
     }
     return sheet;

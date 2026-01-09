@@ -35,7 +35,17 @@ export default function CheckoutPage() {
             // Fetch Restaurant Info for Phone Number
             const restRes = await fetch(`/api/restaurants?id=${restaurantId}`);
             const restData = await restRes.json();
-            const restaurantPhone = restData.phone || "5581995515777"; // Fallback to test number
+
+            // Use whatsapp field first, then phone, then fallback
+            // WhatsApp field should be the primary source as it's specifically for WhatsApp
+            const restaurantPhone = restData.whatsapp || restData.phone || "5581995515777";
+
+            console.log('Restaurant data:', {
+                id: restaurantId,
+                whatsapp: restData.whatsapp,
+                phone: restData.phone,
+                using: restaurantPhone
+            });
 
             const orderData = {
                 restaurantId,
@@ -75,11 +85,25 @@ export default function CheckoutPage() {
                 `*Pagamento:* ${paymentInfo}\n\n` +
                 `_Enviado via OlinDelivery_`;
 
-            const link = `https://wa.me/${restaurantPhone}?text=${encodeURIComponent(message)}`;
+            // Sanitize phone number (remove all non-digits)
+            const cleanPhone = restaurantPhone.replace(/\D/g, '');
+
+            // Ensure phone has country code
+            const finalPhone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
+
+            const link = `https://wa.me/${finalPhone}?text=${encodeURIComponent(message)}`;
+
+            console.log('WhatsApp link generated:', {
+                originalPhone: restaurantPhone,
+                cleanPhone,
+                finalPhone,
+                linkLength: link.length
+            });
 
             clearCart();
-            window.open(link, '_blank');
-            router.push('/?orderSuccess=true');
+            // Redirect to success page which handles the WhatsApp opening via window.location.href
+            // This is more reliable for iOS/Android deep links
+            router.push(`/order-success?link=${encodeURIComponent(link)}`);
 
         } catch (e) {
             alert("Erro ao finalizar pedido.");

@@ -87,6 +87,15 @@ export async function POST(request: Request) {
         const body = await request.json();
         const sheet = await getSheetByTitle('Restaurants');
 
+        console.log('=== Creating Restaurant ===');
+        console.log('Received data:', {
+            name: body.name,
+            slug: body.slug,
+            image: body.image,
+            whatsapp: body.whatsapp,
+            email: body.email
+        });
+
         if (!body.name || !body.slug) {
             return NextResponse.json({ error: 'Name and slug required' }, { status: 400 });
         }
@@ -112,6 +121,8 @@ export async function POST(request: Request) {
             type: body.type || 'Outro'
         };
 
+        console.log('Saving to Google Sheets with image:', newRestaurant.image);
+
         await sheet.addRow({
             id: newRestaurant.id,
             slug: newRestaurant.slug,
@@ -133,8 +144,11 @@ export async function POST(request: Request) {
             type: newRestaurant.type
         });
 
+        console.log('=== Restaurant Created Successfully ===');
+
         return NextResponse.json(newRestaurant);
-    } catch (e) {
+    } catch (e: any) {
+        console.error('=== Restaurant Creation Error ===', e.message);
         return NextResponse.json({ error: 'Create failed' }, { status: 500 });
     }
 }

@@ -116,7 +116,21 @@ export default function StoreAdmin() {
                     {/* Content Card */}
                     <div className="bg-white rounded-b-3xl shadow-2xl p-8 md:p-10 animate-fade-in-up">
                         <div className="text-center mb-8">
-                            {restaurant.image && <img src={restaurant.image} className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-white shadow-xl object-cover hover:scale-105 transition-transform duration-300" />}
+                            {restaurant.image ? (
+                                <img
+                                    src={restaurant.image}
+                                    alt={restaurant.name}
+                                    className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-white shadow-xl object-cover hover:scale-105 transition-transform duration-300"
+                                    onError={(e) => {
+                                        const target = e.target as HTMLImageElement;
+                                        target.style.display = 'none';
+                                    }}
+                                />
+                            ) : (
+                                <div className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-white shadow-xl bg-gray-200 flex items-center justify-center text-gray-400 font-bold text-2xl">
+                                    {restaurant.name?.charAt(0)?.toUpperCase() || '?'}
+                                </div>
+                            )}
                             <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-1">{restaurant.name}</h1>
                             <p className="text-gray-500 font-medium">Área Administrativa</p>
                         </div>
@@ -158,7 +172,21 @@ export default function StoreAdmin() {
             {/* Sidebar (Responsive) */}
             <aside className="w-full md:w-20 lg:w-64 bg-white/80 backdrop-blur-xl border-r border-[#D1D1D6] md:h-screen sticky top-0 flex md:flex-col z-20 justify-between md:justify-start px-4 md:px-0">
                 <div className="p-4 md:p-6 border-b border-[#D1D1D6]/50 flex items-center md:justify-center lg:justify-start gap-3">
-                    {restaurant.image && <img src={restaurant.image} className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-200" />}
+                    {restaurant.image ? (
+                        <img
+                            src={restaurant.image}
+                            alt={restaurant.name}
+                            className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover bg-gray-200"
+                            onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                            }}
+                        />
+                    ) : (
+                        <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 font-bold text-xs">
+                            {restaurant.name?.charAt(0)?.toUpperCase() || '?'}
+                        </div>
+                    )}
                     <span className="font-bold truncate text-sm hidden lg:block">{restaurant.name}</span>
                 </div>
 

@@ -40,10 +40,11 @@ export default function RegisterRestaurant() {
             if (data.success) {
                 setForm(prev => ({ ...prev, image: data.url }));
             } else {
-                alert("Erro ao enviar arquivo.");
+                alert(`Erro ao enviar arquivo: ${data.message || 'Falha desconhecida'}`);
             }
-        } catch (error) {
-            alert("Erro no upload.");
+        } catch (error: any) {
+            console.error("Upload client error:", error);
+            alert(`Erro no upload: ${error.message}`);
         } finally {
             setUploading(false);
         }
@@ -59,6 +60,14 @@ export default function RegisterRestaurant() {
 
             const submitData = { ...form, slug: finalSlug };
 
+            console.log('=== Submitting Restaurant Registration ===');
+            console.log('Form data:', {
+                name: submitData.name,
+                slug: submitData.slug,
+                image: submitData.image,
+                whatsapp: submitData.whatsapp
+            });
+
             const res = await fetch('/api/restaurants', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -69,10 +78,12 @@ export default function RegisterRestaurant() {
                 alert('Cadastro enviado com sucesso! Aguarde a aprovação do administrador.');
                 router.push('/admin'); // Redirect to Admin Portal login
             } else {
+                const errorData = await res.json();
+                console.error('Registration error:', errorData);
                 alert('Erro ao cadastrar. Verifique os dados.');
             }
         } catch (error) {
-            console.error(error);
+            console.error('Registration error:', error);
             alert('Erro ao conectar.');
         } finally {
             setLoading(false);

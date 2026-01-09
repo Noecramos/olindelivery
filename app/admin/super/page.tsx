@@ -214,7 +214,21 @@ export default function SuperAdmin() {
                                     <tr key={r.id} className="hover:bg-gray-50/50 transition-colors group">
                                         <td className="p-6">
                                             <div className="flex items-center gap-4">
-                                                {r.image && <img src={r.image} className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md" />}
+                                                {r.image ? (
+                                                    <img
+                                                        src={r.image}
+                                                        alt={r.name}
+                                                        className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md"
+                                                        onError={(e) => {
+                                                            const target = e.target as HTMLImageElement;
+                                                            target.style.display = 'none';
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 font-bold text-xs border-2 border-white shadow-md">
+                                                        {r.name?.charAt(0)?.toUpperCase() || '?'}
+                                                    </div>
+                                                )}
                                                 <div>
                                                     <div className="font-bold text-gray-900 group-hover:text-[#EA1D2C] transition-colors">{r.name}</div>
                                                     <div className="text-xs text-gray-500 font-medium">{r.responsibleName || r.slug}</div>
