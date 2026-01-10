@@ -316,15 +316,18 @@ export default function StoreAdmin() {
                                             <div className="p-4 space-y-3">
                                                 {orders
                                                     .filter(o => {
-                                                        // Filter by date if not showing history
+                                                        // Show all in history mode
                                                         if (showHistory) return true;
+
+                                                        // Hide completed/sent orders from main view
+                                                        if (o.status === 'sent' || o.status === 'delivered') return false;
 
                                                         try {
                                                             const orderDate = new Date(o.createdAt);
                                                             const today = new Date();
                                                             return orderDate.toDateString() === today.toDateString();
                                                         } catch (e) {
-                                                            return true; // Show if date parsing fails
+                                                            return true;
                                                         }
                                                     })
                                                     .map(order => (
