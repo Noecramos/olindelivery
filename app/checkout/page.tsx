@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "../context/CartContext";
 import { useRouter } from "next/navigation";
 
@@ -8,6 +8,19 @@ export default function CheckoutPage() {
     const { items: cart, total, clearCart, removeOne, addToCart } = useCart();
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const [restaurant, setRestaurant] = useState<any>(null);
+
+    useEffect(() => {
+        if (cart.length > 0) {
+            const restaurantId = cart[0].restaurantId;
+            if (restaurantId) {
+                fetch(`/api/restaurants?id=${restaurantId}`)
+                    .then(res => res.json())
+                    .then(data => setRestaurant(data))
+                    .catch(console.error);
+            }
+        }
+    }, [cart]);
 
     const [form, setForm] = useState({
         name: "",
@@ -222,6 +235,31 @@ export default function CheckoutPage() {
                                     Dinheiro
                                 </button>
                             </div>
+
+                            {form.paymentMethod === 'pix' && restaurant?.pixKey && (
+                                <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl animate-fade-in shadow-sm">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <span className="text-xl">💠</span>
+                                        <span className="font-bold text-green-800">Chave PIX da Loja</span>
+                                    </div>
+                                    <div
+                                        onClick={() => {
+                                            navigator.clipboard.writeText(restaurant.pixKey);
+                                            alert('Chave PIX copiada para a área de transferência!');
+                                        }}
+                                        className="flex items-center gap-3 bg-white p-3 rounded-lg border border-green-200 shadow-sm cursor-pointer hover:bg-green-50/50 transition-colors group"
+                                    >
+                                        <code className="flex-1 font-mono text-sm text-gray-800 break-all select-all">{restaurant.pixKey}</code>
+                                        <div className="flex items-center gap-1 text-green-600 font-bold text-xs bg-green-100 px-2 py-1.5 rounded-md group-hover:bg-green-200 transition-colors">
+                                            <span>COPIAR</span>
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                        </div>
+                                    </div>
+                                    <p className="text-xs text-green-700 mt-2 font-medium">
+                                        ℹ️ Realize o pagamento e envie o comprovante no WhatsApp ao finalizar.
+                                    </p>
+                                </div>
+                            )}
 
                             {form.paymentMethod === 'money' && (
                                 <div className="animate-fade-in mt-2">
