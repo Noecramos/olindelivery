@@ -204,6 +204,7 @@ export default function SuperAdmin() {
                             <thead className="bg-gray-50 border-b border-gray-100">
                                 <tr>
                                     <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Restaurante</th>
+                                    <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Slug (Login)</th>
                                     <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Senha</th>
                                     <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider text-center">Status</th>
                                     <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider text-right">Ações</th>
@@ -231,9 +232,12 @@ export default function SuperAdmin() {
                                                 )}
                                                 <div>
                                                     <div className="font-bold text-gray-900 group-hover:text-[#EA1D2C] transition-colors">{r.name}</div>
-                                                    <div className="text-xs text-gray-500 font-medium">{r.responsibleName || r.slug}</div>
+                                                    <div className="text-xs text-gray-500 font-medium">{r.responsibleName}</div>
                                                 </div>
                                             </div>
+                                        </td>
+                                        <td className="p-6">
+                                            <code className="bg-blue-50 px-3 py-1 rounded-lg text-xs font-bold text-blue-700">{r.slug || '---'}</code>
                                         </td>
                                         <td className="p-6">
                                             <code className="bg-gray-100 px-3 py-1 rounded-lg text-xs font-bold text-gray-600">{r.password || '---'}</code>
@@ -271,7 +275,7 @@ export default function SuperAdmin() {
                                 ))}
                                 {restaurants.length === 0 && (
                                     <tr>
-                                        <td colSpan={4} className="p-20 text-center text-gray-400 font-medium">Nenhum restaurante encontrado.</td>
+                                        <td colSpan={5} className="p-20 text-center text-gray-400 font-medium">Nenhum restaurante encontrado.</td>
                                     </tr>
                                 )}
                             </tbody>
