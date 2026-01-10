@@ -96,7 +96,7 @@ function MarketplaceContent() {
 
         {/* Greeting */}
         <div className="px-6 mb-8 mt-2">
-          <p className="text-gray-400 font-medium text-sm mb-1 uppercase tracking-wider">{config.welcomeSubtitle}</p>
+          <p className="text-yellow-600 font-bold text-base mb-1 uppercase tracking-wider">{config.welcomeSubtitle}</p>
           <h1 className="text-3xl font-bold text-gray-800 tracking-tight" style={{ whiteSpace: 'pre-line' }}>{config.welcomeTitle}</h1>
         </div>
 
@@ -115,7 +115,7 @@ function MarketplaceContent() {
         {/* Best Sellers Section (Horizontal Scroll) */}
         <div className="mb-0">
           <div className="px-6 flex justify-between items-end mb-4">
-            <h2 className="font-bold text-lg text-gray-800">Populares</h2>
+            <h2 className="font-bold text-lg text-gray-800">{config.popularTitle || 'Populares'}</h2>
             <span className="text-xs font-semibold text-yellow-500 cursor-pointer">Ver todos &gt;</span>
           </div>
 
