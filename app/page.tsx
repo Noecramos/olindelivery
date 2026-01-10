@@ -70,8 +70,8 @@ function MarketplaceContent() {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-[#ea1d2c] flex flex-col items-center justify-center z-[9999]">
-        <div className="w-72 h-32 bg-white rounded-2xl flex items-center justify-center shadow-lg p-4 animate-bounce">
+      <div className="fixed inset-0 bg-[#FFD700] flex flex-col items-center justify-center z-[9999]">
+        <div className="w-72 h-32 flex items-center justify-center animate-bounce">
           <Image src={config.headerImage || "https://i.imgur.com/yGLHWLL.png"} alt="Logo" width={240} height={100} style={{ objectFit: 'contain' }} priority />
         </div>
       </div>
