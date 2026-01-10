@@ -71,12 +71,13 @@ function MarketplaceContent() {
         {/* Top Bar */}
         <div className="pt-8 px-6 pb-4 flex justify-center items-center bg-white sticky top-0 z-40 bg-opacity-95 backdrop-blur-sm">
           <Image
-            src="https://i.imgur.com/yGLHWLL.png"
+            src="https://i.imgur.com/Fyccvly.gif"
             alt="OlinDelivery Logo"
             width={150}
             height={50}
             style={{ objectFit: 'contain' }}
             priority
+            unoptimized
           />
         </div>
 
