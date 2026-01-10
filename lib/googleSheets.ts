@@ -9,17 +9,23 @@ if (!SHEET_ID || !SERVICE_EMAIL || !PRIVATE_KEY) {
     console.error("Missing Google Sheets Credentials");
 }
 
-// Google Spreadsheet v3/v4 Auth
-export const doc = new GoogleSpreadsheet(SHEET_ID as string);
+const SCOPES = [
+    'https://www.googleapis.com/auth/spreadsheets',
+    'https://www.googleapis.com/auth/drive.file',
+];
+
+const jwt = new JWT({
+    email: SERVICE_EMAIL,
+    key: PRIVATE_KEY ? PRIVATE_KEY.replace(/\\n/g, '\n').replace(/"/g, '') : undefined,
+    scopes: SCOPES,
+});
+
+export const doc = new GoogleSpreadsheet(SHEET_ID as string, jwt);
 
 let isLoaded = false;
 
 export async function loadDoc() {
     if (!isLoaded) {
-        await doc.useServiceAccountAuth({
-            client_email: SERVICE_EMAIL as string,
-            private_key: PRIVATE_KEY ? PRIVATE_KEY.replace(/\\n/g, '\n').replace(/"/g, '') : '',
-        });
         await doc.loadInfo();
         isLoaded = true;
     }

@@ -16,6 +16,11 @@ export async function GET() {
             return NextResponse.json({ error: 'Missing Private Key', envStatus }, { status: 500 });
         }
 
+        // Test Basic Connectivity
+        const connectivityTest = await fetch('https://www.googleapis.com/discovery/v1/apis/sheets/v4/rest', { method: 'HEAD' })
+            .then(r => ({ ok: r.ok, status: r.status }))
+            .catch(e => ({ ok: false, error: e.message }));
+
         console.log("Attempting to load doc...");
         await loadDoc();
         console.log("Doc loaded:", doc.title);
@@ -25,6 +30,7 @@ export async function GET() {
 
         return NextResponse.json({
             success: true,
+            connectivityTest,
             title: doc.title,
             sheetCount,
             sheets,
