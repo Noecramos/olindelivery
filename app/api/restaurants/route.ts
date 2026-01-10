@@ -197,6 +197,14 @@ export async function PUT(request: Request) {
 
             if (typeof body.deliveryTime !== 'undefined') updates.deliveryTime = body.deliveryTime;
 
+            if (body.name && body.name !== row.get('name')) {
+                const newSlug = body.name.toLowerCase()
+                    .normalize('NFD').replace(/[\u0300-\u036f]/g, "")
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+                updates.slug = newSlug;
+            }
+
             // Allow updating other profile fields
             const profileFields = [
                 'name', 'image', 'banner', 'phone', 'address', 'instagram',
