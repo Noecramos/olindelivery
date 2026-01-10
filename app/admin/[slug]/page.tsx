@@ -338,8 +338,8 @@ export default function StoreAdmin() {
                                                         const status = o.status?.toLowerCase() || '';
                                                         const isCompleted = ['sent', 'delivered', 'cancelled'].includes(status);
 
-                                                        // Show all in history mode
-                                                        if (showHistory) return true;
+                                                        // Show ONLY history in history mode
+                                                        if (showHistory) return isCompleted;
 
                                                         // Hide completed/sent orders from main view
                                                         if (isCompleted) return false;

@@ -59,9 +59,15 @@ export default function CheckoutPage() {
                             <p className="text-gray-500 mb-6 font-medium">Seu pedido foi enviado com sucesso!</p>
 
                             <div className="bg-gray-100 p-4 rounded-xl mb-6">
-                                <div className="text-lg font-bold text-green-600 animate-pulse">
+                                <div className="text-lg font-bold text-green-600 animate-pulse mb-4">
                                     Abrindo WhatsApp...
                                 </div>
+                                <button
+                                    onClick={() => router.push(restaurant?.slug ? `/loja/${restaurant.slug}` : '/')}
+                                    className="w-full bg-white border border-gray-200 text-gray-700 font-bold py-3 px-4 rounded-xl hover:bg-gray-50 transition-colors"
+                                >
+                                    Voltar ao Cardápio
+                                </button>
                             </div>
                         </div>
                     </div>
