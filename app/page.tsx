@@ -83,7 +83,7 @@ function MarketplaceContent() {
   // Derive unique categories from restaurants, filtering out invalid data (emails, etc)
   const forcedCategories = ['Lanches', 'Pizza', 'Hambúrguer', 'Açaí', 'Bebidas', 'Doces'];
   const dynamicCategories = restaurants.map(r => r.type)
-    .filter((t: any) => typeof t === 'string' && t.length > 0 && !t.includes('@') && t.length < 30);
+    .filter((t: any) => typeof t === 'string' && t.length > 0 && !t.includes('@') && t.length < 30 && t !== 'Deposito Bebidas' && t !== 'Depósito de Bebidas');
 
   const categories = ['Todos', ...Array.from(new Set([...forcedCategories, ...dynamicCategories]))];
 
@@ -108,7 +108,7 @@ function MarketplaceContent() {
 
   const filteredRestaurants = restaurants.filter(r => {
     const matchesSearch = (r.name || '').toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'Todos' || r.type === selectedCategory;
+    const matchesCategory = selectedCategory === 'Todos' || r.type === selectedCategory || (selectedCategory === 'Bebidas' && (r.type === 'Deposito Bebidas' || r.type === 'Depósito de Bebidas'));
     return matchesSearch && matchesCategory;
   });
 

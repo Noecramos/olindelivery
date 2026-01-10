@@ -145,7 +145,7 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                             <option value="Hamburgueria">Hamburgueria</option>
                             <option value="Pizzaria">Pizzaria</option>
                             <option value="Comida">Comida Caseira</option>
-                            <option value="Deposito Bebidas">Depósito de Bebidas</option>
+                            <option value="Bebidas">Bebidas</option>
                             <option value="Outro">Outro</option>
                         </select>
                     </div>
