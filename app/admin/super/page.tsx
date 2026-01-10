@@ -48,7 +48,11 @@ export default function SuperAdmin() {
                 // Send WhatsApp
                 const phone = restaurant.whatsapp || restaurant.phone;
                 if (phone) {
-                    const cleanPhone = phone.replace(/\D/g, '');
+                    let cleanPhone = phone.replace(/\D/g, '');
+                    // Ensure country code 55 is present
+                    if (!cleanPhone.startsWith('55') && cleanPhone.length > 0) {
+                        cleanPhone = '55' + cleanPhone;
+                    }
                     const message = `Olá, ${restaurant.responsibleName || 'Parceiro'}! %0A%0ASua loja *${restaurant.name}* foi aprovada no OlinDelivery! 🚀%0A%0AAcesse seu painel administrativo:%0ALink: https://olindelivery.vercel.app/admin/${restaurant.slug}%0A%0A*Suas Credenciais:*%0ALogin: ${restaurant.slug}%0ASenha: ${finalPassword}%0A%0ABoas vendas!`;
                     window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
                 } else {
