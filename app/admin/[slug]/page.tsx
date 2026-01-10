@@ -195,6 +195,89 @@ export default function StoreAdmin() {
         );
     }
 
+    const printOrder = (order: any) => {
+        const printWindow = window.open('', '_blank', 'width=400,height=600');
+        if (!printWindow) return;
+
+        const itemsHtml = order.items.map((item: any) => `
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                <span>${item.quantity}x ${item.name}</span>
+                <span>${(item.price * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+            </div>
+        `).join('');
+
+        const html = `
+            <html>
+                <head>
+                    <title>Pedido #${order.ticketNumber}</title>
+                    <style>
+                        body { font-family: 'Courier New', monospace; padding: 20px; font-size: 12px; }
+                        .header { text-align: center; margin-bottom: 20px; }
+                        .divider { border-top: 1px dashed black; margin: 10px 0; }
+                        .footer { text-align: center; margin-top: 20px; font-size: 10px; }
+                        .bold { font-weight: bold; }
+                        .flex { display: flex; justify-content: space-between; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <div class="bold" style="font-size: 16px;">${restaurant.name}</div>
+                        <div>Pedido #${order.ticketNumber}</div>
+                        <div>${new Date().toLocaleString('pt-BR')}</div>
+                    </div>
+                    
+                    <div class="divider"></div>
+                    
+                    <div>
+                        <div class="bold">Cliente: ${order.customer.name}</div>
+                        <div>${order.customer.phone}</div>
+                        <div>${order.customer.address}</div>
+                        ${order.customer.zipCode ? `<div>CEP: ${order.customer.zipCode}</div>` : ''}
+                    </div>
+
+                    <div class="divider"></div>
+                    
+                    <div>
+                        <div class="bold" style="margin-bottom: 10px;">ITENS:</div>
+                        ${itemsHtml}
+                    </div>
+
+                    <div class="divider"></div>
+                    
+                    <div class="flex bold" style="font-size: 14px;">
+                        <span>TOTAL:</span>
+                        <span>${order.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                    </div>
+                    
+                    <div style="margin-top: 10px;">
+                        Pagamento: ${order.paymentMethod === 'pix' ? 'PIX' : order.paymentMethod === 'card' ? 'Cartão' : 'Dinheiro'}
+                        ${order.changeFor ? `<br>Troco para: R$ ${order.changeFor}` : ''}
+                    </div>
+
+                    ${order.observations ? `
+                        <div class="divider"></div>
+                        <div class="bold">OBSERVACÕES:</div>
+                        <div>${order.observations}</div>
+                    ` : ''}
+
+                    <div class="divider"></div>
+                    <div class="footer">
+                        OlinDelivery
+                    </div>
+
+                    <script>
+                        window.onload = function() {
+                            window.print();
+                        }
+                    </script>
+                </body>
+            </html>
+        `;
+
+        printWindow.document.write(html);
+        printWindow.document.close();
+    };
+
     return (
         <div className="min-h-screen bg-[#F5F5F7] text-[#1D1D1F] flex flex-col md:flex-row">
             {/* Sidebar (Responsive) */}
@@ -423,6 +506,13 @@ export default function StoreAdmin() {
 
                                                                 {/* Action Buttons - Compact */}
                                                                 <div className="flex gap-2">
+                                                                    <button
+                                                                        onClick={() => printOrder(order)}
+                                                                        className="px-3 py-1 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-lg text-[10px] font-bold uppercase transition-colors flex items-center gap-1"
+                                                                        title="Imprimir"
+                                                                    >
+                                                                        <span className="text-sm">🖨️</span>
+                                                                    </button>
                                                                     {order.status === 'pending' && (
                                                                         <button
                                                                             onClick={async () => {
