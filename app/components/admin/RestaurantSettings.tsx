@@ -38,8 +38,8 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
 
             if (res.ok) {
                 alert('Dados atualizados com sucesso!');
-                onUpdate();
-                window.location.reload();
+                setForm(submitData); // IMMEDIATE update to reflect saved data
+                onUpdate(); // Background refresh
             } else {
                 alert('Erro ao atualizar dados.');
             }
