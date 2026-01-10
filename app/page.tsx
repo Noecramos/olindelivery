@@ -119,18 +119,18 @@ function MarketplaceContent() {
           <div className="flex gap-4 overflow-x-auto no-scrollbar px-6 pb-2">
             {/* Mock Items for Demo Style matching image */}
             {[
-              { id: 'p1', name: 'Pizza Calabresa', price: 16.00, bg: 'bg-[#FFFBEB]', icon: '🍕', link: '/loja/olin-burgers' },
-              { id: 'p2', name: 'Bolognesa', price: 22.00, bg: 'bg-[#FEF2F2]', icon: '🍝', link: '/loja/olin-burgers' },
-              { id: 'p3', name: 'Burger Cheddar', price: 18.50, bg: 'bg-[#ECFDF5]', icon: '🍔', link: '/loja/olin-burgers' },
+              { id: 'p1', name: 'Pizza Calabresa', price: 16.00, bg: 'bg-[#FFF4C3]', icon: '🍕', link: '/loja/olin-burgers' },
+              { id: 'p2', name: 'Bolognesa', price: 22.00, bg: 'bg-[#FFE4E6]', icon: '🍝', link: '/loja/olin-burgers' },
+              { id: 'p3', name: 'Burger Cheddar', price: 18.50, bg: 'bg-[#D1FAE5]', icon: '🍔', link: '/loja/olin-burgers' },
             ].map(item => (
               <Link key={item.id} href={item.link}>
-                <div className={`${item.bg} min-w-[200px] p-4 rounded-3xl flex items-center gap-4 cursor-pointer hover:shadow-lg transition-all transform hover:-translate-y-1`}>
-                  <div className="text-3xl drop-shadow-md">{item.icon}</div>
-                  <div>
-                    <h3 className="font-bold text-gray-800 text-sm">{item.name}</h3>
+                <div className={`${item.bg} w-[240px] h-[110px] p-4 rounded-3xl flex items-center justify-between gap-3 cursor-pointer hover:shadow-lg transition-all transform hover:-translate-y-1 flex-shrink-0 border border-black/5`}>
+                  <div className="text-4xl drop-shadow-sm">{item.icon}</div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-gray-800 text-sm truncate">{item.name}</h3>
                     <p className="text-gray-900 font-bold mt-1">R$ {item.price.toFixed(2)}</p>
                   </div>
-                  <div className="ml-auto bg-white w-8 h-8 rounded-full flex items-center justify-center shadow-sm text-gray-400 hover:text-yellow-500">
+                  <div className="bg-white w-10 h-10 rounded-full flex items-center justify-center shadow-sm text-gray-400 hover:text-yellow-500 hover:scale-110 transition-transform flex-shrink-0">
                     &gt;
                   </div>
                 </div>
