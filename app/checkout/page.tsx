@@ -134,21 +134,12 @@ export default function CheckoutPage() {
             const finalPhone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
             const link = `https://wa.me/${finalPhone}?text=${encodeURIComponent(message)}`;
 
-            // Fix for iPhone Safari: Use programmatic anchor click
-            const a = document.createElement('a');
-            a.href = link;
-            a.target = '_self';
-            a.style.display = 'none';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            clearCart();
+            setLoading(false);
+            setShowSuccess(true);
 
-            // Delay UI updates to prevent navigation cancellation
-            setTimeout(() => {
-                clearCart();
-                setLoading(false);
-                setShowSuccess(true);
-            }, 500);
+            // Direct Redirect (Classic Method) - Fixes encoding and deep linking issues
+            window.location.href = link;
 
         } catch (e) {
             console.error(e);
