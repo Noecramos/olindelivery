@@ -1,5 +1,8 @@
 "use client";
 
+// Checkout page with geolocation delivery radius validation - v2.0
+// Deploy timestamp: 2026-01-10T16:55:00
+
 import { useState, useEffect } from "react";
 import { useCart } from "../context/CartContext";
 import { useRouter } from "next/navigation";
