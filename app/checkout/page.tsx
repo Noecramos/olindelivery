@@ -9,6 +9,7 @@ export default function CheckoutPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [restaurant, setRestaurant] = useState<any>(null);
+    const [showSuccess, setShowSuccess] = useState(false);
 
     useEffect(() => {
         if (cart.length > 0) {
@@ -41,6 +42,12 @@ export default function CheckoutPage() {
             return;
         }
 
+        // Open window early to prevent popup blockers
+        const waWindow = window.open('', '_blank');
+        if (waWindow) {
+            waWindow.document.write('<html><body style="background:#25D366; display:flex; justify-content:center; align-items:center; height:100vh; font-family:sans-serif; color:white;"><h1>Aguarde, abrindo WhatsApp... 🚀</h1></body></html>');
+        }
+
         setLoading(true);
         const restaurantId = cart[0].restaurantId || 'default';
 
@@ -48,17 +55,7 @@ export default function CheckoutPage() {
             // Fetch Restaurant Info for Phone Number
             const restRes = await fetch(`/api/restaurants?id=${restaurantId}`);
             const restData = await restRes.json();
-
-            // Use whatsapp field first, then phone, then fallback
-            // WhatsApp field should be the primary source as it's specifically for WhatsApp
             const restaurantPhone = restData.whatsapp || restData.phone || "5581995515777";
-
-            console.log('Restaurant data:', {
-                id: restaurantId,
-                whatsapp: restData.whatsapp,
-                phone: restData.phone,
-                using: restaurantPhone
-            });
 
             const orderData = {
                 restaurantId,
@@ -83,7 +80,7 @@ export default function CheckoutPage() {
             const order = await res.json();
             const ticketNumber = order.ticketNumber || '###';
 
-            // Format Message with detailed items
+            // Format Message
             const itemsList = cart.map(i => {
                 const itemTotal = i.price * i.quantity;
                 return `${i.quantity}x ${i.name} - ${itemTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
@@ -103,27 +100,36 @@ export default function CheckoutPage() {
                 `💳 *Pagamento:* ${paymentInfo}\n\n` +
                 `_Enviado via OlinDelivery 🚀_`;
 
-            // Sanitize phone number (remove all non-digits)
+            // Sanitize phone
             const cleanPhone = restaurantPhone.replace(/\D/g, '');
-
-            // Ensure phone has country code
             const finalPhone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
 
             const link = `https://wa.me/${finalPhone}?text=${encodeURIComponent(message)}`;
 
-            console.log('WhatsApp link generated:', {
-                originalPhone: restaurantPhone,
-                cleanPhone,
-                finalPhone,
-                linkLength: link.length
-            });
+            // Redirect WhatsApp Window
+            if (waWindow) {
+                waWindow.location.href = link;
+            } else {
+                window.location.href = link;
+                return; // Navigation takes over
+            }
 
             clearCart();
+            setLoading(false);
+            setShowSuccess(true);
 
-            // Open WhatsApp directly
-            window.location.href = link;
+            // Redirect back to shop after 10s
+            setTimeout(() => {
+                if (restaurant && restaurant.slug) {
+                    router.push(`/loja/${restaurant.slug}`);
+                } else {
+                    router.push('/');
+                }
+            }, 10000);
 
         } catch (e) {
+            console.error(e);
+            if (waWindow) waWindow.close();
             alert("Erro ao finalizar pedido.");
             setLoading(false);
         }
@@ -300,6 +306,28 @@ export default function CheckoutPage() {
                     © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:underline">www.noviapp.com.br</a> • OlindAki & OlinDelivery
                 </footer>
             </div>
+
+            {/* Success Overlay */}
+            {showSuccess && (
+                <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl transform animate-scale-in">
+                        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
+                            <span className="text-4xl">✅</span>
+                        </div>
+                        <h2 className="text-2xl font-bold text-gray-800 mb-2">Pedido Realizado!</h2>
+                        <p className="text-gray-500 mb-6">O WhatsApp foi aberto com seu pedido.</p>
+
+                        <div className="bg-gray-100 p-4 rounded-xl mb-6">
+                            <p className="text-sm text-gray-400 mb-2">Retornando ao cardápio em:</p>
+                            <div className="text-3xl font-bold text-green-600 animate-pulse">
+                                10s
+                            </div>
+                        </div>
+
+                        <p className="text-xs text-gray-400">Obrigado por comprar conosco! ❤️</p>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
