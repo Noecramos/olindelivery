@@ -51,8 +51,34 @@ export default function StoreAdmin() {
     const fetchOrders = async () => {
         if (!restaurant) return;
         const res = await fetch(`/api/orders?restaurantId=${restaurant.id}`);
-        const data = await res.json();
-        setOrders(data);
+        if (res.ok) {
+            const serverOrders = await res.json();
+
+            setOrders(prevOrders => {
+                if (!prevOrders || prevOrders.length === 0) return serverOrders;
+
+                const statusRank: any = { 'pending': 0, 'preparing': 1, 'sent': 2, 'delivered': 3, 'cancelled': 4 };
+
+                return serverOrders.map((serverOrder: any) => {
+                    const localOrder = prevOrders.find(p => p.id === serverOrder.id);
+
+                    if (localOrder) {
+                        // Check priorities to prevent stale read overwriting optimistic update
+                        const localStatus = localOrder.status?.toLowerCase();
+                        const serverStatus = serverOrder.status?.toLowerCase();
+
+                        const localRank = statusRank[localStatus] || 0;
+                        const serverRank = statusRank[serverStatus] || 0;
+
+                        // If Local is ahead (e.g. Preparing vs Pending), keep Local Status
+                        if (localRank > serverRank) {
+                            return { ...serverOrder, status: localOrder.status };
+                        }
+                    }
+                    return serverOrder;
+                });
+            });
+        }
     };
 
     // Fetch Orders when Auth is true
