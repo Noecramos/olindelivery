@@ -46,7 +46,7 @@ function MarketplaceContent() {
           const timer = setTimeout(() => {
             setLoading(false);
             try { sessionStorage.setItem('splashShown', 'true'); } catch (e) { }
-          }, 2000);
+          }, 10000);
           return () => clearTimeout(timer);
         }
       } catch (e) {

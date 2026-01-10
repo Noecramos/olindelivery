@@ -70,9 +70,7 @@ export default function StoreFront() {
                         <path d="M19 12H5M12 19l-7-7 7-7" />
                     </svg>
                 </button>
-                <div className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg border border-gray-200 pointer-events-auto">
-                    <img src="https://i.imgur.com/iWSJGep.png" alt="OlinDelivery" className="h-6 w-auto object-contain" />
-                </div>
+
             </div>
             {/* Pass dynamic data to header if needed, for now resizing to match */}
             <RestaurantHeader
