@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from "react";
 import RestaurantSettings from "../../components/admin/RestaurantSettings";
+import GlobalConfigForm from "../../components/admin/GlobalConfigForm";
 
 export default function SuperAdmin() {
     const [auth, setAuth] = useState(false);
     const [password, setPassword] = useState("");
     const [restaurants, setRestaurants] = useState<any[]>([]);
     const [editingRestaurant, setEditingRestaurant] = useState<any>(null);
+    const [tab, setTab] = useState<'restaurants' | 'config'>('restaurants');
 
     // Check localStorage for existing session
     useEffect(() => {
@@ -243,96 +245,116 @@ export default function SuperAdmin() {
                 )}
 
                 {/* Main Card Content */}
-                <div className="bg-white rounded-b-3xl shadow-2xl p-6 md:p-8 animate-fade-in-up">
-                    <div className="overflow-x-auto overflow-hidden rounded-2xl border border-gray-100 shadow-lg">
-                        <table className="w-full text-left">
-                            <thead className="bg-gray-50 border-b border-gray-100">
-                                <tr>
-                                    <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Restaurante</th>
-                                    <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Slug (Login)</th>
-                                    <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Senha</th>
-                                    <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider text-center">Status</th>
-                                    <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider text-right">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-100">
-                                {restaurants.map((r: any) => (
-                                    <tr key={r.id} className="hover:bg-gray-50/50 transition-colors group">
-                                        <td className="p-6">
-                                            <div className="flex items-center gap-4">
-                                                {r.image ? (
-                                                    <img
-                                                        src={r.image}
-                                                        alt={r.name}
-                                                        className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md"
-                                                        onError={(e) => {
-                                                            const target = e.target as HTMLImageElement;
-                                                            target.style.display = 'none';
-                                                        }}
-                                                    />
-                                                ) : (
-                                                    <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 font-bold text-xs border-2 border-white shadow-md">
-                                                        {r.name?.charAt(0)?.toUpperCase() || '?'}
-                                                    </div>
-                                                )}
-                                                <div>
-                                                    <div className="font-bold text-gray-900 group-hover:text-[#EA1D2C] transition-colors">{r.name}</div>
-                                                    <div className="text-xs text-gray-500 font-medium">{r.responsibleName}</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="p-6">
-                                            <code className="bg-blue-50 px-3 py-1 rounded-lg text-xs font-bold text-blue-700">{r.slug || '---'}</code>
-                                        </td>
-                                        <td className="p-6">
-                                            <code className="bg-gray-100 px-3 py-1 rounded-lg text-xs font-bold text-gray-600">{r.password || '---'}</code>
-                                        </td>
-                                        <td className="p-6 text-center">
-                                            <span className={`px-4 py-1.5 rounded-full text-xs font-bold shadow-sm ${r.approved ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-amber-100 text-amber-700 border border-amber-200'}`}>
-                                                {r.approved ? 'ATIVO' : 'PENDENTE'}
-                                            </span>
-                                        </td>
-                                        <td className="p-6 text-right">
-                                            <div className="flex justify-end gap-3 translate-x-2 group-hover:translate-x-0 transition-transform duration-300">
-                                                <button
-                                                    onClick={() => setEditingRestaurant(r)}
-                                                    className="p-2.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
-                                                    title="Editar Detalhes"
-                                                >
-                                                    <span className="text-lg">✏️</span>
-                                                </button>
-                                                <button
-                                                    onClick={() => toggleApproval(r)}
-                                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-xl hover:-translate-y-0.5 ${r.approved ? 'bg-amber-500 hover:bg-amber-600 text-white' : 'bg-[#EA1D2C] hover:bg-[#C51623] text-white'}`}
-                                                >
-                                                    {r.approved ? 'Pausar' : 'Aprovar'}
-                                                </button>
-                                                <button
-                                                    onClick={() => resetPassword(r)}
-                                                    className="p-2.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
-                                                    title="Resetar Senha"
-                                                >
-                                                    <span className="text-lg">🔑</span>
-                                                </button>
-                                                <button
-                                                    onClick={() => deleteRestaurant(r.id)}
-                                                    className="p-2.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
-                                                    title="Excluir"
-                                                >
-                                                    <span className="text-lg">🗑️</span>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                                {restaurants.length === 0 && (
-                                    <tr>
-                                        <td colSpan={5} className="p-20 text-center text-gray-400 font-medium">Nenhum restaurante encontrado.</td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
+                <div className="bg-white rounded-b-3xl shadow-2xl p-6 md:p-8 animate-fade-in-up min-h-[500px]">
+
+                    <div className="flex gap-6 mb-8 border-b border-gray-100 pb-px">
+                        <button
+                            onClick={() => setTab('restaurants')}
+                            className={`pb-4 px-2 font-bold transition-all relative ${tab === 'restaurants' ? 'text-gray-900 border-b-2 border-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
+                        >
+                            Restaurantes
+                        </button>
+                        <button
+                            onClick={() => setTab('config')}
+                            className={`pb-4 px-2 font-bold transition-all relative ${tab === 'config' ? 'text-gray-900 border-b-2 border-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
+                        >
+                            Customização do App
+                        </button>
                     </div>
+
+                    {tab === 'restaurants' ? (
+                        <div className="overflow-x-auto overflow-hidden rounded-2xl border border-gray-100 shadow-lg animate-fade-in">
+                            <table className="w-full text-left">
+                                <thead className="bg-gray-50 border-b border-gray-100">
+                                    <tr>
+                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Restaurante</th>
+                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Slug (Login)</th>
+                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Senha</th>
+                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider text-center">Status</th>
+                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider text-right">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100">
+                                    {restaurants.map((r: any) => (
+                                        <tr key={r.id} className="hover:bg-gray-50/50 transition-colors group">
+                                            <td className="p-6">
+                                                <div className="flex items-center gap-4">
+                                                    {r.image ? (
+                                                        <img
+                                                            src={r.image}
+                                                            alt={r.name}
+                                                            className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md"
+                                                            onError={(e) => {
+                                                                const target = e.target as HTMLImageElement;
+                                                                target.style.display = 'none';
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 font-bold text-xs border-2 border-white shadow-md">
+                                                            {r.name?.charAt(0)?.toUpperCase() || '?'}
+                                                        </div>
+                                                    )}
+                                                    <div>
+                                                        <div className="font-bold text-gray-900 group-hover:text-[#EA1D2C] transition-colors">{r.name}</div>
+                                                        <div className="text-xs text-gray-500 font-medium">{r.responsibleName}</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="p-6">
+                                                <code className="bg-blue-50 px-3 py-1 rounded-lg text-xs font-bold text-blue-700">{r.slug || '---'}</code>
+                                            </td>
+                                            <td className="p-6">
+                                                <code className="bg-gray-100 px-3 py-1 rounded-lg text-xs font-bold text-gray-600">{r.password || '---'}</code>
+                                            </td>
+                                            <td className="p-6 text-center">
+                                                <span className={`px-4 py-1.5 rounded-full text-xs font-bold shadow-sm ${r.approved ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-amber-100 text-amber-700 border border-amber-200'}`}>
+                                                    {r.approved ? 'ATIVO' : 'PENDENTE'}
+                                                </span>
+                                            </td>
+                                            <td className="p-6 text-right">
+                                                <div className="flex justify-end gap-3 translate-x-2 group-hover:translate-x-0 transition-transform duration-300">
+                                                    <button
+                                                        onClick={() => setEditingRestaurant(r)}
+                                                        className="p-2.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                                                        title="Editar Detalhes"
+                                                    >
+                                                        <span className="text-lg">✏️</span>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => toggleApproval(r)}
+                                                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-xl hover:-translate-y-0.5 ${r.approved ? 'bg-amber-500 hover:bg-amber-600 text-white' : 'bg-[#EA1D2C] hover:bg-[#C51623] text-white'}`}
+                                                    >
+                                                        {r.approved ? 'Pausar' : 'Aprovar'}
+                                                    </button>
+                                                    <button
+                                                        onClick={() => resetPassword(r)}
+                                                        className="p-2.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                                                        title="Resetar Senha"
+                                                    >
+                                                        <span className="text-lg">🔑</span>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => deleteRestaurant(r.id)}
+                                                        className="p-2.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
+                                                        title="Excluir"
+                                                    >
+                                                        <span className="text-lg">🗑️</span>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {restaurants.length === 0 && (
+                                        <tr>
+                                            <td colSpan={5} className="p-20 text-center text-gray-400 font-medium">Nenhum restaurante encontrado.</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    ) : (
+                        <GlobalConfigForm />
+                    )}
                 </div>
 
                 {/* Footer outside the card */}

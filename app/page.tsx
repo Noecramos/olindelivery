@@ -12,6 +12,12 @@ function MarketplaceContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [showSuccess, setShowSuccess] = useState(false);
+  const [config, setConfig] = useState<any>({
+    headerImage: 'https://i.imgur.com/Fyccvly.gif',
+    welcomeTitle: 'O que vamos\npedir hoje?',
+    welcomeSubtitle: 'Entregar em Casa',
+    footerText: '© 2025 OlindAki Delivery'
+  });
 
   useEffect(() => {
     if (searchParams.get('orderSuccess')) {
@@ -52,13 +58,20 @@ function MarketplaceContent() {
       .then(res => res.json())
       .then(setRestaurants)
       .catch(console.error);
+
+    fetch('/api/config')
+      .then(res => res.json())
+      .then(data => {
+        if (data && !data.error) setConfig((prev: any) => ({ ...prev, ...data }));
+      })
+      .catch(console.error);
   }, []);
 
   if (loading) {
     return (
       <div className="fixed inset-0 bg-[#ea1d2c] flex flex-col items-center justify-center z-[9999]">
         <div className="w-72 h-32 bg-white rounded-2xl flex items-center justify-center shadow-lg p-4 animate-bounce">
-          <Image src="https://i.imgur.com/yGLHWLL.png" alt="Logo" width={240} height={100} style={{ objectFit: 'contain' }} priority />
+          <Image src={config.headerImage || "https://i.imgur.com/yGLHWLL.png"} alt="Logo" width={240} height={100} style={{ objectFit: 'contain' }} priority />
         </div>
       </div>
     );
@@ -71,7 +84,7 @@ function MarketplaceContent() {
         {/* Top Bar */}
         <div className="pt-8 px-6 pb-4 flex justify-center items-center bg-white sticky top-0 z-40 bg-opacity-95 backdrop-blur-sm">
           <Image
-            src="https://i.imgur.com/Fyccvly.gif"
+            src={config.headerImage || "https://i.imgur.com/Fyccvly.gif"}
             alt="OlinDelivery Logo"
             width={150}
             height={50}
@@ -83,8 +96,8 @@ function MarketplaceContent() {
 
         {/* Greeting */}
         <div className="px-6 mb-8 mt-2">
-          <p className="text-gray-400 font-medium text-sm mb-1">Entregar em <span className="text-[#F6D55C] font-bold">Casa</span></p>
-          <h1 className="text-3xl font-bold text-gray-800 tracking-tight">O que vamos<br />pedir hoje?</h1>
+          <p className="text-gray-400 font-medium text-sm mb-1 uppercase tracking-wider">{config.welcomeSubtitle}</p>
+          <h1 className="text-3xl font-bold text-gray-800 tracking-tight" style={{ whiteSpace: 'pre-line' }}>{config.welcomeTitle}</h1>
         </div>
 
         {/* Search */}
@@ -191,6 +204,9 @@ function MarketplaceContent() {
             <span className="font-bold">Pedido enviado com sucesso!</span>
           </div>
         )}
+        <footer className="w-full text-center text-gray-400 text-xs py-8 mt-4 border-t border-gray-100">
+          {config.footerText}
+        </footer>
       </main>
     </div>
   );
