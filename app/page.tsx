@@ -95,9 +95,9 @@ function MarketplaceContent() {
           <div className="flex gap-4 overflow-x-auto no-scrollbar px-6 pb-2">
             {/* Mock Items for Demo Style matching image */}
             {[
-              { id: 'p1', name: 'Pizza Calabresa', price: 16.00, bg: 'bg-[#FFFBEB]', icon: '🍕', link: '/loja/demo-loja' },
-              { id: 'p2', name: 'Bolognesa', price: 22.00, bg: 'bg-[#FEF2F2]', icon: '🍝', link: '/loja/demo-loja' },
-              { id: 'p3', name: 'Burger Cheddar', price: 18.50, bg: 'bg-[#ECFDF5]', icon: '🍔', link: '/loja/demo-loja' },
+              { id: 'p1', name: 'Pizza Calabresa', price: 16.00, bg: 'bg-[#FFFBEB]', icon: '🍕', link: '/loja/olin-burgers' },
+              { id: 'p2', name: 'Bolognesa', price: 22.00, bg: 'bg-[#FEF2F2]', icon: '🍝', link: '/loja/olin-burgers' },
+              { id: 'p3', name: 'Burger Cheddar', price: 18.50, bg: 'bg-[#ECFDF5]', icon: '🍔', link: '/loja/olin-burgers' },
             ].map(item => (
               <Link key={item.id} href={item.link}>
                 <div className={`${item.bg} min-w-[200px] p-4 rounded-3xl flex items-center gap-4 cursor-pointer hover:shadow-lg transition-all transform hover:-translate-y-1`}>
