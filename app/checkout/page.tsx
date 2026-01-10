@@ -74,20 +74,20 @@ export default function CheckoutPage() {
             const itemsList = cart.map(i => {
                 const itemTotal = i.price * i.quantity;
                 return `${i.quantity}x ${i.name} - ${itemTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
-            }).join('%0A');
+            }).join('\n');
 
             const paymentInfo = form.paymentMethod === 'pix' ? 'PIX' :
                 (form.paymentMethod === 'card' ? 'Cartão' :
                     `Dinheiro (Troco para R$ ${form.changeFor})`);
 
-            const message = `🎫 *PEDIDO #${ticketNumber}*%0A%0A` +
-                `👤 *Cliente:* ${form.name}%0A` +
-                `📱 *Telefone:* ${form.phone}%0A` +
-                `📍 *Endereço:* ${form.address}%0A%0A` +
-                `🛒 *ITENS DO PEDIDO:*%0A${itemsList}%0A%0A` +
-                (form.observations ? `📝 *Observações:* ${form.observations}%0A%0A` : '') +
-                `💰 *TOTAL: ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}*%0A` +
-                `💳 *Pagamento:* ${paymentInfo}%0A%0A` +
+            const message = `🎫 *PEDIDO #${ticketNumber}*\n\n` +
+                `👤 *Cliente:* ${form.name}\n` +
+                `📱 *Telefone:* ${form.phone}\n` +
+                `📍 *Endereço:* ${form.address}\n\n` +
+                `🛒 *ITENS DO PEDIDO:*\n${itemsList}\n\n` +
+                (form.observations ? `📝 *Observações:* ${form.observations}\n\n` : '') +
+                `💰 *TOTAL: ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}*\n` +
+                `💳 *Pagamento:* ${paymentInfo}\n\n` +
                 `_Enviado via OlinDelivery 🚀_`;
 
             // Sanitize phone number (remove all non-digits)
