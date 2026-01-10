@@ -221,6 +221,124 @@ export default function StoreAdmin() {
         );
     }
 
+    const printDailyReport = () => {
+        const today = new Date();
+
+        // Filter orders for today (exclude cancelled for revenue, but maybe keep for record? usually exclude for "Closing")
+        const dailyOrders = orders.filter(o => {
+            if (!o.createdAt) return false;
+            const d = new Date(o.createdAt);
+            const isToday = d.getDate() === today.getDate() &&
+                d.getMonth() === today.getMonth() &&
+                d.getFullYear() === today.getFullYear();
+            const isValid = o.status !== 'cancelled';
+            return isToday && isValid;
+        });
+
+        const totalSales = dailyOrders.reduce((acc, o) => acc + o.total, 0);
+        const totalOrders = dailyOrders.length;
+        const avgTicket = totalOrders > 0 ? totalSales / totalOrders : 0;
+
+        // Payment Methods
+        const payments: any = { pix: 0, card: 0, money: 0 };
+        const paymentsCount: any = { pix: 0, card: 0, money: 0 };
+
+        dailyOrders.forEach(o => {
+            const method = o.paymentMethod === 'card' ? 'card' : o.paymentMethod === 'pix' ? 'pix' : 'money';
+            payments[method] += o.total;
+            paymentsCount[method] += 1;
+        });
+
+        // Top Products
+        const itemsMap: any = {};
+        dailyOrders.forEach(o => {
+            o.items.forEach((i: any) => {
+                itemsMap[i.name] = (itemsMap[i.name] || 0) + i.quantity;
+            });
+        });
+        const sortedItems = Object.entries(itemsMap).sort((a: any, b: any) => b[1] - a[1]);
+
+        const printWindow = window.open('', '_blank', 'width=400,height=600');
+        if (!printWindow) return;
+
+        const html = `
+            <html>
+                <head>
+                    <title>Fechamento - ${today.toLocaleDateString('pt-BR')}</title>
+                    <style>
+                        body { font-family: 'Courier New', monospace; padding: 20px; font-size: 12px; color: #000; }
+                        .header { text-align: center; margin-bottom: 20px; }
+                        .divider { border-top: 1px dashed black; margin: 10px 0; }
+                        .bold { font-weight: bold; }
+                        .flex { display: flex; justify-content: space-between; margin-bottom: 3px; }
+                        .section { margin-bottom: 15px; }
+                        .footer { text-align: center; margin-top: 30px; font-size: 10px; }
+                        .title { font-size: 14px; font-weight: bold; margin-bottom: 5px; text-transform: uppercase; border-bottom: 1px solid #000; padding-bottom: 2px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <div class="bold" style="font-size: 16px;">${restaurant.name}</div>
+                        <br>
+                        <div style="font-size: 14px; font-weight: bold;">FECHAMENTO DE CAIXA</div>
+                        <div>${today.toLocaleString('pt-BR')}</div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="section">
+                        <div class="title">RESUMO GERAL</div>
+                        <div class="flex"><span>Faturamento Total:</span> <span class="bold">${totalSales.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span></div>
+                        <div class="flex"><span>Pedidos Realizados:</span> <span>${totalOrders}</span></div>
+                        <div class="flex"><span>Ticket Médio:</span> <span>${avgTicket.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span></div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="section">
+                        <div class="title">Balanço por Pagamento</div>
+                        <div class="flex"><span>PIX (${paymentsCount.pix}):</span> <span>${payments.pix.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span></div>
+                        <div class="flex"><span>Cartão (${paymentsCount.card}):</span> <span>${payments.card.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span></div>
+                        <div class="flex"><span>Dinheiro (${paymentsCount.money}):</span> <span>${payments.money.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span></div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <div class="section">
+                        <div class="title">Produtos Vendidos (Top 10)</div>
+                        ${sortedItems.length === 0 ? '<div>Nenhum item vendido.</div>' : ''}
+                        ${sortedItems.slice(0, 10).map(([name, qty]) => `
+                            <div class="flex"><span>${qty}x ${name}</span></div>
+                        `).join('')}
+                    </div>
+
+                    <div class="divider"></div>
+                    
+                    <div class="footer">
+                        Relatório Gerado por<br>
+                        <strong>OlinDelivery Sistema</strong>
+                    </div>
+
+                    <script>
+                        window.onload = function() {
+                            window.print();
+                        }
+                    </script>
+                </body>
+            </html>
+        `;
+
+        printWindow.document.write(html);
+        printWindow.document.close();
+
+        // Wait for content to render then print
+        setTimeout(() => {
+            printWindow.focus();
+            printWindow.print();
+        }, 500);
+    };
+
+
     const printOrder = (order: any) => {
         const printWindow = window.open('', '_blank', 'width=400,height=600');
         if (!printWindow) return;
@@ -374,10 +492,18 @@ export default function StoreAdmin() {
                                                 <h1 className="text-3xl font-bold tracking-tight text-gray-800">Visão Geral</h1>
                                                 <p className="text-gray-600 text-sm font-medium">Acompanhe o desempenho da sua loja em tempo real.</p>
                                             </div>
-                                            <span className="text-xs text-green-700 bg-white backdrop-blur px-4 py-2 rounded-full font-bold flex items-center gap-2 shadow-lg">
-                                                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                                                Atualização em Tempo Real
-                                            </span>
+                                            <div className="flex items-center gap-3">
+                                                <button
+                                                    onClick={printDailyReport}
+                                                    className="bg-gray-900 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 hover:bg-black shadow-lg transition-transform hover:-translate-y-0.5"
+                                                >
+                                                    🖨️ Fechar Caixa
+                                                </button>
+                                                <span className="text-xs text-green-700 bg-white backdrop-blur px-4 py-2 rounded-full font-bold flex items-center gap-2 shadow-lg">
+                                                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                                    Online
+                                                </span>
+                                            </div>
                                         </header>
 
                                         {/* KPI Cards */}
