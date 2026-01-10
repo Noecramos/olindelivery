@@ -91,6 +91,64 @@ export default function CheckoutPage() {
             const restData = await restRes.json();
             const restaurantPhone = restData.whatsapp || restData.phone || "5581995515777";
 
+            // Validate Delivery Area if configured
+            if (restData.deliveryRadius && restData.latitude && restData.longitude) {
+                try {
+                    // Get coordinates from CEP using ViaCEP + Nominatim
+                    const cepClean = form.zipCode.replace(/\D/g, '');
+                    const cepRes = await fetch(`https://viacep.com.br/ws/${cepClean}/json/`);
+                    const cepData = await cepRes.json();
+
+                    if (cepData.erro) {
+                        alert('CEP inválido. Por favor, verifique o CEP informado.');
+                        setLoading(false);
+                        return;
+                    }
+
+                    // Get coordinates from address
+                    const fullAddress = `${cepData.logradouro}, ${cepData.bairro}, ${cepData.localidade}, ${cepData.uf}, Brazil`;
+                    const geoRes = await fetch(
+                        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(fullAddress)}&format=json&limit=1`,
+                        { headers: { 'User-Agent': 'OlinDelivery/1.0' } }
+                    );
+                    const geoData = await geoRes.json();
+
+                    if (geoData && geoData.length > 0) {
+                        const customerLat = parseFloat(geoData[0].lat);
+                        const customerLon = parseFloat(geoData[0].lon);
+                        const restaurantLat = parseFloat(restData.latitude);
+                        const restaurantLon = parseFloat(restData.longitude);
+
+                        // Calculate distance using Haversine formula
+                        const R = 6371; // Earth's radius in km
+                        const dLat = (customerLat - restaurantLat) * Math.PI / 180;
+                        const dLon = (customerLon - restaurantLon) * Math.PI / 180;
+                        const a =
+                            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                            Math.cos(restaurantLat * Math.PI / 180) * Math.cos(customerLat * Math.PI / 180) *
+                            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                        const distance = R * c;
+
+                        const maxRadius = parseFloat(restData.deliveryRadius);
+
+                        if (distance > maxRadius) {
+                            alert(
+                                `Desculpe, você está fora da nossa área de entrega.\n\n` +
+                                `Distância: ${distance.toFixed(1)} km\n` +
+                                `Raio máximo: ${maxRadius} km\n\n` +
+                                `Por favor, entre em contato conosco para verificar possibilidades.`
+                            );
+                            setLoading(false);
+                            return;
+                        }
+                    }
+                } catch (geoError) {
+                    console.error('Geolocation validation error:', geoError);
+                    // Continue with order if geolocation fails (don't block customer)
+                }
+            }
+
             const orderData = {
                 restaurantId,
                 customer: {
