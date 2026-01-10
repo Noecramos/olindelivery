@@ -29,12 +29,22 @@ export default function StoreAdmin() {
     }, [slug]);
 
     // Fetch Restaurant Info
-    useEffect(() => {
+    const fetchRestaurant = async () => {
         if (!slug) return;
-        fetch(`/api/restaurants?slug=${slug}`)
-            .then(res => res.ok ? res.json() : null)
-            .then(setRestaurant)
-            .catch(console.error);
+        try {
+            const res = await fetch(`/api/restaurants?slug=${slug}`);
+            if (res.ok) {
+                const data = await res.json();
+                setRestaurant(data);
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    // Fetch Restaurant Info
+    useEffect(() => {
+        fetchRestaurant();
     }, [slug]);
 
     // Fetch Orders when Auth is true
@@ -465,7 +475,7 @@ export default function StoreAdmin() {
                                             <div className="py-8">
                                                 <RestaurantSettings
                                                     restaurant={restaurant}
-                                                    onUpdate={() => fetchRestaurant(slug)}
+                                                    onUpdate={() => fetchRestaurant()}
                                                 />
                                             </div>
                                         )}
