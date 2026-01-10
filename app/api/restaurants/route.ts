@@ -219,7 +219,7 @@ export async function PUT(request: Request) {
             row.assign(updates);
             await row.save();
 
-            return NextResponse.json({ success: true, password: currentPassword });
+            return NextResponse.json({ success: true, password: currentPassword, slug: updates.slug || row.get('slug') });
         }
 
         return NextResponse.json({ error: 'NotFound' }, { status: 404 });

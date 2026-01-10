@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { SalesChart, TopProductsChart, StatusPieChart } from "../../components/admin/Charts";
 import ProductForm from "../../components/admin/ProductForm";
 import CategoryForm from "../../components/admin/CategoryForm";
@@ -11,6 +11,7 @@ import RestaurantSettings from "../../components/admin/RestaurantSettings";
 export default function StoreAdmin() {
     const params = useParams();
     const slug = params?.slug as string;
+    const router = useRouter();
 
     const [auth, setAuth] = useState(false);
     const [password, setPassword] = useState("");
@@ -764,7 +765,14 @@ export default function StoreAdmin() {
                                             <div className="py-8">
                                                 <RestaurantSettings
                                                     restaurant={restaurant}
-                                                    onUpdate={() => fetchRestaurant()}
+                                                    onUpdate={(data: any) => {
+                                                        if (data?.slug && data.slug !== slug) {
+                                                            alert('A URL da sua loja mudou. Redirecionando...');
+                                                            router.replace(`/admin/${data.slug}`);
+                                                        } else {
+                                                            fetchRestaurant();
+                                                        }
+                                                    }}
                                                 />
                                             </div>
                                         )}

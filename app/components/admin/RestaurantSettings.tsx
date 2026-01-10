@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-export default function RestaurantSettings({ restaurant, onUpdate }: { restaurant: any, onUpdate: () => void }) {
+export default function RestaurantSettings({ restaurant, onUpdate }: { restaurant: any, onUpdate: (data?: any) => void }) {
     const [form, setForm] = useState(restaurant || {});
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
@@ -36,8 +36,14 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                 body: JSON.stringify(submitData)
             });
 
+            const data = await res.json();
+
             if (res.ok) {
                 alert('Dados atualizados com sucesso!');
+
+                // Notify parent of update, passing response data (which includes new slug)
+                if (onUpdate) onUpdate(data);
+
                 // Reset fields to blank as requested
                 const { id, isOpen, image } = form; // Keep critical identifiers
                 setForm({ id, isOpen, image }); // Clear name, phone, etc.
