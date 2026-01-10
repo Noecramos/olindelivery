@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
-import { writeFile, mkdir, access } from "fs/promises";
-import path from "path";
-import { constants } from "fs";
+import { put } from '@vercel/blob';
 
 export async function POST(request: Request) {
     console.log("=== Upload Request Started ===");
@@ -44,41 +42,25 @@ export async function POST(request: Request) {
             }, { status: 400 });
         }
 
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-
         // Sanitize filename
-        const ext = path.extname(file.name);
-        const nameWithoutExt = path.basename(file.name, ext);
+        const ext = file.name.split('.').pop();
+        const nameWithoutExt = file.name.replace(`.${ext}`, '');
         const safeName = nameWithoutExt.replace(/[^a-zA-Z0-9]/g, '');
-        const filename = `${Date.now()}-${safeName}${ext}`;
+        const filename = `${Date.now()}-${safeName}.${ext}`;
 
-        const uploadDir = path.join(process.cwd(), "public", "uploads");
-        console.log("Upload directory:", uploadDir);
+        console.log("Uploading to Vercel Blob:", filename);
 
-        // Ensure directory exists
-        try {
-            await access(uploadDir, constants.W_OK);
-            console.log("Upload directory is writable");
-        } catch {
-            console.log("Creating upload directory...");
-            await mkdir(uploadDir, { recursive: true });
-            console.log("Upload directory created");
-        }
+        // Upload to Vercel Blob
+        const blob = await put(filename, file, {
+            access: 'public',
+            addRandomSuffix: false,
+        });
 
-        const filepath = path.join(uploadDir, filename);
-        console.log("Writing file to:", filepath);
-
-        await writeFile(filepath, buffer);
-        console.log("File written successfully");
-
-        // Use API route for serving images (more reliable in dev mode)
-        const url = `/api/images/${filename}`;
-        console.log("=== Upload Successful ===", url);
+        console.log("=== Upload Successful ===", blob.url);
 
         return NextResponse.json({
             success: true,
-            url
+            url: blob.url
         });
     } catch (error: any) {
         console.error("=== Upload Error ===");
