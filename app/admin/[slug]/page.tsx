@@ -50,7 +50,7 @@ export default function StoreAdmin() {
     // Fetch Orders when Auth is true
     const fetchOrders = async () => {
         if (!restaurant) return;
-        const res = await fetch(`/api/orders?restaurantId=${restaurant.id}`);
+        const res = await fetch(`/api/orders?restaurantId=${restaurant.id}&_t=${Date.now()}`, { cache: 'no-store' });
         if (res.ok) {
             const serverOrders = await res.json();
 
@@ -86,7 +86,7 @@ export default function StoreAdmin() {
         if (!auth || !restaurant) return;
         fetchOrders();
         // Polling for Real-Time updates
-        const interval = setInterval(fetchOrders, 5000);
+        const interval = setInterval(fetchOrders, 3000);
         return () => clearInterval(interval);
     }, [auth, restaurant]);
 
