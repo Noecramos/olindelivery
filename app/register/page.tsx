@@ -274,7 +274,7 @@ export default function RegisterRestaurant() {
                                     id="type"
                                     name="type"
                                     className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
-                                    value={form.type}
+                                    value={['Lanchonete', 'Restaurante', 'Hamburgueria', 'Pizzaria', 'Comida', 'Bebidas'].includes(form.type) ? form.type : 'Outro'}
                                     onChange={e => setForm({ ...form, type: e.target.value })}
                                 >
                                     <option value="Lanchonete">Lanchonete</option>
@@ -282,9 +282,17 @@ export default function RegisterRestaurant() {
                                     <option value="Hamburgueria">Hamburgueria</option>
                                     <option value="Pizzaria">Pizzaria</option>
                                     <option value="Comida">Comida Caseira</option>
-                                    <option value="Deposito Bebidas">Depósito de Bebidas</option>
-                                    <option value="Outro">Outro</option>
+                                    <option value="Bebidas">Bebidas</option>
+                                    <option value="Outro">Outro (Especificar)</option>
                                 </select>
+                                {(!['Lanchonete', 'Restaurante', 'Hamburgueria', 'Pizzaria', 'Comida', 'Bebidas'].includes(form.type)) && (
+                                    <input
+                                        className="mt-2 w-full p-3 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C] animate-fade-in"
+                                        placeholder="Especifique o tipo (ex: Japonês)"
+                                        value={form.type === 'Outro' ? '' : form.type}
+                                        onChange={e => setForm({ ...form, type: e.target.value })}
+                                    />
+                                )}
                             </div>
                         </div>
 

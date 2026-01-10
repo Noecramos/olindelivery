@@ -137,7 +137,7 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-1">Tipo de Cozinha</label>
                         <select className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
-                            value={form.type || 'Lanchonete'}
+                            value={['Lanchonete', 'Restaurante', 'Hamburgueria', 'Pizzaria', 'Comida', 'Bebidas'].includes(form.type) ? form.type : 'Outro'}
                             onChange={e => setForm({ ...form, type: e.target.value })}
                         >
                             <option value="Lanchonete">Lanchonete</option>
@@ -146,8 +146,16 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                             <option value="Pizzaria">Pizzaria</option>
                             <option value="Comida">Comida Caseira</option>
                             <option value="Bebidas">Bebidas</option>
-                            <option value="Outro">Outro</option>
+                            <option value="Outro">Outro (Especificar)</option>
                         </select>
+                        {(!['Lanchonete', 'Restaurante', 'Hamburgueria', 'Pizzaria', 'Comida', 'Bebidas'].includes(form.type)) && (
+                            <input
+                                className="mt-2 w-full p-3 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 animate-fade-in"
+                                placeholder="Especifique o tipo (ex: Japonês)"
+                                value={form.type === 'Outro' ? '' : form.type}
+                                onChange={e => setForm({ ...form, type: e.target.value })}
+                            />
+                        )}
                     </div>
                 </div>
 
