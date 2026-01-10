@@ -2,6 +2,37 @@
 "use client";
 import { useState, useEffect } from "react";
 
+const ICONS = {
+    '🍔': 'Hambúrguer',
+    '🍕': 'Pizza',
+    '🌭': 'Cachorro Quente',
+    '🍟': 'Batata Frita',
+    '🥤': 'Refrigerante',
+    '🍦': 'Sorvete',
+    '🍰': 'Sobremesa',
+    '🥗': 'Salada',
+    '🍣': 'Japonês',
+    '🥪': 'Sanduíche',
+    '🍗': 'Frango',
+    '☕': 'Café',
+    '🍺': 'Cerveja',
+    '🍹': 'Drink',
+    '🥡': 'Marmita',
+    '🥩': 'Carne',
+    '🥐': 'Padaria',
+    '🥣': 'Açaí'
+};
+
+const COLORS = [
+    { bg: 'bg-[#FFF4C3]', label: 'Amarelo' },
+    { bg: 'bg-[#FFE4E6]', label: 'Rosa' },
+    { bg: 'bg-[#D1FAE5]', label: 'Verde' },
+    { bg: 'bg-[#DBEAFE]', label: 'Azul' },
+    { bg: 'bg-[#F3E8FF]', label: 'Roxo' },
+    { bg: 'bg-[#FFEDD5]', label: 'Laranja' },
+    { bg: 'bg-white', label: 'Branco' },
+];
+
 export default function GlobalConfigForm() {
     const [config, setConfig] = useState({
         headerImage: '',
@@ -11,7 +42,8 @@ export default function GlobalConfigForm() {
         footerText: '',
         headerBgColor: '',
         headerBackgroundType: 'color',
-        headerBackgroundImage: ''
+        headerBackgroundImage: '',
+        featuredItems: [] as any[]
     });
     const [loading, setLoading] = useState(false);
 
@@ -19,16 +51,31 @@ export default function GlobalConfigForm() {
         fetch('/api/config')
             .then(res => res.json())
             .then(data => {
-                if (data && !data.error) setConfig(prev => ({ ...prev, ...data }));
+                if (data && !data.error) {
+                    let parsedItems = [];
+                    if (data.featuredItems) {
+                        try {
+                            parsedItems = typeof data.featuredItems === 'string' ? JSON.parse(data.featuredItems) : data.featuredItems;
+                        } catch (e) {
+                            console.error("Error parsing featuredItems", e);
+                        }
+                    }
+                    setConfig(prev => ({ ...prev, ...data, featuredItems: parsedItems || [] }));
+                }
             });
     }, []);
 
     const handleSave = async () => {
         setLoading(true);
         try {
+            const payload = {
+                ...config,
+                featuredItems: JSON.stringify(config.featuredItems) // Store as string
+            };
+
             await fetch('/api/config', {
                 method: 'POST',
-                body: JSON.stringify(config)
+                body: JSON.stringify(payload)
             });
             alert('Configurações salvas!');
         } catch (e) {
@@ -36,6 +83,32 @@ export default function GlobalConfigForm() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const addFeaturedItem = () => {
+        const newItem = {
+            id: Date.now().toString(),
+            name: 'Novo Item',
+            price: 0,
+            icon: '🍔',
+            bg: 'bg-[#FFF4C3]',
+            link: ''
+        };
+        setConfig(prev => ({
+            ...prev,
+            featuredItems: [...prev.featuredItems, newItem]
+        }));
+    };
+
+    const updateFeaturedItem = (index: number, field: string, value: any) => {
+        const newItems = [...config.featuredItems];
+        newItems[index] = { ...newItems[index], [field]: value };
+        setConfig(prev => ({ ...prev, featuredItems: newItems }));
+    };
+
+    const removeFeaturedItem = (index: number) => {
+        const newItems = config.featuredItems.filter((_, i) => i !== index);
+        setConfig(prev => ({ ...prev, featuredItems: newItems }));
     };
 
     return (
@@ -154,6 +227,113 @@ export default function GlobalConfigForm() {
                             placeholder="© 2025 OlindAki Delivery..."
                         />
                     </div>
+                </div>
+            </div>
+
+            {/* SEÇÃO 3: ITENS POPULARES */}
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-200">
+                <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2 pb-4 border-b border-gray-100 justify-between">
+                    <span>⭐ Itens em Destaque</span>
+                    <button
+                        onClick={addFeaturedItem}
+                        className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-black transition-colors flex items-center gap-2"
+                    >
+                        + Adicionar Card
+                    </button>
+                </h3>
+
+                <div className="grid grid-cols-1 gap-6">
+                    {config.featuredItems.map((item, index) => (
+                        <div key={item.id || index} className="border border-gray-200 rounded-2xl p-6 bg-gray-50 flex flex-col md:flex-row gap-6 relative group">
+                            <button
+                                onClick={() => removeFeaturedItem(index)}
+                                className="absolute top-4 right-4 text-red-400 hover:text-red-600 p-2 rounded-full hover:bg-red-50 transition-colors"
+                                title="Remover item"
+                            >
+                                🗑️
+                            </button>
+
+                            {/* Preview Card (Mini) */}
+                            <div className="flex-shrink-0 flex items-center justify-center pt-2 md:pt-0">
+                                <div className={`${item.bg} w-[200px] h-[90px] p-4 rounded-3xl flex items-center justify-between gap-3 shadow-md border border-black/5 transform scale-90 md:scale-100 origin-left`}>
+                                    <div className="text-3xl drop-shadow-sm">{item.icon}</div>
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="font-bold text-gray-800 text-xs truncate">{item.name || 'Nome do Item'}</h3>
+                                        <p className="text-gray-900 font-bold text-sm mt-0.5">R$ {Number(item.price).toFixed(2)}</p>
+                                    </div>
+                                    <div className="bg-white w-8 h-8 rounded-full flex items-center justify-center shadow-sm text-gray-400">
+                                        &gt;
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Edit Fields */}
+                            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 mb-1">Nome do Produto</label>
+                                    <input
+                                        value={item.name}
+                                        onChange={e => updateFeaturedItem(index, 'name', e.target.value)}
+                                        className="w-full p-2 bg-white border border-gray-200 rounded-lg focus:border-gray-900 outline-none text-sm"
+                                        placeholder="Ex: Pizza Calabresa"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 mb-1">Preço (R$)</label>
+                                    <input
+                                        type="number"
+                                        value={item.price}
+                                        onChange={e => updateFeaturedItem(index, 'price', parseFloat(e.target.value))}
+                                        className="w-full p-2 bg-white border border-gray-200 rounded-lg focus:border-gray-900 outline-none text-sm"
+                                        placeholder="0.00"
+                                    />
+                                </div>
+                                <div className="md:col-span-2">
+                                    <label className="block text-xs font-bold text-gray-500 mb-1">Link do Restaurante (Slug)</label>
+                                    <input
+                                        value={item.link}
+                                        onChange={e => updateFeaturedItem(index, 'link', e.target.value)}
+                                        className="w-full p-2 bg-white border border-gray-200 rounded-lg focus:border-gray-900 outline-none text-sm font-mono text-gray-600"
+                                        placeholder="Ex: /loja/olin-burgers"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Style Controls */}
+                            <div className="flex-shrink-0 w-full md:w-48 space-y-4">
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 mb-1">Ícone</label>
+                                    <select
+                                        value={item.icon}
+                                        onChange={e => updateFeaturedItem(index, 'icon', e.target.value)}
+                                        className="w-full p-2 bg-white border border-gray-200 rounded-lg focus:border-gray-900 outline-none text-xl"
+                                    >
+                                        {Object.entries(ICONS).map(([icon, label]) => (
+                                            <option key={icon} value={icon}>{icon} {label}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 mb-1">Cor de Fundo</label>
+                                    <div className="flex flex-wrap gap-2">
+                                        {COLORS.map(c => (
+                                            <button
+                                                key={c.bg}
+                                                onClick={() => updateFeaturedItem(index, 'bg', c.bg)}
+                                                className={`w-6 h-6 rounded-full border border-gray-200 shadow-sm ${c.bg} ${item.bg === c.bg ? 'ring-2 ring-gray-900 scale-110' : ''}`}
+                                                title={c.label}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                    {config.featuredItems.length === 0 && (
+                        <div className="text-center py-10 text-gray-400 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                            Nenhum item em destaque. Adicione um para começar.
+                        </div>
+                    )}
                 </div>
             </div>
 
