@@ -18,6 +18,7 @@ export default function RegisterRestaurant() {
         hours: "",
         type: "Lanchonete",
         image: "", // Logo URL
+        pixKey: "",
     });
 
     const [uploading, setUploading] = useState(false);
@@ -192,7 +193,6 @@ export default function RegisterRestaurant() {
                                         return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
                                     })()}
                                     onChange={e => {
-                                        // Store only digits
                                         const digits = e.target.value.replace(/\D/g, '');
                                         setForm({ ...form, whatsapp: digits });
                                     }}
@@ -201,6 +201,20 @@ export default function RegisterRestaurant() {
                                 />
                                 <p className="text-xs text-gray-500 mt-1">Código do país (+55) será adicionado automaticamente</p>
                             </div>
+                            <div>
+                                <label htmlFor="pixKey" className="block text-sm font-bold text-gray-700 mb-1">Chave PIX</label>
+                                <input
+                                    id="pixKey"
+                                    name="pixKey"
+                                    className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                    placeholder="CPF, CNPJ, Email, Telefone ou Aleatória"
+                                    value={form.pixKey}
+                                    onChange={e => setForm({ ...form, pixKey: e.target.value })}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label htmlFor="instagram" className="block text-sm font-bold text-gray-700 mb-1">Instagram (Opcional)</label>
                                 <input

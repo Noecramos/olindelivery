@@ -17,3 +17,8 @@ Your Google Sheet needs these EXACT column headers in Row 1:
 - The `status` can be: pending, accepted, delivered
 - All headers must be in the first row (Row 1)
 - No spaces before or after the header names
+- No spaces before or after the header names
+
+# Sheet: Restaurants
+Columns:
+id, slug, name, password, isOpen, image, banner, approved, phone, address, deliveryTime, instagram, zipCode, hours, responsibleName, email, whatsapp, pixKey, type, ratingSum, ratingCount

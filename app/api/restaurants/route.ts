@@ -43,6 +43,7 @@ export async function GET(request: Request) {
                         responsibleName: r.get('responsibleName'),
                         email: r.get('email'),
                         whatsapp: r.get('whatsapp'),
+                        pixKey: r.get('pixKey'),
                         type: r.get('type'),
                         ratingSum: parseInt(r.get('ratingSum') || '0'),
                         ratingCount: parseInt(r.get('ratingCount') || '0')
@@ -71,6 +72,7 @@ export async function GET(request: Request) {
                 deliveryTime: restaurant.get('deliveryTime') || '30-45 min',
                 instagram: restaurant.get('instagram'),
                 whatsapp: restaurant.get('whatsapp'),
+                pixKey: restaurant.get('pixKey'),
                 type: restaurant.get('type'),
                 // Password is NOT returned for single public view
             });
@@ -93,6 +95,7 @@ export async function POST(request: Request) {
             slug: body.slug,
             image: body.image,
             whatsapp: body.whatsapp,
+            pixKey: body.pixKey,
             email: body.email
         });
 
@@ -118,6 +121,7 @@ export async function POST(request: Request) {
             responsibleName: body.responsibleName || '',
             email: body.email || '',
             whatsapp: body.whatsapp || '',
+            pixKey: body.pixKey || '',
             type: body.type || 'Outro'
         };
 
@@ -141,6 +145,7 @@ export async function POST(request: Request) {
             responsibleName: newRestaurant.responsibleName,
             email: newRestaurant.email,
             whatsapp: newRestaurant.whatsapp,
+            pixKey: newRestaurant.pixKey,
             type: newRestaurant.type
         });
 
