@@ -18,6 +18,15 @@ export default function StoreAdmin() {
     const [tab, setTab] = useState('dashboard'); // dashboard | products | categories | settings
     const [showHistory, setShowHistory] = useState(false);
 
+    // Check localStorage for existing session
+    useEffect(() => {
+        if (!slug) return;
+        const savedAuth = localStorage.getItem(`admin_auth_${slug}`);
+        if (savedAuth === 'true') {
+            setAuth(true);
+        }
+    }, [slug]);
+
     // Fetch Restaurant Info
     useEffect(() => {
         if (!slug) return;
@@ -55,12 +64,20 @@ export default function StoreAdmin() {
 
             if (res.ok && data.success) {
                 setAuth(true);
+                // Save to localStorage
+                localStorage.setItem(`admin_auth_${slug}`, 'true');
             } else {
                 alert('Senha incorreta');
             }
         } catch (error) {
             alert('Erro ao verificar senha');
         }
+    };
+
+    const handleLogout = () => {
+        setAuth(false);
+        localStorage.removeItem(`admin_auth_${slug}`);
+        setPassword("");
     };
 
     // Calculate chart data
@@ -202,6 +219,9 @@ export default function StoreAdmin() {
                     </button>
                     <button onClick={() => setTab('settings')} className={`p-3 rounded-xl transition-all flex items-center gap-3 ${tab === 'settings' ? 'bg-red-50 text-[#EA1D2C] font-bold shadow-sm' : 'hover:bg-gray-100 text-gray-600'}`}>
                         <span className="text-xl">⚙️</span> <span className="hidden lg:block">Configurações</span>
+                    </button>
+                    <button onClick={handleLogout} className="p-3 rounded-xl transition-all flex items-center gap-3 hover:bg-red-50 text-gray-600 hover:text-red-600 mt-auto">
+                        <span className="text-xl">🚪</span> <span className="hidden lg:block">Sair</span>
                     </button>
                 </nav>
             </aside>

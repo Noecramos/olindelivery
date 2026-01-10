@@ -177,11 +177,23 @@ export default function RegisterRestaurant() {
                                     id="whatsapp"
                                     name="whatsapp"
                                     className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
-                                    placeholder="5581999999999"
-                                    value={form.whatsapp}
-                                    onChange={e => setForm({ ...form, whatsapp: e.target.value.replace(/\D/g, '') })}
+                                    placeholder="(81) 99999-9999"
+                                    value={(() => {
+                                        // Format for display: (XX) XXXXX-XXXX
+                                        const digits = form.whatsapp.replace(/\D/g, '');
+                                        if (digits.length <= 2) return digits;
+                                        if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+                                        return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
+                                    })()}
+                                    onChange={e => {
+                                        // Store only digits
+                                        const digits = e.target.value.replace(/\D/g, '');
+                                        setForm({ ...form, whatsapp: digits });
+                                    }}
+                                    maxLength={15}
                                     required
                                 />
+                                <p className="text-xs text-gray-500 mt-1">Formato: (DDD) 99999-9999</p>
                             </div>
                             <div>
                                 <label htmlFor="instagram" className="block text-sm font-bold text-gray-700 mb-1">Instagram (Opcional)</label>

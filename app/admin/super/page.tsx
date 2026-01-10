@@ -7,6 +7,14 @@ export default function SuperAdmin() {
     const [password, setPassword] = useState("");
     const [restaurants, setRestaurants] = useState<any[]>([]);
 
+    // Check localStorage for existing session
+    useEffect(() => {
+        const savedAuth = localStorage.getItem('super_admin_auth');
+        if (savedAuth === 'true') {
+            setAuth(true);
+        }
+    }, []);
+
     useEffect(() => {
         if (auth) fetchRestaurants();
     }, [auth]);
@@ -95,12 +103,20 @@ export default function SuperAdmin() {
             });
             if (res.ok) {
                 setAuth(true);
+                // Save to localStorage
+                localStorage.setItem('super_admin_auth', 'true');
             } else {
                 alert('Senha inválida');
             }
         } catch (e) {
             alert('Erro ao verificar senha');
         }
+    };
+
+    const handleLogout = () => {
+        setAuth(false);
+        localStorage.removeItem('super_admin_auth');
+        setPassword("");
     };
 
     const handleResetPassword = async () => {
@@ -190,7 +206,7 @@ export default function SuperAdmin() {
                         <p className="text-xs md:text-sm font-medium opacity-90">Controle total de parceiros OlinDelivery</p>
                     </div>
                     <button
-                        onClick={() => setAuth(false)}
+                        onClick={handleLogout}
                         className="absolute bottom-4 right-6 bg-white/20 backdrop-blur-md text-white px-4 py-2 rounded-lg font-bold hover:bg-white hover:text-red-600 transition-all text-sm border border-white/30"
                     >
                         Sair
