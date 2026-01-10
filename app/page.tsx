@@ -19,6 +19,7 @@ function MarketplaceContent() {
     footerText: '© 2025 OlindAki Delivery',
     headerBgColor: '#FFD700'
   });
+  const [selectedCategory, setSelectedCategory] = useState("Todos");
 
   useEffect(() => {
     if (searchParams.get('orderSuccess')) {
@@ -88,7 +89,7 @@ function MarketplaceContent() {
     );
   }
 
-  const [selectedCategory, setSelectedCategory] = useState("Todos");
+
 
   // Derive unique categories from restaurants, filtering out invalid data (emails, etc)
   const forcedCategories = ['Lanches', 'Pizza', 'Hambúrguer', 'Açaí', 'Bebidas', 'Doces'];
