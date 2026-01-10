@@ -92,18 +92,35 @@ function MarketplaceContent() {
       'Todos': '🔥',
       'Lanches': '🍔',
       'Hambúrguer': '🍔',
+      'Hamburgueria': '🍔',
       'Pizza': '🍕',
+      'Pizzaria': '🍕',
       'Japonês': '🍣',
+      'Sushi': '🍣',
+      'Oriental': '🍣',
       'Doces': '🍰',
+      'Sobremesa': '🍰',
       'Açaí': '🥣',
       'Bebidas': '🥤',
       'Padaria': '🥐',
       'Brasileira': '🍛',
+      'Comida': '🍲',
+      'Comida Caseira': '🍲',
       'Saudável': '🥗',
+      'Salada': '🥗',
       'Pastel': '🥟',
-      'Sorvete': '🍦'
+      'Sorvete': '🍦',
+      'Churrasco': '🥩',
+      'Carne': '🥩',
+      'Café': '☕',
+      'Massas': '🍝',
+      'Italiana': '🍝',
+      'Mexicano': '🌮',
+      'Vegano': '🥦'
     };
-    return map[cat] || '🍽️';
+    // Case insensitive lookup
+    const normalizedCat = Object.keys(map).find(key => key.toLowerCase() === cat.toLowerCase());
+    return normalizedCat ? map[normalizedCat] : '🍽️';
   };
 
   const filteredRestaurants = restaurants.filter(r => {
