@@ -132,21 +132,12 @@ export default function CheckoutPage() {
             const finalPhone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
             const link = `https://wa.me/${finalPhone}?text=${encodeURIComponent(message)}`;
 
-            // 1. Open WhatsApp in new tab (Keep script alive)
-            window.open(link, '_blank');
-
             clearCart();
             setLoading(false);
             setShowSuccess(true);
 
-            // 2. Redirect this tab to Restaurant Menu
-            setTimeout(() => {
-                if (restaurant && restaurant.slug) {
-                    router.push(`/loja/${restaurant.slug}`);
-                } else {
-                    router.push('/');
-                }
-            }, 2000);
+            // Direct Redirect (Works on iPhone)
+            window.location.href = link;
 
         } catch (e) {
             console.error(e);
