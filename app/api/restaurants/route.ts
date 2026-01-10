@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getSheetByTitle } from '@/lib/googleSheets';
 import { v4 as uuidv4 } from 'uuid';
 
+// API route for restaurant data - includes geolocation fields (latitude, longitude, deliveryRadius)
+
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
