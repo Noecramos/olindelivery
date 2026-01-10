@@ -152,7 +152,7 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                             <input
                                 className="mt-2 w-full p-3 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 animate-fade-in"
                                 placeholder="Especifique o tipo (ex: Japonês)"
-                                value={form.type === 'Outro' ? '' : form.type}
+                                value={form.type === 'Outro' ? '' : (form.type || '')}
                                 onChange={e => setForm({ ...form, type: e.target.value })}
                             />
                         )}
