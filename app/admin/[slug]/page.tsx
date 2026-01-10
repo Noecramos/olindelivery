@@ -19,6 +19,7 @@ export default function StoreAdmin() {
     const [orders, setOrders] = useState<any[]>([]);
     const [tab, setTab] = useState('dashboard'); // dashboard | products | categories | settings
     const [showHistory, setShowHistory] = useState(false);
+    const [catRefresh, setCatRefresh] = useState(0);
 
     // Check localStorage for existing session
     useEffect(() => {
@@ -747,7 +748,7 @@ export default function StoreAdmin() {
                                                         <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-orange-600">Configuração de Categorias</h2>
                                                     </div>
                                                     <div className="bg-gray-50/50 p-6 rounded-3xl border border-gray-100/50 hover:bg-white hover:shadow-lg transition-all duration-300">
-                                                        <CategoryForm restaurantId={restaurant.id} onSave={() => { }} />
+                                                        <CategoryForm restaurantId={restaurant.id} onSave={() => setCatRefresh(Date.now())} />
                                                     </div>
                                                 </div>
 
@@ -757,7 +758,7 @@ export default function StoreAdmin() {
                                                     <div className="flex justify-between items-center mb-6">
                                                         <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-orange-600">Catálogo de Produtos</h2>
                                                     </div>
-                                                    <ProductForm restaurantId={restaurant.id} onSave={() => alert('Salvo!')} />
+                                                    <ProductForm restaurantId={restaurant.id} onSave={() => alert('Salvo!')} refreshCategories={catRefresh} />
                                                 </div>
                                             </div>
                                         )}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-export default function ProductForm({ restaurantId, onSave }: { restaurantId: string, onSave: () => void }) {
+export default function ProductForm({ restaurantId, onSave, refreshCategories }: { restaurantId: string, onSave: () => void, refreshCategories?: number }) {
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [categories, setCategories] = useState<any[]>([]);
@@ -22,9 +22,12 @@ export default function ProductForm({ restaurantId, onSave }: { restaurantId: st
             .then(res => res.json())
             .then(data => {
                 setCategories(data);
-                if (data.length > 0) setForm(prev => ({ ...prev, categoryId: data[0].id }));
+                // Only select first category if none selected, or safeguard it
+                if (data.length > 0 && !form.categoryId) {
+                    setForm(prev => ({ ...prev, categoryId: data[0].id }));
+                }
             });
-    }, [restaurantId]);
+    }, [restaurantId, refreshCategories]);
 
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files?.[0]) return;
