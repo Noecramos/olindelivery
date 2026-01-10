@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import RestaurantSettings from "../../components/admin/RestaurantSettings";
 
 export default function SuperAdmin() {
     const [auth, setAuth] = useState(false);
     const [password, setPassword] = useState("");
     const [restaurants, setRestaurants] = useState<any[]>([]);
+    const [editingRestaurant, setEditingRestaurant] = useState<any>(null);
 
     // Check localStorage for existing session
     useEffect(() => {
@@ -217,6 +219,29 @@ export default function SuperAdmin() {
                     </button>
                 </div>
 
+                {editingRestaurant && (
+                    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+                        <div className="bg-white rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl relative">
+                            <button
+                                onClick={() => setEditingRestaurant(null)}
+                                className="absolute top-4 right-4 bg-gray-100 hover:bg-gray-200 p-2 rounded-full transition-colors z-10 font-bold"
+                            >
+                                ✕
+                            </button>
+                            <div className="p-8">
+                                <h2 className="text-2xl font-bold mb-6 text-gray-800">Editar: {editingRestaurant.name}</h2>
+                                <RestaurantSettings
+                                    restaurant={editingRestaurant}
+                                    onUpdate={() => {
+                                        fetchRestaurants();
+                                        setEditingRestaurant(null);
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 {/* Main Card Content */}
                 <div className="bg-white rounded-b-3xl shadow-2xl p-6 md:p-8 animate-fade-in-up">
                     <div className="overflow-x-auto overflow-hidden rounded-2xl border border-gray-100 shadow-lg">
@@ -269,6 +294,13 @@ export default function SuperAdmin() {
                                         </td>
                                         <td className="p-6 text-right">
                                             <div className="flex justify-end gap-3 translate-x-2 group-hover:translate-x-0 transition-transform duration-300">
+                                                <button
+                                                    onClick={() => setEditingRestaurant(r)}
+                                                    className="p-2.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                                                    title="Editar Detalhes"
+                                                >
+                                                    <span className="text-lg">✏️</span>
+                                                </button>
                                                 <button
                                                     onClick={() => toggleApproval(r)}
                                                     className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-md hover:shadow-xl hover:-translate-y-0.5 ${r.approved ? 'bg-amber-500 hover:bg-amber-600 text-white' : 'bg-[#EA1D2C] hover:bg-[#C51623] text-white'}`}

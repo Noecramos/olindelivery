@@ -193,6 +193,17 @@ export async function PUT(request: Request) {
 
             if (typeof body.deliveryTime !== 'undefined') updates.deliveryTime = body.deliveryTime;
 
+            // Allow updating other profile fields
+            const profileFields = [
+                'name', 'image', 'banner', 'phone', 'address', 'instagram',
+                'zipCode', 'hours', 'responsibleName', 'email', 'whatsapp',
+                'pixKey', 'type'
+            ];
+
+            profileFields.forEach(field => {
+                if (typeof body[field] !== 'undefined') updates[field] = body[field];
+            });
+
             row.assign(updates);
             await row.save();
 

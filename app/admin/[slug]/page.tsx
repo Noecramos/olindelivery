@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { SalesChart, TopProductsChart, StatusPieChart } from "../../components/admin/Charts";
 import ProductForm from "../../components/admin/ProductForm";
 import CategoryForm from "../../components/admin/CategoryForm";
+import RestaurantSettings from "../../components/admin/RestaurantSettings";
 
 export default function StoreAdmin() {
     const params = useParams();
@@ -461,60 +462,11 @@ export default function StoreAdmin() {
                                             </>
                                         )}
                                         {tab === 'settings' && (
-                                            <div className="max-w-xl mx-auto text-center py-10">
-                                                <h2 className="text-2xl font-bold mb-4">Status da Loja</h2>
-                                                <button
-                                                    onClick={async () => {
-                                                        const newStatus = !restaurant.isOpen;
-                                                        setRestaurant((prev: any) => ({ ...prev, isOpen: newStatus }));
-                                                        try {
-                                                            await fetch('/api/restaurants', {
-                                                                method: 'PUT',
-                                                                headers: { 'Content-Type': 'application/json' },
-                                                                body: JSON.stringify({ id: restaurant.id, isOpen: newStatus })
-                                                            });
-                                                        } catch (e) {
-                                                            alert('Erro ao atualizar status');
-                                                            setRestaurant((prev: any) => ({ ...prev, isOpen: !newStatus }));
-                                                        }
-                                                    }}
-                                                    className={`w-full py-4 text-xl font-bold rounded-2xl transition-all transform hover:scale-105 shadow-xl ${restaurant.isOpen ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}
-                                                >
-                                                    {restaurant.isOpen ? '🟢 LOJA ABERTA (Clique para Fechar)' : '🔴 LOJA FECHADA (Clique para Abrir)'}
-                                                </button>
-                                                <p className="mt-4 text-gray-500 text-sm">
-                                                    {restaurant.isOpen
-                                                        ? 'Sua loja está visível para os clientes e aceitando novos pedidos.'
-                                                        : 'Sua loja aparece como "Fechada" e não aceita novos pedidos.'}
-                                                </p>
-                                                <div className="mt-10 text-left">
-                                                    <label className="block text-gray-700 font-bold mb-2">Tempo de Entrega</label>
-                                                    <div className="flex gap-2">
-                                                        <input
-                                                            type="text"
-                                                            className="flex-1 p-3 bg-gray-50 rounded-xl border border-gray-200"
-                                                            placeholder="Ex: 30-45 min"
-                                                            value={restaurant.deliveryTime || ''}
-                                                            onChange={(e) => setRestaurant({ ...restaurant, deliveryTime: e.target.value })}
-                                                        />
-                                                        <button
-                                                            onClick={async () => {
-                                                                try {
-                                                                    const res = await fetch('/api/restaurants', {
-                                                                        method: 'PUT',
-                                                                        headers: { 'Content-Type': 'application/json' },
-                                                                        body: JSON.stringify({ id: restaurant.id, deliveryTime: restaurant.deliveryTime })
-                                                                    });
-                                                                    if (res.ok) alert('Tempo de entrega atualizado!');
-                                                                    else alert('Erro ao salvar');
-                                                                } catch (e) { alert('Erro de conexão'); }
-                                                            }}
-                                                            className="px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700"
-                                                        >
-                                                            Salvar
-                                                        </button>
-                                                    </div>
-                                                </div>
+                                            <div className="py-8">
+                                                <RestaurantSettings
+                                                    restaurant={restaurant}
+                                                    onUpdate={() => fetchRestaurant(slug)}
+                                                />
                                             </div>
                                         )}
                                     </div>
