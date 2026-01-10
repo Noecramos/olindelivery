@@ -42,12 +42,6 @@ export default function CheckoutPage() {
             return;
         }
 
-        // Open window early to prevent popup blockers
-        const waWindow = window.open('', '_blank');
-        if (waWindow) {
-            waWindow.document.write('<html><body style="background:#25D366; display:flex; justify-content:center; align-items:center; height:100vh; font-family:sans-serif; color:white;"><h1>Aguarde, abrindo WhatsApp... 🚀</h1></body></html>');
-        }
-
         setLoading(true);
         const restaurantId = cart[0].restaurantId || 'default';
 
@@ -103,33 +97,17 @@ export default function CheckoutPage() {
             // Sanitize phone
             const cleanPhone = restaurantPhone.replace(/\D/g, '');
             const finalPhone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
-
             const link = `https://wa.me/${finalPhone}?text=${encodeURIComponent(message)}`;
-
-            // Redirect WhatsApp Window
-            if (waWindow) {
-                waWindow.location.href = link;
-            } else {
-                window.location.href = link;
-                return; // Navigation takes over
-            }
 
             clearCart();
             setLoading(false);
             setShowSuccess(true);
 
-            // Redirect back to shop after 10s
-            setTimeout(() => {
-                if (restaurant && restaurant.slug) {
-                    router.push(`/loja/${restaurant.slug}`);
-                } else {
-                    router.push('/');
-                }
-            }, 10000);
+            // Redirect directly to WhatsApp
+            window.location.href = link;
 
         } catch (e) {
             console.error(e);
-            if (waWindow) waWindow.close();
             alert("Erro ao finalizar pedido.");
             setLoading(false);
         }
@@ -315,12 +293,11 @@ export default function CheckoutPage() {
                             <span className="text-4xl">✅</span>
                         </div>
                         <h2 className="text-2xl font-bold text-gray-800 mb-2">Pedido Realizado!</h2>
-                        <p className="text-gray-500 mb-6">O WhatsApp foi aberto com seu pedido.</p>
+                        <p className="text-gray-500 mb-6">Redirecionando para WhatsApp...</p>
 
                         <div className="bg-gray-100 p-4 rounded-xl mb-6">
-                            <p className="text-sm text-gray-400 mb-2">Retornando ao cardápio em:</p>
                             <div className="text-3xl font-bold text-green-600 animate-pulse">
-                                10s
+                                Abrindo...
                             </div>
                         </div>
 
