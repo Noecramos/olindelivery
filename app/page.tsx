@@ -89,15 +89,6 @@ function MarketplaceContent() {
             backgroundImage: config.headerBackgroundType === 'image' ? `url('${config.headerBackgroundImage}')` : 'none',
           }}
         >
-          <Image
-            src={config.headerImage || "https://i.imgur.com/Fyccvly.gif"}
-            alt="OlinDelivery Logo"
-            width={150}
-            height={50}
-            style={{ objectFit: 'contain' }}
-            priority
-            unoptimized
-          />
         </div>
 
         {/* Greeting */}

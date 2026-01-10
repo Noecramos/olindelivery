@@ -54,27 +54,6 @@ export default function GlobalConfigForm() {
                 </h3>
 
                 <div className="space-y-8">
-                    {/* Logo Config */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="md:col-span-2">
-                            <label className="block text-sm font-bold text-gray-700 mb-2">Logo do App (URL)</label>
-                            <input
-                                value={config.headerImage}
-                                onChange={e => setConfig({ ...config, headerImage: e.target.value })}
-                                className="w-full p-3 bg-white border-2 border-gray-200 rounded-xl focus:border-gray-900 outline-none transition-colors"
-                                placeholder="https://..."
-                            />
-                            <p className="text-xs text-gray-400 mt-2">✨ Recomendado: PNG transparente ou GIF animado</p>
-                        </div>
-                        <div className="flex items-center justify-center p-4 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
-                            {config.headerImage ? (
-                                <img src={config.headerImage} className="h-16 object-contain" alt="Preview" />
-                            ) : (
-                                <span className="text-xs text-gray-400">Sem Logo</span>
-                            )}
-                        </div>
-                    </div>
-
                     {/* Header Background Config */}
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-3">Fundo do Header</label>
