@@ -15,9 +15,19 @@ export default function CheckoutPage() {
         if (cart.length > 0) {
             const restaurantId = cart[0].restaurantId;
             if (restaurantId) {
-                fetch(`/api/restaurants?id=${restaurantId}`)
+                // Add cache-busting parameter to ensure fresh data
+                fetch(`/api/restaurants?id=${restaurantId}&t=${Date.now()}`)
                     .then(res => res.json())
-                    .then(data => setRestaurant(data))
+                    .then(data => {
+                        console.log('🍽️ Restaurant data loaded:', data);
+                        console.log('🔍 Geolocation fields:', {
+                            latitude: data.latitude,
+                            longitude: data.longitude,
+                            deliveryRadius: data.deliveryRadius,
+                            hasAll: !!(data.latitude && data.longitude && data.deliveryRadius)
+                        });
+                        setRestaurant(data);
+                    })
                     .catch(console.error);
             }
         }
