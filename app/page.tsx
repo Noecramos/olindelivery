@@ -32,27 +32,32 @@ function MarketplaceContent() {
   }, [searchParams, router]);
 
   // Loading Splash Screen Logic - Only show once per session
-  const [loading, setLoading] = useState(() => {
-    // Check if splash has been shown in this session
-    if (typeof window !== 'undefined') {
-      return !sessionStorage.getItem('splashShown');
-    }
-    return true;
-  });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (loading) {
-      // Mark splash as shown and hide after delay
-      const timer = setTimeout(() => {
+    // Prevent hydration mismatch by checking session only on client mount
+    if (typeof window !== 'undefined') {
+      const hasShownSplash = sessionStorage.getItem('splashShown');
+      if (hasShownSplash) {
         setLoading(false);
-        if (typeof window !== 'undefined') {
+      } else {
+        const timer = setTimeout(() => {
+          setLoading(false);
           sessionStorage.setItem('splashShown', 'true');
-        }
-      }, 2000);
-      return () => clearTimeout(timer);
+        }, 2000);
+        return () => clearTimeout(timer);
+      }
     }
-  }, [loading]);
+  }, []);
 
+  const safeJsonParse = (str: string) => {
+    try {
+      return JSON.parse(str);
+    } catch (e) {
+      console.error("Failed to parse featuredItems", e);
+      return [];
+    }
+  };
 
   useEffect(() => {
     fetch('/api/restaurants')
@@ -188,7 +193,7 @@ function MarketplaceContent() {
           <div className="flex gap-4 overflow-x-auto no-scrollbar px-6 pb-2">
             {/* Mock Items for Demo Style matching image */}
             {(config.featuredItems && config.featuredItems.length > 0
-              ? (typeof config.featuredItems === 'string' ? JSON.parse(config.featuredItems) : config.featuredItems)
+              ? (typeof config.featuredItems === 'string' ? safeJsonParse(config.featuredItems) : config.featuredItems)
               : [
                 { id: 'p1', name: 'Pizza Calabresa', price: 16.00, bg: 'bg-[#FFF4C3]', icon: '🍕', link: '/loja/olin-burgers' },
                 { id: 'p2', name: 'Bolognesa', price: 22.00, bg: 'bg-[#FFE4E6]', icon: '🍝', link: '/loja/olin-burgers' },
