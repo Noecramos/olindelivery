@@ -9,7 +9,9 @@ export default function GlobalConfigForm() {
         welcomeSubtitle: '',
         popularTitle: '',
         footerText: '',
-        headerBgColor: ''
+        headerBgColor: '',
+        headerBackgroundType: 'color',
+        headerBackgroundImage: ''
     });
     const [loading, setLoading] = useState(false);
 
@@ -85,21 +87,50 @@ export default function GlobalConfigForm() {
             </div>
 
             <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Cor de Fundo do Header</label>
-                <div className="flex gap-4">
-                    <input
-                        type="color"
-                        value={config.headerBgColor || '#ffffff'}
-                        onChange={e => setConfig({ ...config, headerBgColor: e.target.value })}
-                        className="h-14 w-14 p-1 bg-gray-50 border-2 border-gray-100 rounded-xl cursor-pointer"
-                    />
-                    <input
-                        value={config.headerBgColor}
-                        onChange={e => setConfig({ ...config, headerBgColor: e.target.value })}
-                        className="flex-1 p-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-red-500 outline-none"
-                        placeholder="#ffffff"
-                    />
+                <label className="block text-sm font-bold text-gray-700 mb-2">Estilo do Header</label>
+                <div className="flex gap-4 mb-4">
+                    <button
+                        onClick={() => setConfig({ ...config, headerBackgroundType: 'color' })}
+                        className={`px-4 py-2 rounded-lg font-bold transition-all ${config.headerBackgroundType === 'color' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-400'}`}
+                    >
+                        Cor Sólida
+                    </button>
+                    <button
+                        onClick={() => setConfig({ ...config, headerBackgroundType: 'image' })}
+                        className={`px-4 py-2 rounded-lg font-bold transition-all ${config.headerBackgroundType === 'image' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-400'}`}
+                    >
+                        Imagem de Fundo
+                    </button>
                 </div>
+
+                {config.headerBackgroundType === 'image' ? (
+                    <div>
+                        <input
+                            value={config.headerBackgroundImage}
+                            onChange={e => setConfig({ ...config, headerBackgroundImage: e.target.value })}
+                            className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-red-500 outline-none"
+                            placeholder="URL da Imagem (Ex: https://imgur.com/example.png)"
+                        />
+                        {config.headerBackgroundImage && (
+                            <div className="mt-4 h-24 rounded-xl bg-cover bg-center border border-gray-200" style={{ backgroundImage: `url('${config.headerBackgroundImage}')` }} />
+                        )}
+                    </div>
+                ) : (
+                    <div className="flex gap-4">
+                        <input
+                            type="color"
+                            value={config.headerBgColor || '#FFD700'}
+                            onChange={e => setConfig({ ...config, headerBgColor: e.target.value })}
+                            className="h-14 w-14 p-1 bg-gray-50 border-2 border-gray-100 rounded-xl cursor-pointer"
+                        />
+                        <input
+                            value={config.headerBgColor}
+                            onChange={e => setConfig({ ...config, headerBgColor: e.target.value })}
+                            className="flex-1 p-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-red-500 outline-none"
+                            placeholder="#FFD700"
+                        />
+                    </div>
+                )}
             </div>
 
             <div>
