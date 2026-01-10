@@ -55,8 +55,26 @@ export default function RegisterRestaurant() {
         setLoading(true);
 
         try {
-            // Auto-generate slug if empty (though field is there)
-            const finalSlug = form.slug || form.name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+            // Auto-generate shorter slug from restaurant name
+            let finalSlug = form.slug;
+            if (!finalSlug) {
+                // Split name into words and clean them
+                const words = form.name
+                    .toLowerCase()
+                    .replace(/[^\w\s-]/g, '') // Remove special chars except spaces and hyphens
+                    .split(/\s+/) // Split by spaces
+                    .filter(word => word.length > 0); // Remove empty strings
+
+                // Create slug from first and last word (or just first if only one word)
+                if (words.length === 1) {
+                    finalSlug = words[0];
+                } else if (words.length === 2) {
+                    finalSlug = words.join('-');
+                } else {
+                    // Use first and last word for names with 3+ words
+                    finalSlug = `${words[0]}-${words[words.length - 1]}`;
+                }
+            }
 
             const submitData = { ...form, slug: finalSlug };
 
