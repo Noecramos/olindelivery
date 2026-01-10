@@ -91,8 +91,17 @@ export default function CheckoutPage() {
             const restData = await restRes.json();
             const restaurantPhone = restData.whatsapp || restData.phone || "5581995515777";
 
+            // Debug: Log restaurant geolocation data
+            console.log('🔍 Restaurant Geolocation Data:', {
+                deliveryRadius: restData.deliveryRadius,
+                latitude: restData.latitude,
+                longitude: restData.longitude,
+                hasAllFields: !!(restData.deliveryRadius && restData.latitude && restData.longitude)
+            });
+
             // Validate Delivery Area if configured
             if (restData.deliveryRadius && restData.latitude && restData.longitude) {
+                console.log('✅ Delivery validation ENABLED - checking distance...');
                 try {
                     // Get coordinates from CEP using ViaCEP + Nominatim
                     const cepClean = form.zipCode.replace(/\D/g, '');
@@ -132,7 +141,15 @@ export default function CheckoutPage() {
 
                         const maxRadius = parseFloat(restData.deliveryRadius);
 
+                        console.log('📏 Distance Calculation:', {
+                            customerCEP: form.zipCode,
+                            distance: distance.toFixed(2) + ' km',
+                            maxRadius: maxRadius + ' km',
+                            isWithinRange: distance <= maxRadius
+                        });
+
                         if (distance > maxRadius) {
+                            console.log('❌ BLOCKED: Customer outside delivery area');
                             alert(
                                 `Desculpe, você está fora da nossa área de entrega.\n\n` +
                                 `Distância: ${distance.toFixed(1)} km\n` +
@@ -141,6 +158,8 @@ export default function CheckoutPage() {
                             );
                             setLoading(false);
                             return;
+                        } else {
+                            console.log('✅ APPROVED: Customer within delivery area');
                         }
                     }
                 } catch (geoError) {
