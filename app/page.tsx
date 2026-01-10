@@ -81,15 +81,17 @@ function MarketplaceContent() {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
 
   // Derive unique categories from restaurants, filtering out invalid data (emails, etc)
-  const categories = ['Todos', ...Array.from(new Set(
-    restaurants.map(r => r.type)
-      .filter((t: any) => typeof t === 'string' && t.length > 0 && !t.includes('@') && t.length < 30)
-  ))].sort();
+  const forcedCategories = ['Lanches', 'Pizza', 'Hambúrguer', 'Açaí', 'Bebidas', 'Doces'];
+  const dynamicCategories = restaurants.map(r => r.type)
+    .filter((t: any) => typeof t === 'string' && t.length > 0 && !t.includes('@') && t.length < 30);
+
+  const categories = ['Todos', ...Array.from(new Set([...forcedCategories, ...dynamicCategories]))];
 
   const getCategoryIcon = (cat: string) => {
     const map: any = {
       'Todos': '🔥',
       'Lanches': '🍔',
+      'Hambúrguer': '🍔',
       'Pizza': '🍕',
       'Japonês': '🍣',
       'Doces': '🍰',
