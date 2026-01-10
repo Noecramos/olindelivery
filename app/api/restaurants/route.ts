@@ -197,12 +197,16 @@ export async function PUT(request: Request) {
 
             if (typeof body.deliveryTime !== 'undefined') updates.deliveryTime = body.deliveryTime;
 
-            if (body.name && body.name !== row.get('name')) {
+            if (body.name) {
                 const newSlug = body.name.toLowerCase()
                     .normalize('NFD').replace(/[\u0300-\u036f]/g, "")
                     .replace(/[^a-z0-9]+/g, '-')
                     .replace(/^-+|-+$/g, '');
-                updates.slug = newSlug;
+
+                // Update slug if name changed OR if current slug doesn't match expected slug (self-healing)
+                if (body.name !== row.get('name') || row.get('slug') !== newSlug) {
+                    updates.slug = newSlug;
+                }
             }
 
             // Allow updating other profile fields
