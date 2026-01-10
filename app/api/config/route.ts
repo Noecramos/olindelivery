@@ -1,24 +1,9 @@
-
-import { GoogleSpreadsheet } from 'google-spreadsheet';
-import { JWT } from 'google-auth-library';
+import { getSheetByTitle } from '@/lib/googleSheets';
 import { NextResponse } from 'next/server';
-
-async function getDoc() {
-    const serviceAccountAuth = new JWT({
-        email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-        key: process.env.GOOGLE_PRIVATE_KEY!.replace(/\\n/g, '\n'),
-        scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
-
-    const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_ID!, serviceAccountAuth);
-    await doc.loadInfo();
-    return doc;
-}
 
 export async function GET() {
     try {
-        const doc = await getDoc();
-        const sheet = doc.sheetsByTitle['GlobalConfig'];
+        const sheet = await getSheetByTitle('GlobalConfig');
         if (!sheet) return NextResponse.json({});
 
         const rows = await sheet.getRows();
@@ -29,19 +14,30 @@ export async function GET() {
         });
 
         return NextResponse.json(config);
-    } catch (error) {
+    } catch (error: any) {
         console.error('Config Fetch Error:', error);
-        return NextResponse.json({ error: 'Failed' }, { status: 500 });
+        return NextResponse.json({
+            error: 'Failed to fetch config',
+            details: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        }, { status: 500 });
     }
 }
 
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const doc = await getDoc();
-        const sheet = doc.sheetsByTitle['GlobalConfig'];
+        const sheet = await getSheetByTitle('GlobalConfig');
 
         if (!sheet) return NextResponse.json({ error: 'Sheet not found' }, { status: 500 });
+
+        // Ensure headers exist if it was auto-created without them
+        try {
+            await sheet.loadHeaderRow();
+        } catch (e) {
+            // If headers load fail (empty sheet), set them
+            await sheet.setHeaderRow(['key', 'value']);
+        }
 
         const rows = await sheet.getRows();
 
@@ -57,8 +53,11 @@ export async function POST(req: Request) {
         }
 
         return NextResponse.json({ success: true });
-    } catch (error) {
+    } catch (error: any) {
         console.error('Config Save Error:', error);
-        return NextResponse.json({ error: 'Failed' }, { status: 500 });
+        return NextResponse.json({
+            error: 'Failed to save config',
+            details: error.message
+        }, { status: 500 });
     }
 }
