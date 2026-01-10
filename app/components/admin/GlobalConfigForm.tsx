@@ -78,6 +78,7 @@ export default function GlobalConfigForm() {
                 body: JSON.stringify(payload)
             });
             alert('Configurações salvas!');
+            window.location.reload();
         } catch (e) {
             alert('Erro ao salvar');
         } finally {

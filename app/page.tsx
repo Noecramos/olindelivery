@@ -112,6 +112,17 @@ function MarketplaceContent() {
     return matchesSearch && matchesCategory;
   });
 
+  const pastelColors = [
+    'bg-[#FFF4C3]', // Yellow
+    'bg-[#FFE4E6]', // Pink
+    'bg-[#D1FAE5]', // Green
+    'bg-[#DBEAFE]', // Blue
+    'bg-[#F3E8FF]', // Purple
+    'bg-[#FFEDD5]', // Orange
+    'bg-[#E0F2F1]', // Teal
+    'bg-[#F1F8E9]', // Light Green
+  ];
+
   return (
     <div style={{ background: "#F2F4F8", minHeight: "100vh" }}>
       <main className="mobile-container relative bg-white pb-20">
@@ -202,7 +213,7 @@ function MarketplaceContent() {
                   setSelectedCategory(cat);
                   document.getElementById('restaurantes')?.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className={`category-tab ${selectedCategory === cat ? 'active' : ''}`}
+                className={`category-tab ${selectedCategory === cat ? 'active' : pastelColors[i % pastelColors.length]}`}
               >
                 {getCategoryIcon(cat)} {cat}
               </button>

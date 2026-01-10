@@ -397,14 +397,12 @@ body {
   padding: 8px 20px;
   border-radius: 25px;
   font-size: 13px;
-  font-weight: 500;
-  color: #666;
-  background: #FFF;
-  border: 1px solid #F0F0F0;
+  font-weight: 600;
+  color: #555;
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .category-tab.active {
