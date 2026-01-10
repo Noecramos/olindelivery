@@ -263,10 +263,50 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                         </div>
                     </div>
 
+                    <button
+                        type="button"
+                        onClick={async () => {
+                            if (!form.address) {
+                                alert('Por favor, preencha o endereço primeiro!');
+                                return;
+                            }
+
+                            setLoading(true);
+                            try {
+                                // Try to geocode the address
+                                const geoRes = await fetch(
+                                    `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(form.address + ', Brazil')}&format=json&limit=1`,
+                                    { headers: { 'User-Agent': 'OlinDelivery/1.0' } }
+                                );
+                                const geoData = await geoRes.json();
+
+                                if (geoData && geoData.length > 0) {
+                                    setForm({
+                                        ...form,
+                                        latitude: geoData[0].lat,
+                                        longitude: geoData[0].lon
+                                    });
+                                    alert('✅ Coordenadas obtidas com sucesso!');
+                                } else {
+                                    alert('❌ Não foi possível encontrar as coordenadas. Verifique se o endereço está completo (Rua, Número, Bairro, Cidade).');
+                                }
+                            } catch (error) {
+                                alert('❌ Erro ao buscar coordenadas. Tente novamente.');
+                            } finally {
+                                setLoading(false);
+                            }
+                        }}
+                        disabled={loading || !form.address}
+                        className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-3 px-4 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                        <span>📍</span>
+                        {loading ? 'Buscando coordenadas...' : 'Obter Coordenadas do Endereço Automaticamente'}
+                    </button>
+
                     <div className="mt-3 p-3 bg-white rounded-lg border border-blue-100">
                         <p className="text-xs text-gray-600">
-                            💡 <strong>Dica:</strong> Deixe as coordenadas em branco para preenchimento automático baseado no endereço,
-                            ou use <a href="https://www.google.com/maps" target="_blank" className="text-blue-600 underline">Google Maps</a> para obter coordenadas precisas.
+                            💡 <strong>Como usar:</strong> Preencha o endereço completo acima e clique no botão azul para obter as coordenadas automaticamente.
+                            Depois, defina o raio de entrega em km.
                         </p>
                     </div>
                 </div>
