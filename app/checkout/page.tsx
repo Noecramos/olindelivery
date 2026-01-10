@@ -106,9 +106,9 @@ export default function CheckoutPage() {
             });
 
             clearCart();
-            // Redirect to success page which handles the WhatsApp opening via window.location.href
-            // This is more reliable for iOS/Android deep links
-            router.push(`/order-success?link=${encodeURIComponent(link)}`);
+
+            // Open WhatsApp directly
+            window.location.href = link;
 
         } catch (e) {
             alert("Erro ao finalizar pedido.");
