@@ -455,7 +455,7 @@ export default function StoreAdmin() {
 
                 <nav className="flex md:flex-col gap-2 p-2 md:p-4 overflow-x-auto md:overflow-visible no-scrollbar">
                     <button onClick={() => setTab('dashboard')} className={`p-3 rounded-xl transition-all flex items-center gap-3 ${tab === 'dashboard' ? 'bg-red-50 text-[#EA1D2C] font-bold shadow-sm' : 'hover:bg-gray-100 text-gray-600'}`}>
-                        <span className="text-xl">📊</span> <span className="hidden lg:block">Dashboard</span>
+                        <span className="text-xl">📊</span> <span className="hidden lg:block">Painel</span>
                     </button>
                     <button onClick={() => setTab('products')} className={`p-3 rounded-xl transition-all flex items-center gap-3 ${tab === 'products' ? 'bg-red-50 text-[#EA1D2C] font-bold shadow-sm' : 'hover:bg-gray-100 text-gray-600'}`}>
                         <span className="text-xl">🍔</span> <span className="hidden lg:block">Produtos</span>
