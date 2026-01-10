@@ -339,7 +339,7 @@ export default function StoreAdmin() {
                                                             {/* Compact Header */}
                                                             <div className="flex justify-between items-center mb-3">
                                                                 <div className="flex items-center gap-3">
-                                                                    <span className="text-xl font-black text-gray-900">#{order.ticketNumber || '...'}</span>
+                                                                    <span className="text-xl font-black text-[#EA1D2C]">#{order.ticketNumber || '...'}</span>
                                                                     <span className="text-xs text-gray-400">
                                                                         {(() => {
                                                                             try {
@@ -361,6 +361,8 @@ export default function StoreAdmin() {
                                                                             order.status === 'sent' ? 'Enviado' : order.status}
                                                                 </span>
                                                             </div>
+
+                                                            <hr className="border-gray-200 mb-3" />
 
                                                             {/* Customer Info - Compact */}
                                                             <div className="mb-3 text-sm">
@@ -447,7 +449,7 @@ export default function StoreAdmin() {
                                                 {orders.filter(o => {
                                                     const status = o.status?.toLowerCase() || '';
                                                     const isCompleted = ['sent', 'delivered', 'cancelled'].includes(status);
-                                                    
+
                                                     if (showHistory) return true;
                                                     if (isCompleted) return false; // Match main filter
 

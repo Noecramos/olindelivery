@@ -157,7 +157,7 @@ export default function RegisterRestaurant() {
                                 <input
                                     id="responsibleName"
                                     name="responsibleName"
-                                    className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                    className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
                                     value={form.responsibleName}
                                     onChange={e => setForm({ ...form, responsibleName: e.target.value })}
                                     required
@@ -169,7 +169,7 @@ export default function RegisterRestaurant() {
                                     id="email"
                                     name="email"
                                     type="email"
-                                    className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                    className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
                                     value={form.email}
                                     onChange={e => setForm({ ...form, email: e.target.value })}
                                     required
@@ -183,7 +183,7 @@ export default function RegisterRestaurant() {
                                 <input
                                     id="whatsapp"
                                     name="whatsapp"
-                                    className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                    className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
                                     placeholder="(81) 99999-9999"
                                     value={(() => {
                                         // Format for display: (XX) XXXXX-XXXX
@@ -206,7 +206,7 @@ export default function RegisterRestaurant() {
                                 <input
                                     id="pixKey"
                                     name="pixKey"
-                                    className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                    className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
                                     placeholder="CPF, CNPJ, Email, Telefone ou Aleatória"
                                     value={form.pixKey}
                                     onChange={e => setForm({ ...form, pixKey: e.target.value })}
@@ -220,7 +220,7 @@ export default function RegisterRestaurant() {
                                 <input
                                     id="instagram"
                                     name="instagram"
-                                    className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                    className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
                                     placeholder="@loja"
                                     value={form.instagram}
                                     onChange={e => setForm({ ...form, instagram: e.target.value })}
@@ -235,7 +235,7 @@ export default function RegisterRestaurant() {
                                 <input
                                     id="zipCode"
                                     name="zipCode"
-                                    className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                    className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
                                     placeholder="00000-000"
                                     value={form.zipCode}
                                     onChange={e => setForm({ ...form, zipCode: e.target.value })}
@@ -247,7 +247,7 @@ export default function RegisterRestaurant() {
                                 <input
                                     id="address"
                                     name="address"
-                                    className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
+                                    className="w-full p-3 bg-white border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-[#EA1D2C]"
                                     value={form.address}
                                     onChange={e => setForm({ ...form, address: e.target.value })}
                                     required
