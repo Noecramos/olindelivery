@@ -59,19 +59,7 @@ export default function StoreFront() {
 
     return (
         <main style={{ paddingBottom: "100px", minHeight: "100vh" }}>
-            {/* Top Bar */}
-            <div className="fixed top-0 left-0 right-0 z-50 p-4 flex items-center justify-between pointer-events-none">
-                <button
-                    onClick={() => router.push('/')}
-                    className="bg-white/90 backdrop-blur-md p-3 rounded-full shadow-lg text-gray-800 hover:bg-white transition-all border border-gray-200 pointer-events-auto"
-                    aria-label="Voltar"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M19 12H5M12 19l-7-7 7-7" />
-                    </svg>
-                </button>
 
-            </div>
             {/* Pass dynamic data to header if needed, for now resizing to match */}
             <RestaurantHeader
                 name={restaurant.name}
