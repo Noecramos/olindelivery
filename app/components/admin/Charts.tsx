@@ -51,7 +51,7 @@ export function SalesChart({ data }: { data: any[] }) {
                         contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                         cursor={{ stroke: '#EA1D2C', strokeWidth: 1 }}
                     />
-                    <Line type="monotone" dataKey="sales" stroke="#EA1D2C" strokeWidth={3} dot={{ r: 4, fill: '#EA1D2C', strokeWidth: 2, stroke: '#fff' }} />
+                    <Line type="monotone" dataKey="vendas" stroke="#EA1D2C" strokeWidth={3} dot={{ r: 4, fill: '#EA1D2C', strokeWidth: 2, stroke: '#fff' }} />
                 </LineChart>
             </ResponsiveContainer>
         </div>

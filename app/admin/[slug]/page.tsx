@@ -73,18 +73,18 @@ export default function StoreAdmin() {
         }
         return {
             date: dateObj.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
-            sales: o.total,
+            vendas: o.total,
             rawDate: dateObj
         };
     }).reduce((acc: any[], curr) => {
         const found = acc.find(x => x.date === curr.date);
-        if (found) found.sales += curr.sales;
+        if (found) found.vendas += curr.vendas;
         else acc.push(curr);
         return acc;
     }, [])
         .sort((a: any, b: any) => a.rawDate - b.rawDate)
         .slice(-7)
-        .map(x => ({ date: x.date, sales: x.sales }));
+        .map(x => ({ date: x.date, vendas: x.vendas }));
 
     const topProducts = orders.flatMap(o => o.items).reduce((acc: any, item: any) => {
         acc[item.name] = (acc[item.name] || 0) + item.quantity;
@@ -314,9 +314,9 @@ export default function StoreAdmin() {
                                                                     </span>
                                                                 </div>
                                                                 <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                                                                        order.status === 'preparing' ? 'bg-blue-100 text-blue-700' :
-                                                                            order.status === 'sent' ? 'bg-green-100 text-green-700' :
-                                                                                'bg-gray-100 text-gray-600'
+                                                                    order.status === 'preparing' ? 'bg-blue-100 text-blue-700' :
+                                                                        order.status === 'sent' ? 'bg-green-100 text-green-700' :
+                                                                            'bg-gray-100 text-gray-600'
                                                                     }`}>
                                                                     {order.status === 'pending' ? 'Pendente' :
                                                                         order.status === 'preparing' ? 'Preparo' :
