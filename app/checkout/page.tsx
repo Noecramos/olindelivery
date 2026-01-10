@@ -96,76 +96,141 @@ export default function CheckoutPage() {
                 deliveryRadius: restData.deliveryRadius,
                 latitude: restData.latitude,
                 longitude: restData.longitude,
-                hasAllFields: !!(restData.deliveryRadius && restData.latitude && restData.longitude)
+                hasAllFields: !!(restData.deliveryRadius && restData.latitude && restData.longitude),
+                rawData: {
+                    deliveryRadius: restData.deliveryRadius,
+                    latitude: restData.latitude,
+                    longitude: restData.longitude
+                }
             });
 
             // Validate Delivery Area if configured
             if (restData.deliveryRadius && restData.latitude && restData.longitude) {
-                console.log('✅ Delivery validation ENABLED - checking distance...');
-                try {
-                    // Get coordinates from CEP using ViaCEP + Nominatim
-                    const cepClean = form.zipCode.replace(/\D/g, '');
-                    const cepRes = await fetch(`https://viacep.com.br/ws/${cepClean}/json/`);
-                    const cepData = await cepRes.json();
+                // Validate coordinate format
+                const lat = parseFloat(restData.latitude);
+                const lon = parseFloat(restData.longitude);
+                const radius = parseFloat(restData.deliveryRadius);
 
-                    if (cepData.erro) {
-                        alert('CEP inválido. Por favor, verifique o CEP informado.');
-                        setLoading(false);
-                        return;
-                    }
+                // Check if coordinates are valid numbers
+                if (isNaN(lat) || isNaN(lon) || isNaN(radius)) {
+                    console.error('❌ Invalid coordinate format detected!');
+                    console.error('Parsed values:', { lat, lon, radius });
+                    console.error('⚠️ Geolocation validation DISABLED due to invalid data');
+                    console.error('Please reconfigure coordinates in Admin Panel → Settings');
+                } else if (lat < -33.75 || lat > 5.27 || lon < -73.99 || lon > -28.84) {
+                    // Check if coordinates are within Brazil's bounds
+                    console.error('❌ Coordinates outside Brazil\'s valid range!');
+                    console.error('Current:', { lat, lon });
+                    console.error('Valid range: Lat: -33.75 to 5.27, Lon: -73.99 to -28.84');
+                    console.error('⚠️ Geolocation validation DISABLED due to invalid coordinates');
+                    console.error('Please reconfigure coordinates in Admin Panel → Settings');
+                } else {
+                    console.log('✅ Delivery validation ENABLED - checking distance...');
+                    console.log('📍 Restaurant Location:', {
+                        lat: restData.latitude,
+                        lon: restData.longitude,
+                        radius: restData.deliveryRadius + ' km'
+                    });
 
-                    // Get coordinates from address
-                    const fullAddress = `${cepData.logradouro}, ${cepData.bairro}, ${cepData.localidade}, ${cepData.uf}, Brazil`;
-                    const geoRes = await fetch(
-                        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(fullAddress)}&format=json&limit=1`,
-                        { headers: { 'User-Agent': 'OlinDelivery/1.0' } }
-                    );
-                    const geoData = await geoRes.json();
+                    try {
+                        // Get coordinates from CEP using ViaCEP + Nominatim
+                        const cepClean = form.zipCode.replace(/\D/g, '');
+                        console.log('🔎 Looking up CEP:', cepClean);
 
-                    if (geoData && geoData.length > 0) {
-                        const customerLat = parseFloat(geoData[0].lat);
-                        const customerLon = parseFloat(geoData[0].lon);
-                        const restaurantLat = parseFloat(restData.latitude);
-                        const restaurantLon = parseFloat(restData.longitude);
+                        const cepRes = await fetch(`https://viacep.com.br/ws/${cepClean}/json/`);
+                        const cepData = await cepRes.json();
 
-                        // Calculate distance using Haversine formula
-                        const R = 6371; // Earth's radius in km
-                        const dLat = (customerLat - restaurantLat) * Math.PI / 180;
-                        const dLon = (customerLon - restaurantLon) * Math.PI / 180;
-                        const a =
-                            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                            Math.cos(restaurantLat * Math.PI / 180) * Math.cos(customerLat * Math.PI / 180) *
-                            Math.sin(dLon / 2) * Math.sin(dLon / 2);
-                        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                        const distance = R * c;
+                        console.log('📮 ViaCEP Response:', cepData);
 
-                        const maxRadius = parseFloat(restData.deliveryRadius);
-
-                        console.log('📏 Distance Calculation:', {
-                            customerCEP: form.zipCode,
-                            distance: distance.toFixed(2) + ' km',
-                            maxRadius: maxRadius + ' km',
-                            isWithinRange: distance <= maxRadius
-                        });
-
-                        if (distance > maxRadius) {
-                            console.log('❌ BLOCKED: Customer outside delivery area');
-                            alert(
-                                `Desculpe, você está fora da nossa área de entrega.\n\n` +
-                                `Distância: ${distance.toFixed(1)} km\n` +
-                                `Raio máximo: ${maxRadius} km\n\n` +
-                                `Por favor, entre em contato conosco para verificar possibilidades.`
-                            );
+                        if (cepData.erro) {
+                            console.error('❌ Invalid CEP');
+                            alert('CEP inválido. Por favor, verifique o CEP informado.');
                             setLoading(false);
                             return;
-                        } else {
-                            console.log('✅ APPROVED: Customer within delivery area');
                         }
+
+                        // Get coordinates from address
+                        const fullAddress = `${cepData.logradouro}, ${cepData.bairro}, ${cepData.localidade}, ${cepData.uf}, Brazil`;
+                        console.log('🌍 Geocoding address:', fullAddress);
+
+                        const geoRes = await fetch(
+                            `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(fullAddress)}&format=json&limit=1`,
+                            { headers: { 'User-Agent': 'OlinDelivery/1.0' } }
+                        );
+                        const geoData = await geoRes.json();
+
+                        console.log('🗺️ Nominatim Response:', geoData);
+
+                        if (geoData && geoData.length > 0) {
+                            const customerLat = parseFloat(geoData[0].lat);
+                            const customerLon = parseFloat(geoData[0].lon);
+                            const restaurantLat = parseFloat(restData.latitude);
+                            const restaurantLon = parseFloat(restData.longitude);
+
+                            console.log('📊 Coordinates:', {
+                                customer: { lat: customerLat, lon: customerLon },
+                                restaurant: { lat: restaurantLat, lon: restaurantLon }
+                            });
+
+                            // Calculate distance using Haversine formula
+                            const R = 6371; // Earth's radius in km
+                            const dLat = (customerLat - restaurantLat) * Math.PI / 180;
+                            const dLon = (customerLon - restaurantLon) * Math.PI / 180;
+                            const a =
+                                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                                Math.cos(restaurantLat * Math.PI / 180) * Math.cos(customerLat * Math.PI / 180) *
+                                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                            const distance = R * c;
+
+                            const maxRadius = parseFloat(restData.deliveryRadius);
+
+                            console.log('📏 Distance Calculation:', {
+                                customerCEP: form.zipCode,
+                                customerAddress: fullAddress,
+                                distance: distance.toFixed(2) + ' km',
+                                maxRadius: maxRadius + ' km',
+                                isWithinRange: distance <= maxRadius,
+                                willBlock: distance > maxRadius
+                            });
+
+                            if (distance > maxRadius) {
+                                console.error('❌ BLOCKED: Customer outside delivery area');
+                                console.error('Distance:', distance.toFixed(2), 'km > Max:', maxRadius, 'km');
+                                alert(
+                                    `🚫 Desculpe, você está fora da nossa área de entrega.\n\n` +
+                                    `📍 Seu endereço: ${cepData.bairro}, ${cepData.localidade}\n` +
+                                    `📏 Distância: ${distance.toFixed(1)} km\n` +
+                                    `🎯 Raio máximo de entrega: ${maxRadius} km\n\n` +
+                                    `💬 Por favor, entre em contato conosco pelo WhatsApp para verificar possibilidades de entrega.`
+                                );
+                                setLoading(false);
+                                return;
+                            } else {
+                                console.log('✅ APPROVED: Customer within delivery area');
+                                console.log('Distance:', distance.toFixed(2), 'km ≤ Max:', maxRadius, 'km');
+                            }
+                        } else {
+                            console.warn('⚠️ Could not geocode address - allowing order to proceed');
+                            console.warn('This may happen if the address is too generic or not found in OSM database');
+                        }
+                    } catch (geoError) {
+                        console.error('❌ Geolocation validation error:', geoError);
+                        console.error('Error details:', {
+                            message: geoError instanceof Error ? geoError.message : 'Unknown error',
+                            stack: geoError instanceof Error ? geoError.stack : undefined
+                        });
+                        // Continue with order if geolocation fails (don't block customer)
+                        console.warn('⚠️ Allowing order to proceed despite geolocation error');
                     }
-                } catch (geoError) {
-                    console.error('Geolocation validation error:', geoError);
-                    // Continue with order if geolocation fails (don't block customer)
                 }
+            } else {
+                console.log('ℹ️ Delivery radius validation DISABLED (missing configuration)');
+                console.log('Missing fields:', {
+                    deliveryRadius: !restData.deliveryRadius,
+                    latitude: !restData.latitude,
+                    longitude: !restData.longitude
+                });
             }
 
             const orderData = {
@@ -242,6 +307,12 @@ export default function CheckoutPage() {
             <div className="flex-1 flex flex-col items-center px-4 md:px-8 lg:px-12 pb-10 pt-8 z-10 relative">
                 <div className="text-center mb-6">
                     <h1 className="text-2xl font-bold text-gray-800">Finalizar Pedido</h1>
+                    {restaurant?.deliveryRadius && restaurant?.latitude && restaurant?.longitude && (
+                        <div className="mt-2 inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-700 px-3 py-1.5 rounded-full text-xs font-medium">
+                            <span>📍</span>
+                            <span>Validação de área de entrega ativa ({restaurant.deliveryRadius} km)</span>
+                        </div>
+                    )}
                 </div>
 
                 <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden glass">
