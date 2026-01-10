@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-export default function StarRating({ restaurantId, initialSum, initialCount }: { restaurantId: string, initialSum: number, initialCount: number }) {
+export default function StarRating({ restaurantId, initialSum, initialCount, readonly = false }: { restaurantId: string, initialSum: number, initialCount: number, readonly?: boolean }) {
     const [stats, setStats] = useState({ sum: initialSum || 0, count: initialCount || 0 });
     const [userRating, setUserRating] = useState(0);
     const [hover, setHover] = useState(0);
@@ -14,7 +14,7 @@ export default function StarRating({ restaurantId, initialSum, initialCount }: {
         e.preventDefault();
         e.stopPropagation(); // Prevent card navigation
 
-        if (loading) return;
+        if (loading || readonly) return;
         setLoading(true);
 
         try {
@@ -46,10 +46,10 @@ export default function StarRating({ restaurantId, initialSum, initialCount }: {
                 {[1, 2, 3, 4, 5].map((star) => (
                     <span
                         key={star}
-                        className={`cursor-pointer text-xl transition-colors ${star <= (hover || userRating || Math.round(stats.count > 0 ? stats.sum / stats.count : 0)) ? 'text-yellow-500' : 'text-gray-300'}`}
-                        onMouseEnter={() => setHover(star)}
-                        onMouseLeave={() => setHover(0)}
-                        onClick={(e) => handleRate(star, e)}
+                        className={`text-xl transition-colors ${readonly ? '' : 'cursor-pointer'} ${star <= (hover || userRating || Math.round(stats.count > 0 ? stats.sum / stats.count : 0)) ? 'text-yellow-500' : 'text-gray-300'}`}
+                        onMouseEnter={() => !readonly && setHover(star)}
+                        onMouseLeave={() => !readonly && setHover(0)}
+                        onClick={(e) => !readonly && handleRate(star, e)}
                     >
                         ★
                     </span>

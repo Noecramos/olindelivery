@@ -24,14 +24,27 @@ function MarketplaceContent() {
     }
   }, [searchParams, router]);
 
-  // Loading Splash Screen Logic
-  const [loading, setLoading] = useState(true);
+  // Loading Splash Screen Logic - Only show once per session
+  const [loading, setLoading] = useState(() => {
+    // Check if splash has been shown in this session
+    if (typeof window !== 'undefined') {
+      return !sessionStorage.getItem('splashShown');
+    }
+    return true;
+  });
 
   useEffect(() => {
-    // Simulate loading or wait for resources
-    const timer = setTimeout(() => setLoading(false), 2000);
-    return () => clearTimeout(timer);
-  }, []);
+    if (loading) {
+      // Mark splash as shown and hide after delay
+      const timer = setTimeout(() => {
+        setLoading(false);
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('splashShown', 'true');
+        }
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [loading]);
 
 
   useEffect(() => {
@@ -157,7 +170,7 @@ function MarketplaceContent() {
                   <div className="flex-1">
                     <h3 className="font-bold text-gray-800 text-base">{rest.name}</h3>
                     <div className="flex flex-col items-start gap-1 mt-1">
-                      <StarRating restaurantId={rest.id} initialSum={rest.ratingSum} initialCount={rest.ratingCount} />
+                      <StarRating restaurantId={rest.id} initialSum={rest.ratingSum} initialCount={rest.ratingCount} readonly={true} />
                       <span className="text-xs text-gray-400 font-medium ml-1">{rest.deliveryTime || '30-45m'}</span>
                     </div>
                   </div>
