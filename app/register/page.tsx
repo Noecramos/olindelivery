@@ -76,7 +76,13 @@ export default function RegisterRestaurant() {
                 }
             }
 
-            const submitData = { ...form, slug: finalSlug };
+            // Ensure WhatsApp number has country code (55 for Brazil)
+            let finalWhatsapp = form.whatsapp.replace(/\D/g, ''); // Clean digits
+            if (!finalWhatsapp.startsWith('55') && finalWhatsapp.length > 0) {
+                finalWhatsapp = '55' + finalWhatsapp;
+            }
+
+            const submitData = { ...form, slug: finalSlug, whatsapp: finalWhatsapp };
 
             console.log('=== Submitting Restaurant Registration ===');
             console.log('Form data:', {
@@ -193,7 +199,7 @@ export default function RegisterRestaurant() {
                                     maxLength={15}
                                     required
                                 />
-                                <p className="text-xs text-gray-500 mt-1">Formato: (DDD) 99999-9999</p>
+                                <p className="text-xs text-gray-500 mt-1">Código do país (+55) será adicionado automaticamente</p>
                             </div>
                             <div>
                                 <label htmlFor="instagram" className="block text-sm font-bold text-gray-700 mb-1">Instagram (Opcional)</label>
