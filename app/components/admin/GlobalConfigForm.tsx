@@ -8,7 +8,8 @@ export default function GlobalConfigForm() {
         welcomeTitle: '',
         welcomeSubtitle: '',
         popularTitle: '',
-        footerText: ''
+        footerText: '',
+        headerBgColor: ''
     });
     const [loading, setLoading] = useState(false);
 
@@ -79,6 +80,24 @@ export default function GlobalConfigForm() {
                         onChange={e => setConfig({ ...config, footerText: e.target.value })}
                         className="w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-red-500 outline-none"
                         placeholder="© 2025..."
+                    />
+                </div>
+            </div>
+
+            <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">Cor de Fundo do Header</label>
+                <div className="flex gap-4">
+                    <input
+                        type="color"
+                        value={config.headerBgColor || '#ffffff'}
+                        onChange={e => setConfig({ ...config, headerBgColor: e.target.value })}
+                        className="h-14 w-14 p-1 bg-gray-50 border-2 border-gray-100 rounded-xl cursor-pointer"
+                    />
+                    <input
+                        value={config.headerBgColor}
+                        onChange={e => setConfig({ ...config, headerBgColor: e.target.value })}
+                        className="flex-1 p-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:border-red-500 outline-none"
+                        placeholder="#ffffff"
                     />
                 </div>
             </div>

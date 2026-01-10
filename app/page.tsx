@@ -16,7 +16,8 @@ function MarketplaceContent() {
     headerImage: 'https://i.imgur.com/Fyccvly.gif',
     welcomeTitle: 'O que vamos\npedir hoje?',
     welcomeSubtitle: 'Entregar em Casa',
-    footerText: '© 2025 OlindAki Delivery'
+    footerText: '© 2025 OlindAki Delivery',
+    headerBgColor: '#FFD700'
   });
 
   useEffect(() => {
@@ -81,8 +82,10 @@ function MarketplaceContent() {
     <div style={{ background: "#F2F4F8", minHeight: "100vh" }}>
       <main className="mobile-container relative bg-white pb-20">
         {/* Top Bar */}
-        {/* Top Bar */}
-        <div className="pt-8 px-6 pb-4 flex justify-center items-center bg-white sticky top-0 z-40 bg-opacity-95 backdrop-blur-sm">
+        <div
+          className="pt-8 px-6 pb-4 flex justify-center items-center sticky top-0 z-40 bg-opacity-95 backdrop-blur-sm transition-colors duration-300"
+          style={{ backgroundColor: config.headerBgColor || '#FFD700' }}
+        >
           <Image
             src={config.headerImage || "https://i.imgur.com/Fyccvly.gif"}
             alt="OlinDelivery Logo"
