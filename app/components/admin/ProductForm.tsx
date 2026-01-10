@@ -66,7 +66,7 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
             <div className="space-y-4">
                 {/* Image Upload Area */}
                 <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:bg-gray-50 transition-colors bg-white">
-                    <input type="file" id="prod-img" accept="image/*" onChange={handleUpload} className="hidden" />
+                    <input type="file" id="prod-img" name="image" accept="image/*" onChange={handleUpload} className="hidden" />
                     <label htmlFor="prod-img" className="cursor-pointer block">
                         {form.image ? (
                             <div className="relative h-40 w-full">
@@ -84,8 +84,10 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
 
                 {/* Input Fields */}
                 <div>
-                    <label className="text-xs font-semibold text-gray-500 uppercase ml-1">Nome do Produto</label>
+                    <label htmlFor="productName" className="text-xs font-semibold text-gray-500 uppercase ml-1">Nome do Produto</label>
                     <input
+                        id="productName"
+                        name="productName"
                         className="w-full p-3 bg-gray-50 rounded-xl border border-transparent focus:bg-white focus:border-blue-500 outline-none transition-all"
                         placeholder="Ex: X-Bacon Supremo"
                         value={form.name}
@@ -96,8 +98,10 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
 
                 <div className="flex gap-4">
                     <div className="flex-1">
-                        <label className="text-xs font-semibold text-gray-500 uppercase ml-1">Preço (R$)</label>
+                        <label htmlFor="productPrice" className="text-xs font-semibold text-gray-500 uppercase ml-1">Preço (R$)</label>
                         <input
+                            id="productPrice"
+                            name="productPrice"
                             className="w-full p-3 bg-gray-50 rounded-xl border border-transparent focus:bg-white focus:border-blue-500 outline-none transition-all"
                             placeholder="0,00"
                             type="number" step="0.01"
@@ -107,8 +111,10 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                         />
                     </div>
                     <div className="flex-1">
-                        <label className="text-xs font-semibold text-gray-500 uppercase ml-1">Categoria</label>
+                        <label htmlFor="productCategory" className="text-xs font-semibold text-gray-500 uppercase ml-1">Categoria</label>
                         <select
+                            id="productCategory"
+                            name="productCategory"
                             className="w-full p-3 bg-gray-50 rounded-xl border border-transparent focus:bg-white focus:border-blue-500 outline-none transition-all appearance-none"
                             value={form.categoryId}
                             onChange={e => setForm({ ...form, categoryId: e.target.value })}
@@ -123,8 +129,10 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                 </div>
 
                 <div>
-                    <label className="text-xs font-semibold text-gray-500 uppercase ml-1">Descrição</label>
+                    <label htmlFor="productDescription" className="text-xs font-semibold text-gray-500 uppercase ml-1">Descrição</label>
                     <textarea
+                        id="productDescription"
+                        name="productDescription"
                         className="w-full p-3 bg-gray-50 rounded-xl border border-transparent focus:bg-white focus:border-blue-500 outline-none transition-all"
                         placeholder="Ingredientes, detalhes, etc."
                         rows={3}
