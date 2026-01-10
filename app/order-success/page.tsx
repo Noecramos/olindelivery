@@ -156,14 +156,6 @@ function SuccessContent() {
                                     >
                                         Abrir WhatsApp e Colar
                                     </a>
-
-                                    {/* Phone Number Display */}
-                                    <div className="bg-white border border-gray-200 rounded-lg p-3">
-                                        <p className="text-xs text-gray-600 mb-1">Ou ligue/envie SMS:</p>
-                                        <a href={`tel:+${phoneNumber}`} className="text-blue-600 font-mono font-bold">
-                                            +{phoneNumber}
-                                        </a>
-                                    </div>
                                 </div>
                             </div>
                         )}
