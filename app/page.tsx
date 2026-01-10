@@ -37,15 +37,20 @@ function MarketplaceContent() {
   useEffect(() => {
     // Prevent hydration mismatch by checking session only on client mount
     if (typeof window !== 'undefined') {
-      const hasShownSplash = sessionStorage.getItem('splashShown');
-      if (hasShownSplash) {
-        setLoading(false);
-      } else {
-        const timer = setTimeout(() => {
+      try {
+        const hasShownSplash = sessionStorage.getItem('splashShown');
+        if (hasShownSplash) {
           setLoading(false);
-          sessionStorage.setItem('splashShown', 'true');
-        }, 2000);
-        return () => clearTimeout(timer);
+        } else {
+          const timer = setTimeout(() => {
+            setLoading(false);
+            try { sessionStorage.setItem('splashShown', 'true'); } catch (e) { }
+          }, 2000);
+          return () => clearTimeout(timer);
+        }
+      } catch (e) {
+        // Fallback if sessionStorage is blocked
+        setLoading(false);
       }
     }
   }, []);
