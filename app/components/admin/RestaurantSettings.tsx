@@ -219,6 +219,58 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                     />
                 </div>
 
+                {/* Delivery Area Configuration */}
+                <div className="bg-blue-50 p-4 rounded-xl border border-blue-200">
+                    <h3 className="text-sm font-bold text-blue-900 mb-3 flex items-center gap-2">
+                        <span>📍</span> Área de Entrega (Geolocalização)
+                    </h3>
+                    <p className="text-xs text-blue-700 mb-4">
+                        Configure o raio de entrega. As coordenadas serão preenchidas automaticamente a partir do endereço.
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-1">Raio de Entrega (km)</label>
+                            <input
+                                className="w-full p-3 bg-white rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-200"
+                                type="number"
+                                step="0.1"
+                                value={form.deliveryRadius || ''}
+                                onChange={e => setForm({ ...form, deliveryRadius: e.target.value })}
+                                placeholder="Ex: 5"
+                            />
+                            <p className="text-xs text-gray-500 mt-1">Distância máxima em km</p>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-1">Latitude</label>
+                            <input
+                                className="w-full p-3 bg-white rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-200"
+                                value={form.latitude || ''}
+                                onChange={e => setForm({ ...form, latitude: e.target.value })}
+                                placeholder="Ex: -8.0476"
+                            />
+                            <p className="text-xs text-gray-500 mt-1">Coordenada Y</p>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-bold text-gray-700 mb-1">Longitude</label>
+                            <input
+                                className="w-full p-3 bg-white rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-200"
+                                value={form.longitude || ''}
+                                onChange={e => setForm({ ...form, longitude: e.target.value })}
+                                placeholder="Ex: -34.8770"
+                            />
+                            <p className="text-xs text-gray-500 mt-1">Coordenada X</p>
+                        </div>
+                    </div>
+
+                    <div className="mt-3 p-3 bg-white rounded-lg border border-blue-100">
+                        <p className="text-xs text-gray-600">
+                            💡 <strong>Dica:</strong> Deixe as coordenadas em branco para preenchimento automático baseado no endereço,
+                            ou use <a href="https://www.google.com/maps" target="_blank" className="text-blue-600 underline">Google Maps</a> para obter coordenadas precisas.
+                        </p>
+                    </div>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-1">Responsável</label>

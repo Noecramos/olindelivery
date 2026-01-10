@@ -47,7 +47,10 @@ export async function GET(request: Request) {
                         type: r.get('type'),
                         deliveryFee: r.get('deliveryFee'),
                         ratingSum: parseInt(r.get('ratingSum') || '0'),
-                        ratingCount: parseInt(r.get('ratingCount') || '0')
+                        ratingCount: parseInt(r.get('ratingCount') || '0'),
+                        latitude: r.get('latitude'),
+                        longitude: r.get('longitude'),
+                        deliveryRadius: r.get('deliveryRadius')
                     };
                     // Only return password if Super Admin (requesting all)
                     if (showAll) {
@@ -76,6 +79,9 @@ export async function GET(request: Request) {
                 pixKey: restaurant.get('pixKey'),
                 type: restaurant.get('type'),
                 deliveryFee: restaurant.get('deliveryFee'),
+                latitude: restaurant.get('latitude'),
+                longitude: restaurant.get('longitude'),
+                deliveryRadius: restaurant.get('deliveryRadius'),
                 // Password is NOT returned for single public view
             });
         }
@@ -213,7 +219,7 @@ export async function PUT(request: Request) {
             const profileFields = [
                 'name', 'image', 'banner', 'phone', 'address', 'instagram',
                 'zipCode', 'hours', 'responsibleName', 'email', 'whatsapp',
-                'pixKey', 'type', 'deliveryFee'
+                'pixKey', 'type', 'deliveryFee', 'latitude', 'longitude', 'deliveryRadius'
             ];
 
             profileFields.forEach(field => {
