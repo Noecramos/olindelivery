@@ -276,6 +276,12 @@ export default function StoreAdmin() {
 
         printWindow.document.write(html);
         printWindow.document.close();
+
+        // Wait for content to render then print
+        setTimeout(() => {
+            printWindow.focus();
+            printWindow.print();
+        }, 500);
     };
 
     return (
@@ -508,10 +514,10 @@ export default function StoreAdmin() {
                                                                 <div className="flex gap-2">
                                                                     <button
                                                                         onClick={() => printOrder(order)}
-                                                                        className="px-3 py-1 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-lg text-[10px] font-bold uppercase transition-colors flex items-center gap-1"
-                                                                        title="Imprimir"
+                                                                        className="p-2 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-xl transition-colors"
+                                                                        title="Imprimir Pedido"
                                                                     >
-                                                                        <span className="text-sm">🖨️</span>
+                                                                        <span className="text-2xl">🖨️</span>
                                                                     </button>
                                                                     {order.status === 'pending' && (
                                                                         <button
