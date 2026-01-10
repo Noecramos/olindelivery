@@ -34,7 +34,7 @@ export default function CheckoutPage() {
 
     if (cart.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-screen bg-[#F5F5F7] p-8">
+            <div className="flex flex-col items-center justify-center min-h-screen bg-[#F5F5F7] p-8 relative">
                 <div className="bg-white p-8 rounded-3xl shadow-lg text-center max-w-sm w-full">
                     <div className="text-6xl mb-4">🛒</div>
                     <h2 className="text-xl font-bold text-gray-800 mb-2">Seu carrinho está vazio</h2>
@@ -46,6 +46,25 @@ export default function CheckoutPage() {
                         ⬅️ Voltar ao Cardápio
                     </button>
                 </div>
+
+                {/* Success Overlay - Rendered even if cart is empty (post-checkout) */}
+                {showSuccess && (
+                    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+                        <div className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl transform animate-scale-in">
+                            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
+                                <span className="text-4xl">✅</span>
+                            </div>
+                            <h2 className="text-2xl font-bold text-gray-800 mb-2">Pedido Realizado!</h2>
+                            <p className="text-gray-500 mb-6 font-medium">Seu pedido foi enviado com sucesso!</p>
+
+                            <div className="bg-gray-100 p-4 rounded-xl mb-6">
+                                <div className="text-lg font-bold text-green-600 animate-pulse">
+                                    Abrindo WhatsApp...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         );
     }
