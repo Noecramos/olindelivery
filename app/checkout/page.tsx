@@ -33,7 +33,21 @@ export default function CheckoutPage() {
     });
 
     if (cart.length === 0) {
-        return <div className="p-10 text-center">Seu carrinho está vazio.</div>;
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen bg-[#F5F5F7] p-8">
+                <div className="bg-white p-8 rounded-3xl shadow-lg text-center max-w-sm w-full">
+                    <div className="text-6xl mb-4">🛒</div>
+                    <h2 className="text-xl font-bold text-gray-800 mb-2">Seu carrinho está vazio</h2>
+                    <p className="text-gray-500 mb-8">Adicione itens deliciosos antes de finalizar!</p>
+                    <button
+                        onClick={() => router.back()}
+                        className="w-full bg-gray-200 text-gray-800 font-bold py-3 px-6 rounded-xl hover:bg-gray-300 transition-all flex items-center justify-center gap-2"
+                    >
+                        ⬅️ Voltar ao Cardápio
+                    </button>
+                </div>
+            </div>
+        );
     }
 
     const handleFinish = async () => {
@@ -99,12 +113,21 @@ export default function CheckoutPage() {
             const finalPhone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
             const link = `https://wa.me/${finalPhone}?text=${encodeURIComponent(message)}`;
 
+            // 1. Open WhatsApp in new tab (Keep script alive)
+            window.open(link, '_blank');
+
             clearCart();
             setLoading(false);
             setShowSuccess(true);
 
-            // Redirect directly to WhatsApp
-            window.location.href = link;
+            // 2. Redirect this tab to Restaurant Menu
+            setTimeout(() => {
+                if (restaurant && restaurant.slug) {
+                    router.push(`/loja/${restaurant.slug}`);
+                } else {
+                    router.push('/');
+                }
+            }, 2000);
 
         } catch (e) {
             console.error(e);

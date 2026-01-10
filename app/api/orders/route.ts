@@ -107,3 +107,36 @@ export async function PUT(request: Request) {
         return NextResponse.json({ error: 'Failed' }, { status: 500 });
     }
 }
+
+export async function DELETE(request: Request) {
+    try {
+        const { searchParams } = new URL(request.url);
+        const restaurantId = searchParams.get('restaurantId');
+        const clearHistory = searchParams.get('clearHistory');
+
+        if (!restaurantId) return NextResponse.json({ error: 'Missing restaurantId' }, { status: 400 });
+
+        const sheet = await getSheetByTitle('Orders');
+        const rows = await sheet.getRows();
+
+        if (clearHistory === 'true') {
+            const rowsToDelete = rows.filter((r: any) =>
+                r.get('restaurantId') === restaurantId &&
+                ['sent', 'delivered', 'cancelled'].includes(r.get('status'))
+            );
+
+            // Delete in reverse to avoid index shifting issues if sequential?
+            // Actually, just awaiting each delete is safest for now.
+            for (const row of rowsToDelete) {
+                await row.delete();
+            }
+
+            return NextResponse.json({ success: true, count: rowsToDelete.length });
+        }
+
+        return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
+    } catch (e) {
+        console.error("Sheets Delete Error:", e);
+        return NextResponse.json({ error: 'Failed' }, { status: 500 });
+    }
+}

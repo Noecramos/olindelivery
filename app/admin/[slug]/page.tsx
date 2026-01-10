@@ -306,14 +306,34 @@ export default function StoreAdmin() {
                                         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
                                             <div className="p-6 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
                                                 <h3 className="font-bold text-lg text-gray-900">Últimos Pedidos</h3>
-                                                <button
-                                                    onClick={() => setShowHistory(!showHistory)}
-                                                    className={`text-xs font-bold px-3 py-1 rounded-full transition-colors ${showHistory ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
-                                                >
-                                                    {showHistory ? 'Apenas Hoje' : 'Ver Histórico'}
-                                                </button>
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        onClick={() => setShowHistory(!showHistory)}
+                                                        className={`text-xs font-bold px-3 py-1 rounded-full transition-colors ${showHistory ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
+                                                    >
+                                                        {showHistory ? 'Apenas Hoje' : 'Ver Histórico'}
+                                                    </button>
+                                                    {showHistory && (
+                                                        <button
+                                                            onClick={async () => {
+                                                                if (!confirm('Tem certeza que deseja apagar permanentemente o histórico de pedidos concluídos?')) return;
+                                                                try {
+                                                                    // restaurant.id might be numeric or string, need to ensure we access it correctly
+                                                                    const restId = restaurant?.id;
+                                                                    if (!restId) return;
+                                                                    await fetch(`/api/orders?restaurantId=${restId}&clearHistory=true`, { method: 'DELETE' });
+                                                                    fetchOrders();
+                                                                } catch (e) { alert('Erro ao limpar'); }
+                                                            }}
+                                                            className="text-xs font-bold px-3 py-1 bg-red-100 text-red-600 rounded-full hover:bg-red-200 flex items-center gap-1"
+                                                            title="Limpar Histórico"
+                                                        >
+                                                            🗑️ Limpar
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </div>
-                                            <div className="p-4 space-y-3">
+                                            <div className="p-4 space-y-6">
                                                 {orders
                                                     .filter(o => {
                                                         // Normalize status
@@ -335,7 +355,7 @@ export default function StoreAdmin() {
                                                         }
                                                     })
                                                     .map(order => (
-                                                        <div key={order.id} className="p-4 bg-gray-50 rounded-2xl border border-gray-200 hover:border-gray-300 transition-all">
+                                                        <div key={order.id} className="p-6 bg-white rounded-3xl shadow-md border border-gray-100 transition-all hover:shadow-lg relative overflow-hidden">
                                                             {/* Compact Header */}
                                                             <div className="flex justify-between items-center mb-3">
                                                                 <div className="flex items-center gap-3">
