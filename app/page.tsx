@@ -83,7 +83,7 @@ function MarketplaceContent() {
       <main className="mobile-container relative bg-white pb-20">
         {/* Top Bar */}
         <div
-          className="pt-8 px-6 pb-4 flex justify-center items-center sticky top-0 z-40 bg-opacity-95 backdrop-blur-sm transition-colors duration-300"
+          className="pt-8 px-6 pb-6 flex justify-center items-center sticky top-0 z-40 bg-opacity-95 backdrop-blur-md transition-all duration-300 shadow-lg rounded-b-3xl"
           style={{ backgroundColor: config.headerBgColor || '#FFD700' }}
         >
           <Image
