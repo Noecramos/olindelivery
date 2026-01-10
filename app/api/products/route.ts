@@ -89,3 +89,24 @@ export async function PUT(request: Request) {
         return NextResponse.json({ error: 'Failed' }, { status: 500 });
     }
 }
+export async function DELETE(request: Request) {
+    try {
+        const { searchParams } = new URL(request.url);
+        const id = searchParams.get('id');
+
+        if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
+
+        const sheet = await getSheetByTitle('Products');
+        const rows = await sheet.getRows();
+        const row = rows.find((r: any) => r.get('id') === id);
+
+        if (row) {
+            await row.delete();
+            return NextResponse.json({ success: true });
+        }
+
+        return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    } catch (e) {
+        return NextResponse.json({ error: 'Delete failed' }, { status: 500 });
+    }
+}
