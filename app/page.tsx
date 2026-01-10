@@ -92,7 +92,7 @@ function MarketplaceContent() {
 
 
   // Derive unique categories from restaurants, filtering out invalid data (emails, etc)
-  const forcedCategories = ['Lanches', 'Pizza', 'Hambúrguer', 'Açaí', 'Bebidas', 'Doces'];
+  const forcedCategories = ['Lanches', 'Pizza', 'Açaí', 'Bebidas', 'Doces'];
   const dynamicCategories = restaurants.map(r => r.type)
     .filter((t: any) => typeof t === 'string' && t.length > 0 && !t.includes('@') && t.length < 30 && t !== 'Deposito Bebidas' && t !== 'Depósito de Bebidas');
 
