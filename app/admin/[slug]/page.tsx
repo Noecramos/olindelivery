@@ -279,103 +279,92 @@ export default function StoreAdmin() {
                                                     onClick={() => setShowHistory(!showHistory)}
                                                     className={`text-xs font-bold px-3 py-1 rounded-full transition-colors ${showHistory ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
                                                 >
-                                                    {showHistory ? 'Ocultar Histórico' : 'Ver Histórico'}
+                                                    {showHistory ? 'Apenas Hoje' : 'Ver Histórico'}
                                                 </button>
                                             </div>
-                                            <div className="divide-y divide-gray-100">
+                                            <div className="p-4 space-y-3">
                                                 {orders
-                                                    .filter(o => showHistory ? true : o.status !== 'sent')
+                                                    .filter(o => {
+                                                        // Filter by date if not showing history
+                                                        if (showHistory) return true;
+
+                                                        try {
+                                                            const orderDate = new Date(o.createdAt);
+                                                            const today = new Date();
+                                                            return orderDate.toDateString() === today.toDateString();
+                                                        } catch (e) {
+                                                            return true; // Show if date parsing fails
+                                                        }
+                                                    })
                                                     .map(order => (
-                                                        <div key={order.id} className={`p-6 bg-white flex flex-col transition-all duration-300 rounded-[2rem] border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] mb-6 ${order.status === 'sent' ? 'opacity-60 grayscale' : ''}`}>
-                                                            {/* Apple Style Header: Ticket & Status */}
-                                                            <div className="flex justify-between items-start mb-6">
-                                                                <div className="flex flex-col">
-                                                                    <span className="text-gray-900 font-extrabold text-3xl tracking-tight">#{order.ticketNumber || '...'}</span>
-                                                                    <span className="text-gray-400 text-sm font-medium mt-1">
+                                                        <div key={order.id} className={`p-4 bg-gray-50 rounded-2xl border border-gray-200 hover:border-gray-300 transition-all ${order.status === 'sent' || order.status === 'delivered' ? 'opacity-50' : ''}`}>
+                                                            {/* Compact Header */}
+                                                            <div className="flex justify-between items-center mb-3">
+                                                                <div className="flex items-center gap-3">
+                                                                    <span className="text-xl font-black text-gray-900">#{order.ticketNumber || '...'}</span>
+                                                                    <span className="text-xs text-gray-400">
                                                                         {(() => {
                                                                             try {
-                                                                                if (!order.createdAt) return 'Hoje';
+                                                                                if (!order.createdAt) return 'Agora';
                                                                                 let date = new Date(order.createdAt);
-                                                                                if (isNaN(date.getTime())) return 'Hoje';
+                                                                                if (isNaN(date.getTime())) return 'Agora';
                                                                                 return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
                                                                             } catch (e) { return '-'; }
-                                                                        })()} • Pedido
+                                                                        })()}
                                                                     </span>
                                                                 </div>
-                                                                <span className={`px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider shadow-sm ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                                                                    order.status === 'preparing' ? 'bg-blue-100 text-blue-700' :
-                                                                        order.status === 'sent' ? 'bg-gray-100 text-gray-600' :
-                                                                            'bg-green-100 text-green-700'
+                                                                <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                                                        order.status === 'preparing' ? 'bg-blue-100 text-blue-700' :
+                                                                            order.status === 'sent' ? 'bg-green-100 text-green-700' :
+                                                                                'bg-gray-100 text-gray-600'
                                                                     }`}>
                                                                     {order.status === 'pending' ? 'Pendente' :
-                                                                        order.status === 'preparing' ? 'Em Preparo' :
+                                                                        order.status === 'preparing' ? 'Preparo' :
                                                                             order.status === 'sent' ? 'Enviado' : order.status}
                                                                 </span>
                                                             </div>
 
-                                                            {/* Customer Section - Clean & Human */}
-                                                            <div className="flex items-start gap-4 mb-6">
-                                                                <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-xl shrink-0">
-                                                                    👤
-                                                                </div>
-                                                                <div>
-                                                                    <p className="font-bold text-gray-900 text-base leading-tight">{order.customer.name}</p>
-                                                                    <p className="text-gray-500 text-sm mt-0.5">{order.customer.phone}</p>
-                                                                    <p className="text-gray-500 text-sm mt-1 leading-snug">{order.customer.address}</p>
-                                                                </div>
+                                                            {/* Customer Info - Compact */}
+                                                            <div className="mb-3 text-sm">
+                                                                <p className="font-bold text-gray-900">{order.customer.name}</p>
+                                                                <p className="text-gray-500 text-xs">{order.customer.address}</p>
                                                             </div>
 
-                                                            {/* Items - Minimalist List */}
-                                                            <div className="mb-6 space-y-3">
+                                                            {/* Items - Compact List */}
+                                                            <div className="mb-3 space-y-1">
                                                                 {order.items.map((item: any, idx: number) => (
-                                                                    <div key={idx} className="flex justify-between items-center text-sm group">
-                                                                        <div className="flex items-center gap-3">
-                                                                            <span className="flex items-center justify-center bg-gray-50 text-gray-900 font-bold w-6 h-6 rounded-md text-xs border border-gray-100">
-                                                                                {item.quantity}
-                                                                            </span>
-                                                                            <span className="text-gray-700 font-medium">{item.name}</span>
-                                                                        </div>
-                                                                        <span className="text-gray-400 text-xs tabular-nums">
+                                                                    <div key={idx} className="flex justify-between text-xs">
+                                                                        <span className="text-gray-600">
+                                                                            <span className="font-bold text-gray-900">{item.quantity}x</span> {item.name}
+                                                                        </span>
+                                                                        <span className="text-gray-400">
                                                                             {(item.price * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                                                         </span>
                                                                     </div>
                                                                 ))}
                                                             </div>
 
-                                                            {/* Observations - Standout but Clean */}
+                                                            {/* Observations - Compact */}
                                                             {order.observations && (
-                                                                <div className="mb-6 p-4 bg-red-50/50 border border-red-100 rounded-2xl flex gap-3 text-red-600 text-sm leading-relaxed">
-                                                                    <span className="shrink-0 text-lg">⚠️</span>
-                                                                    <span className="font-medium">{order.observations}</span>
+                                                                <div className="mb-3 p-2 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700">
+                                                                    ⚠️ {order.observations}
                                                                 </div>
                                                             )}
 
-                                                            <div className="flex items-center justify-between border-t border-gray-50 pt-5 mt-auto">
-                                                                <div className="flex flex-col">
-                                                                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Total a Pagar</span>
-                                                                    <div className="flex items-center gap-2">
-                                                                        <span className="text-2xl font-black text-gray-900 tracking-tight">
-                                                                            {order.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                                                                        </span>
-                                                                        <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-[10px] font-bold border border-gray-200 uppercase tracking-wide">
-                                                                            {(() => {
-                                                                                const method = (order.paymentMethod || '').toLowerCase().trim();
-                                                                                if (method === 'money' || method === 'dinheiro') return 'Dinheiro';
-                                                                                if (method === 'pix') return 'PIX';
-                                                                                if (method === 'card' || method === 'cartao' || method === 'cartão') return 'Cartão';
-                                                                                return method || '-';
-                                                                            })()}
-                                                                        </span>
-                                                                    </div>
-                                                                    {order.changeFor && (
-                                                                        <span className="text-xs text-orange-600 font-medium mt-1">
-                                                                            Troco para R$ {order.changeFor}
-                                                                        </span>
-                                                                    )}
+                                                            {/* Footer - Total & Actions */}
+                                                            <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+                                                                <div>
+                                                                    <span className="text-lg font-black text-gray-900">
+                                                                        {order.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                                                    </span>
+                                                                    <span className="ml-2 text-[10px] text-gray-500 uppercase">
+                                                                        {order.paymentMethod === 'pix' ? 'PIX' :
+                                                                            order.paymentMethod === 'card' ? 'Cartão' : 'Dinheiro'}
+                                                                    </span>
                                                                 </div>
 
-                                                                {/* Apple Buttons - Small & Clean */}
-                                                                <div className="flex items-center gap-2">
+                                                                {/* Action Buttons - Compact */}
+                                                                <div className="flex gap-2">
                                                                     {order.status === 'pending' && (
                                                                         <button
                                                                             onClick={async () => {
@@ -389,7 +378,7 @@ export default function StoreAdmin() {
                                                                                     });
                                                                                 } catch (error) { fetchOrders(); }
                                                                             }}
-                                                                            className="px-4 py-1.5 bg-black text-white hover:bg-gray-800 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-md transition-all active:scale-95"
+                                                                            className="px-3 py-1 bg-black text-white hover:bg-gray-800 rounded-lg text-[10px] font-bold uppercase"
                                                                         >
                                                                             Aprovar
                                                                         </button>
@@ -407,7 +396,7 @@ export default function StoreAdmin() {
                                                                                     });
                                                                                 } catch (error) { fetchOrders(); }
                                                                             }}
-                                                                            className="px-4 py-1.5 bg-blue-600 text-white hover:bg-blue-700 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-md shadow-blue-200 transition-all active:scale-95"
+                                                                            className="px-3 py-1 bg-blue-600 text-white hover:bg-blue-700 rounded-lg text-[10px] font-bold uppercase"
                                                                         >
                                                                             Enviar
                                                                         </button>
@@ -415,14 +404,22 @@ export default function StoreAdmin() {
                                                                 </div>
                                                             </div>
                                                         </div>
-
                                                     ))
                                                 }
-                                                {orders.filter(o => showHistory ? true : o.status !== 'sent').length === 0 && (
-                                                    <div className="p-10 text-center text-gray-400">
-                                                        {showHistory ? 'Nenhum pedido encontrado.' : 'Nenhum pedido pendente.'}
-                                                    </div>
-                                                )}
+                                                {orders.filter(o => {
+                                                    if (showHistory) return true;
+                                                    try {
+                                                        const orderDate = new Date(o.createdAt);
+                                                        const today = new Date();
+                                                        return orderDate.toDateString() === today.toDateString();
+                                                    } catch (e) {
+                                                        return true;
+                                                    }
+                                                }).length === 0 && (
+                                                        <div className="p-10 text-center text-gray-400">
+                                                            {showHistory ? 'Nenhum pedido encontrado.' : 'Nenhum pedido hoje.'}
+                                                        </div>
+                                                    )}
                                             </div>
                                         </div>
                                     </div>
