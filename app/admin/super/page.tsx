@@ -25,7 +25,7 @@ export default function SuperAdmin() {
 
     const fetchRestaurants = async () => {
         try {
-            const res = await fetch('/api/restaurants?all=true');
+            const res = await fetch(`/api/restaurants?all=true&t=${Date.now()}`, { cache: 'no-store' });
             const data = await res.json();
             setRestaurants(data);
         } catch (e) {
