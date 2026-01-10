@@ -78,6 +78,17 @@ function MarketplaceContent() {
     );
   }
 
+  const [selectedCategory, setSelectedCategory] = useState("Todos");
+
+  // Derive unique categories from restaurants
+  const categories = ['Todos', ...Array.from(new Set(restaurants.map(r => r.type).filter(Boolean)))];
+
+  const filteredRestaurants = restaurants.filter(r => {
+    const matchesSearch = (r.name || '').toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === 'Todos' || r.type === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
   return (
     <div style={{ background: "#F2F4F8", minHeight: "100vh" }}>
       <main className="mobile-container relative bg-white pb-20">
@@ -161,9 +172,16 @@ function MarketplaceContent() {
             </span>
           </div>
           <div className="flex gap-2 overflow-x-auto no-scrollbar">
-            {['Todos', 'Lanches', 'Pizza', 'Doces', 'Bebidas'].map((cat, i) => (
-              <button key={cat} className={`category-tab ${i === 0 ? 'active' : ''}`}>
-                {i === 0 ? '🔥 ' : ''}{cat}
+            {categories.map((cat, i) => (
+              <button
+                key={cat}
+                onClick={() => {
+                  setSelectedCategory(cat);
+                  document.getElementById('restaurantes')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className={`category-tab ${selectedCategory === cat ? 'active' : ''}`}
+              >
+                {cat === 'Todos' ? '🔥 ' : ''}{cat}
               </button>
             ))}
           </div>
@@ -171,13 +189,13 @@ function MarketplaceContent() {
 
         {/* Main List (Restaurants) */}
         <div className="px-6 space-y-4" id="restaurantes">
-          <h2 className="font-bold text-lg text-gray-800">Restaurantes</h2>
-          {restaurants.filter(r => (r.name || '').toLowerCase().includes(searchTerm.toLowerCase())).length === 0 ? (
+          <h2 className="font-bold text-lg text-gray-800">Restaurantes {selectedCategory !== 'Todos' && <span className="text-gray-400 font-normal text-sm">({selectedCategory})</span>}</h2>
+          {filteredRestaurants.length === 0 ? (
             <div className="p-8 text-center text-gray-400 bg-gray-50 rounded-xl">
-              Nenhum restaurante encontrado.
+              Nenhum restaurante encontrado para "{selectedCategory}".
             </div>
           ) : (
-            restaurants.filter(r => (r.name || '').toLowerCase().includes(searchTerm.toLowerCase())).map(rest => (
+            filteredRestaurants.map(rest => (
               <Link key={rest.id} href={`/loja/${rest.slug}`}>
                 <div className="item-card-row group">
                   <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-gray-100 shadow-inner">
@@ -197,7 +215,10 @@ function MarketplaceContent() {
                     <h3 className="font-bold text-gray-800 text-base">{rest.name}</h3>
                     <div className="flex flex-col items-start gap-1 mt-1">
                       <StarRating restaurantId={rest.id} initialSum={rest.ratingSum} initialCount={rest.ratingCount} readonly={true} />
-                      <span className="text-xs text-gray-400 font-medium ml-1">{rest.deliveryTime || '30-45m'}</span>
+                      <span className="text-xs text-gray-400 font-medium ml-1">
+                        {rest.type ? <span className="text-gray-500 mr-2">• {rest.type}</span> : ''}
+                        {rest.deliveryTime || '30-45m'}
+                      </span>
                     </div>
                   </div>
                   <div className="text-yellow-500 font-bold text-lg ml-2">
