@@ -113,7 +113,12 @@ function MarketplaceContent() {
         <div className="mb-0">
           <div className="px-6 flex justify-between items-end mb-4">
             <h2 className="font-bold text-lg text-gray-800">{config.popularTitle || 'Populares'}</h2>
-            <span className="text-xs font-semibold text-yellow-500 cursor-pointer">Ver todos &gt;</span>
+            <span
+              className="text-xs font-semibold text-yellow-500 cursor-pointer hover:underline"
+              onClick={() => document.getElementById('restaurantes')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              Ver todos &gt;
+            </span>
           </div>
 
           <div className="flex gap-4 overflow-x-auto no-scrollbar px-6 pb-2">
@@ -148,7 +153,12 @@ function MarketplaceContent() {
         <div className="px-6 mb-6">
           <div className="flex justify-between items-end mb-4">
             <h2 className="font-bold text-lg text-gray-800">Categorias</h2>
-            <span className="text-xs font-semibold text-yellow-500 cursor-pointer">Ver todas &gt;</span>
+            <span
+              className="text-xs font-semibold text-yellow-500 cursor-pointer hover:underline"
+              onClick={() => document.getElementById('restaurantes')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              Ver todas &gt;
+            </span>
           </div>
           <div className="flex gap-2 overflow-x-auto no-scrollbar">
             {['Todos', 'Lanches', 'Pizza', 'Doces', 'Bebidas'].map((cat, i) => (
@@ -160,7 +170,7 @@ function MarketplaceContent() {
         </div>
 
         {/* Main List (Restaurants) */}
-        <div className="px-6 space-y-4">
+        <div className="px-6 space-y-4" id="restaurantes">
           <h2 className="font-bold text-lg text-gray-800">Restaurantes</h2>
           {restaurants.filter(r => (r.name || '').toLowerCase().includes(searchTerm.toLowerCase())).length === 0 ? (
             <div className="p-8 text-center text-gray-400 bg-gray-50 rounded-xl">
