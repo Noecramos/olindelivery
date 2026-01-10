@@ -316,11 +316,15 @@ export default function StoreAdmin() {
                                             <div className="p-4 space-y-3">
                                                 {orders
                                                     .filter(o => {
+                                                        // Normalize status
+                                                        const status = o.status?.toLowerCase() || '';
+                                                        const isCompleted = ['sent', 'delivered', 'cancelled'].includes(status);
+
                                                         // Show all in history mode
                                                         if (showHistory) return true;
 
                                                         // Hide completed/sent orders from main view
-                                                        if (o.status === 'sent' || o.status === 'delivered') return false;
+                                                        if (isCompleted) return false;
 
                                                         try {
                                                             const orderDate = new Date(o.createdAt);
@@ -331,7 +335,7 @@ export default function StoreAdmin() {
                                                         }
                                                     })
                                                     .map(order => (
-                                                        <div key={order.id} className={`p-4 bg-gray-50 rounded-2xl border border-gray-200 hover:border-gray-300 transition-all ${order.status === 'sent' || order.status === 'delivered' ? 'opacity-50' : ''}`}>
+                                                        <div key={order.id} className="p-4 bg-gray-50 rounded-2xl border border-gray-200 hover:border-gray-300 transition-all">
                                                             {/* Compact Header */}
                                                             <div className="flex justify-between items-center mb-3">
                                                                 <div className="flex items-center gap-3">
@@ -441,7 +445,12 @@ export default function StoreAdmin() {
                                                     ))
                                                 }
                                                 {orders.filter(o => {
+                                                    const status = o.status?.toLowerCase() || '';
+                                                    const isCompleted = ['sent', 'delivered', 'cancelled'].includes(status);
+                                                    
                                                     if (showHistory) return true;
+                                                    if (isCompleted) return false; // Match main filter
+
                                                     try {
                                                         const orderDate = new Date(o.createdAt);
                                                         const today = new Date();
