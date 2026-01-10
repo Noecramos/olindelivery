@@ -225,9 +225,7 @@ export default function StoreAdmin() {
                     <button onClick={() => setTab('products')} className={`p-3 rounded-xl transition-all flex items-center gap-3 ${tab === 'products' ? 'bg-red-50 text-[#EA1D2C] font-bold shadow-sm' : 'hover:bg-gray-100 text-gray-600'}`}>
                         <span className="text-xl">🍔</span> <span className="hidden lg:block">Produtos</span>
                     </button>
-                    <button onClick={() => setTab('categories')} className={`p-3 rounded-xl transition-all flex items-center gap-3 ${tab === 'categories' ? 'bg-red-50 text-[#EA1D2C] font-bold shadow-sm' : 'hover:bg-gray-100 text-gray-600'}`}>
-                        <span className="text-xl">🏷️</span> <span className="hidden lg:block">Categorias</span>
-                    </button>
+
                     <button onClick={() => setTab('settings')} className={`p-3 rounded-xl transition-all flex items-center gap-3 ${tab === 'settings' ? 'bg-red-50 text-[#EA1D2C] font-bold shadow-sm' : 'hover:bg-gray-100 text-gray-600'}`}>
                         <span className="text-xl">⚙️</span> <span className="hidden lg:block">Configurações</span>
                     </button>
@@ -494,16 +492,25 @@ export default function StoreAdmin() {
                                 {(tab !== 'dashboard') && (
                                     <div className="animate-fade-in bg-white p-8 rounded-3xl shadow-sm border border-gray-100 min-h-[500px]">
                                         {tab === 'products' && (
-                                            <>
-                                                <h2 className="text-2xl font-bold mb-6">Meus Produtos</h2>
-                                                <ProductForm restaurantId={restaurant.id} onSave={() => alert('Salvo!')} />
-                                            </>
-                                        )}
-                                        {tab === 'categories' && (
-                                            <>
-                                                <h2 className="text-2xl font-bold mb-6">Categorias do Menu</h2>
-                                                <CategoryForm restaurantId={restaurant.id} onSave={() => alert('Salvo!')} />
-                                            </>
+                                            <div className="space-y-12">
+                                                <div>
+                                                    <div className="flex justify-between items-center mb-6">
+                                                        <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-orange-600">Configuração de Categorias</h2>
+                                                    </div>
+                                                    <div className="bg-gray-50/50 p-6 rounded-3xl border border-gray-100/50 hover:bg-white hover:shadow-lg transition-all duration-300">
+                                                        <CategoryForm restaurantId={restaurant.id} onSave={() => { }} />
+                                                    </div>
+                                                </div>
+
+                                                <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
+
+                                                <div>
+                                                    <div className="flex justify-between items-center mb-6">
+                                                        <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-orange-600">Catálogo de Produtos</h2>
+                                                    </div>
+                                                    <ProductForm restaurantId={restaurant.id} onSave={() => alert('Salvo!')} />
+                                                </div>
+                                            </div>
                                         )}
                                         {tab === 'settings' && (
                                             <div className="py-8">

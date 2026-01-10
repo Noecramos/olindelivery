@@ -26,6 +26,7 @@ export default function CheckoutPage() {
     const [form, setForm] = useState({
         name: "",
         phone: "",
+        zipCode: "",
         address: "",
         paymentMethod: "pix",
         changeFor: "",
@@ -70,8 +71,8 @@ export default function CheckoutPage() {
     }
 
     const handleFinish = async () => {
-        if (!form.name || !form.phone || !form.address) {
-            alert("Por favor, preencha seus dados.");
+        if (!form.name || !form.phone || !form.address || !form.zipCode) {
+            alert("Por favor, preencha todos os dados (incluindo o CEP).");
             return;
         }
 
@@ -120,7 +121,8 @@ export default function CheckoutPage() {
             const message = `🎫 *PEDIDO #${ticketNumber}*\n\n` +
                 `👤 *Cliente:* ${form.name}\n` +
                 `📱 *Telefone:* ${form.phone}\n` +
-                `📍 *Endereço:* ${form.address}\n\n` +
+                `📍 *Endereço:* ${form.address}\n` +
+                `📮 *CEP:* ${form.zipCode}\n\n` +
                 `🛒 *ITENS DO PEDIDO:*\n${itemsList}\n\n` +
                 (form.observations ? `📝 *Observações:* ${form.observations}\n\n` : '') +
                 `💰 *TOTAL: ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}*\n` +
@@ -217,6 +219,21 @@ export default function CheckoutPage() {
                                 placeholder="Telefone (WhatsApp)"
                                 value={form.phone}
                                 onChange={e => setForm({ ...form, phone: e.target.value })}
+                            />
+                            <input
+                                id="zipCode"
+                                name="zipCode"
+                                className="w-full p-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                placeholder="CEP (00000-000)"
+                                value={form.zipCode}
+                                onChange={e => {
+                                    // Mask 00000-000
+                                    let val = e.target.value.replace(/\D/g, '');
+                                    if (val.length > 5) val = val.slice(0, 5) + '-' + val.slice(5, 8);
+                                    else if (val.length > 8) val = val.slice(0, 9);
+                                    setForm({ ...form, zipCode: val });
+                                }}
+                                maxLength={9}
                             />
                             <textarea
                                 id="customerAddress"

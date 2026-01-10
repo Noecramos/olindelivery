@@ -45,6 +45,7 @@ export async function GET(request: Request) {
                         whatsapp: r.get('whatsapp'),
                         pixKey: r.get('pixKey'),
                         type: r.get('type'),
+                        deliveryFee: r.get('deliveryFee'),
                         ratingSum: parseInt(r.get('ratingSum') || '0'),
                         ratingCount: parseInt(r.get('ratingCount') || '0')
                     };
@@ -74,6 +75,7 @@ export async function GET(request: Request) {
                 whatsapp: restaurant.get('whatsapp'),
                 pixKey: restaurant.get('pixKey'),
                 type: restaurant.get('type'),
+                deliveryFee: restaurant.get('deliveryFee'),
                 // Password is NOT returned for single public view
             });
         }
@@ -115,6 +117,7 @@ export async function POST(request: Request) {
             phone: body.phone || body.whatsapp || '', // Fallback to whatsapp if phone not provided
             address: body.address || '',
             deliveryTime: body.deliveryTime || '30-45 min',
+            deliveryFee: body.deliveryFee || '0',
             instagram: body.instagram || '',
             zipCode: body.zipCode || '',
             hours: body.hours || '',
@@ -139,6 +142,7 @@ export async function POST(request: Request) {
             phone: newRestaurant.phone,
             address: newRestaurant.address,
             deliveryTime: newRestaurant.deliveryTime,
+            deliveryFee: newRestaurant.deliveryFee,
             instagram: newRestaurant.instagram,
             zipCode: newRestaurant.zipCode,
             hours: newRestaurant.hours,
@@ -197,7 +201,7 @@ export async function PUT(request: Request) {
             const profileFields = [
                 'name', 'image', 'banner', 'phone', 'address', 'instagram',
                 'zipCode', 'hours', 'responsibleName', 'email', 'whatsapp',
-                'pixKey', 'type'
+                'pixKey', 'type', 'deliveryFee'
             ];
 
             profileFields.forEach(field => {

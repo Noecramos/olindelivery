@@ -170,10 +170,11 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">Chave PIX</label>
+                        <label className="block text-sm font-bold text-gray-700 mb-1">Taxa de Entrega</label>
                         <input className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
-                            value={form.pixKey || ''}
-                            onChange={e => setForm({ ...form, pixKey: e.target.value })}
+                            value={form.deliveryFee || ''}
+                            onChange={e => setForm({ ...form, deliveryFee: e.target.value })}
+                            placeholder="Ex: 5.00"
                         />
                     </div>
                     <div>
@@ -184,6 +185,14 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                             placeholder="30-45 min"
                         />
                     </div>
+                </div>
+
+                <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-1">Chave PIX</label>
+                    <input className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
+                        value={form.pixKey || ''}
+                        onChange={e => setForm({ ...form, pixKey: e.target.value })}
+                    />
                 </div>
 
                 <div>
