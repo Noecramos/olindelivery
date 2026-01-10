@@ -119,6 +119,8 @@ function MarketplaceContent() {
       'Vegano': '🥦'
     };
     // Case insensitive lookup
+    // Case insensitive lookup
+    if (!cat || typeof cat !== 'string') return '🍽️';
     const normalizedCat = Object.keys(map).find(key => key.toLowerCase() === cat.toLowerCase());
     return normalizedCat ? map[normalizedCat] : '🍽️';
   };
