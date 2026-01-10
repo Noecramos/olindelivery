@@ -80,8 +80,29 @@ function MarketplaceContent() {
 
   const [selectedCategory, setSelectedCategory] = useState("Todos");
 
-  // Derive unique categories from restaurants
-  const categories = ['Todos', ...Array.from(new Set(restaurants.map(r => r.type).filter(Boolean)))];
+  // Derive unique categories from restaurants, filtering out invalid data (emails, etc)
+  const categories = ['Todos', ...Array.from(new Set(
+    restaurants.map(r => r.type)
+      .filter((t: any) => typeof t === 'string' && t.length > 0 && !t.includes('@') && t.length < 30)
+  ))].sort();
+
+  const getCategoryIcon = (cat: string) => {
+    const map: any = {
+      'Todos': '🔥',
+      'Lanches': '🍔',
+      'Pizza': '🍕',
+      'Japonês': '🍣',
+      'Doces': '🍰',
+      'Açaí': '🥣',
+      'Bebidas': '🥤',
+      'Padaria': '🥐',
+      'Brasileira': '🍛',
+      'Saudável': '🥗',
+      'Pastel': '🥟',
+      'Sorvete': '🍦'
+    };
+    return map[cat] || '🍽️';
+  };
 
   const filteredRestaurants = restaurants.filter(r => {
     const matchesSearch = (r.name || '').toLowerCase().includes(searchTerm.toLowerCase());
@@ -181,7 +202,7 @@ function MarketplaceContent() {
                 }}
                 className={`category-tab ${selectedCategory === cat ? 'active' : ''}`}
               >
-                {cat === 'Todos' ? '🔥 ' : ''}{cat}
+                {getCategoryIcon(cat)} {cat}
               </button>
             ))}
           </div>
