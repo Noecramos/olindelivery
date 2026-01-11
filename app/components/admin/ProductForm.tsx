@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { compressImage } from "@/lib/compress";
 
 export default function ProductForm({ restaurantId, onSave, refreshCategories }: { restaurantId: string, onSave: () => void, refreshCategories?: number }) {
     const [loading, setLoading] = useState(false);
@@ -44,14 +45,23 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files?.[0]) return;
         setUploading(true);
-        const formData = new FormData();
-        formData.append("file", e.target.files[0]);
         try {
+            const compressed = await compressImage(e.target.files[0]);
+            const formData = new FormData();
+            formData.append("file", compressed);
             const res = await fetch('/api/upload', { method: 'POST', body: formData });
+
+            if (!res.ok) {
+                if (res.status === 413) throw new Error("413");
+                throw new Error("Erro");
+            }
+
             const data = await res.json();
             if (data.success) setForm({ ...form, image: data.url });
-        } catch (err) { alert("Erro ao fazer upload"); }
-        finally { setUploading(false); }
+        } catch (err: any) {
+            if (err.message === "413") alert("Imagem muito grande mesmo comprimida!");
+            else alert("Erro ao fazer upload");
+        } finally { setUploading(false); }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {

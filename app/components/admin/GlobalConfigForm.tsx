@@ -1,6 +1,6 @@
-
 "use client";
 import { useState, useEffect } from "react";
+import { compressImage } from "@/lib/compress";
 
 const ICONS = {
     '🍔': 'Hambúrguer',
@@ -46,6 +46,7 @@ export default function GlobalConfigForm() {
         featuredItems: [] as any[]
     });
     const [loading, setLoading] = useState(false);
+    const [uploading, setUploading] = useState(false);
 
     useEffect(() => {
         fetch('/api/config')
@@ -70,7 +71,7 @@ export default function GlobalConfigForm() {
         try {
             const payload = {
                 ...config,
-                featuredItems: JSON.stringify(config.featuredItems) // Store as string
+                featuredItems: JSON.stringify(config.featuredItems)
             };
 
             await fetch('/api/config', {
@@ -112,21 +113,34 @@ export default function GlobalConfigForm() {
         setConfig(prev => ({ ...prev, featuredItems: newItems }));
     };
 
-    const [uploading, setUploading] = useState(false);
-
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
         if (!e.target.files?.[0]) return;
         setUploading(true);
-        const formData = new FormData();
-        formData.append("file", e.target.files[0]);
+
         try {
+            const originalFile = e.target.files[0];
+            const compressedFile = await compressImage(originalFile);
+
+            const formData = new FormData();
+            formData.append("file", compressedFile);
+
             const res = await fetch('/api/upload', { method: 'POST', body: formData });
+
+            if (!res.ok) {
+                if (res.status === 413) throw new Error("Arquivo muito grande mesmo após compressão");
+                throw new Error("Erro no envio");
+            }
+
             const data = await res.json();
             if (data.success) {
                 setConfig(prev => ({ ...prev, [field]: data.url }));
             }
-        } catch (err) { alert("Erro ao fazer upload"); }
-        finally { setUploading(false); }
+        } catch (err) {
+            console.error(err);
+            alert("Erro ao fazer upload. Tente uma imagem menor.");
+        } finally {
+            setUploading(false);
+        }
     };
 
     return (
@@ -187,7 +201,6 @@ export default function GlobalConfigForm() {
                 </h3>
 
                 <div className="space-y-8">
-                    {/* Header Background Config */}
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-3">Fundo do Header</label>
                         <div className="flex gap-2 mb-4 p-1 bg-gray-100 rounded-xl w-fit">
@@ -221,7 +234,6 @@ export default function GlobalConfigForm() {
                                         </label>
                                     </div>
                                 </div>
-
                                 {config.headerBackgroundImage && (
                                     <div className="h-32 rounded-xl bg-cover bg-center border-2 border-gray-100 shadow-inner relative group" style={{ backgroundImage: `url('${config.headerBackgroundImage}')` }}>
                                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors rounded-xl" />
@@ -256,7 +268,6 @@ export default function GlobalConfigForm() {
                 <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2 pb-4 border-b border-gray-100">
                     ✍️ Textos do App
                 </h3>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="col-span-1">
                         <label className="block text-sm font-bold text-gray-700 mb-2">Título Principal (Boas Vindas)</label>
@@ -267,7 +278,6 @@ export default function GlobalConfigForm() {
                             placeholder="Ex: O que vamos pedir hoje?"
                         />
                     </div>
-
                     <div className="col-span-1 space-y-6">
                         <div>
                             <label className="block text-sm font-bold text-gray-700 mb-2">Subtítulo (Destaque)</label>
@@ -288,7 +298,6 @@ export default function GlobalConfigForm() {
                             />
                         </div>
                     </div>
-
                     <div className="md:col-span-2">
                         <label className="block text-sm font-bold text-gray-700 mb-2">Rodapé (Copyright)</label>
                         <input
@@ -323,8 +332,6 @@ export default function GlobalConfigForm() {
                             >
                                 🗑️
                             </button>
-
-                            {/* Preview Card (Mini) */}
                             <div className="flex-shrink-0 flex items-center justify-center pt-2 md:pt-0">
                                 <div className={`${item.bg} w-[200px] h-[90px] p-4 rounded-3xl flex items-center justify-between gap-3 shadow-md border border-black/5 transform scale-90 md:scale-100 origin-left`}>
                                     <div className="text-3xl drop-shadow-sm">{item.icon}</div>
@@ -337,8 +344,6 @@ export default function GlobalConfigForm() {
                                     </div>
                                 </div>
                             </div>
-
-                            {/* Edit Fields */}
                             <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-xs font-bold text-gray-500 mb-1">Nome do Produto</label>
@@ -369,8 +374,6 @@ export default function GlobalConfigForm() {
                                     />
                                 </div>
                             </div>
-
-                            {/* Style Controls */}
                             <div className="flex-shrink-0 w-full md:w-48 space-y-4">
                                 <div>
                                     <label className="block text-xs font-bold text-gray-500 mb-1">Ícone</label>
