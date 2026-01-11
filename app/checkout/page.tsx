@@ -107,16 +107,32 @@ export default function CheckoutPage() {
 
         // Check if restaurant has delivery fee tiers configured
         const tiers = restaurant.deliveryFeeTiers;
-        if (!tiers || !Array.isArray(tiers) || tiers.length === 0) {
-            console.log('ℹ️ No delivery fee tiers configured');
+        const hasTiers = tiers && Array.isArray(tiers) && tiers.length > 0 &&
+            tiers.some((t: any) => t.maxDistance && t.fee);
+
+        // Check if restaurant has flat delivery fee configured (fallback)
+        const flatFee = parseFloat(restaurant.deliveryFee);
+        const hasFlatFee = !isNaN(flatFee) && flatFee > 0;
+
+        if (!hasTiers && !hasFlatFee) {
+            console.log('ℹ️ No delivery fee configured (neither tiers nor flat fee)');
             setDeliveryFee(0);
+            setIsCepOutOfRange(false);
             return;
         }
 
         // Check if geolocation is configured
         if (!restaurant.latitude || !restaurant.longitude) {
             console.log('ℹ️ Restaurant geolocation not configured');
+            // If only flat fee is configured (no tiers), use it without distance calculation
+            if (hasFlatFee && !hasTiers) {
+                console.log('💰 Using flat delivery fee (no geolocation):', flatFee);
+                setDeliveryFee(flatFee);
+                setIsCepOutOfRange(false);
+                return;
+            }
             setDeliveryFee(0);
+            setIsCepOutOfRange(false);
             return;
         }
 
@@ -184,6 +200,13 @@ export default function CheckoutPage() {
 
                 // CEP is within range
                 setIsCepOutOfRange(false);
+
+                // If using flat fee (no tiers), apply it now
+                if (!hasTiers && hasFlatFee) {
+                    console.log('💰 Using flat delivery fee:', flatFee);
+                    setDeliveryFee(flatFee);
+                    return;
+                }
 
                 // Find appropriate fee tier
                 const validTiers = tiers
