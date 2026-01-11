@@ -17,12 +17,28 @@ export async function POST(req: NextRequest) {
         }
 
         // Fetch restaurant directly from Postgres
-        const { rows } = await sql`
-            SELECT id, password, name, slug 
-            FROM restaurants 
-            WHERE id = ${identifier} OR slug = ${identifier}
-            LIMIT 1
-        `;
+        let rows: any[] = [];
+
+        // precise UUID regex
+        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(identifier);
+
+        if (isUUID) {
+            const result = await sql`
+                SELECT id, password, name, slug 
+                FROM restaurants 
+                WHERE id = ${identifier} OR slug = ${identifier}
+                LIMIT 1
+            `;
+            rows = result.rows;
+        } else {
+            const result = await sql`
+                SELECT id, password, name, slug 
+                FROM restaurants 
+                WHERE slug = ${identifier}
+                LIMIT 1
+            `;
+            rows = result.rows;
+        }
 
         if (rows.length === 0) {
             return NextResponse.json({
