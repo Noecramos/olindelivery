@@ -13,6 +13,7 @@ export default function CheckoutPage() {
     const [loading, setLoading] = useState(false);
     const [restaurant, setRestaurant] = useState<any>(null);
     const [showSuccess, setShowSuccess] = useState(false);
+    const [whatsappLink, setWhatsappLink] = useState("");
 
     useEffect(() => {
         if (cart.length > 0) {
@@ -295,11 +296,12 @@ export default function CheckoutPage() {
             const finalPhone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
             const link = `https://wa.me/${finalPhone}?text=${encodeURIComponent(message)}`;
 
+            setWhatsappLink(link);
             clearCart();
             setLoading(false);
             setShowSuccess(true);
 
-            // Direct Redirect (Classic Method) - Fixes encoding and deep linking issues
+            // Try automatic redirect, but keep button as fallback
             window.location.href = link;
 
         } catch (e) {
@@ -510,15 +512,27 @@ export default function CheckoutPage() {
                             <span className="text-4xl">✅</span>
                         </div>
                         <h2 className="text-2xl font-bold text-gray-800 mb-2">Pedido Realizado!</h2>
-                        <p className="text-gray-500 mb-6">Redirecionando para WhatsApp...</p>
+                        <p className="text-gray-500 mb-6">Seu pedido foi validado com sucesso.</p>
 
                         <div className="bg-gray-100 p-4 rounded-xl mb-6">
-                            <div className="text-3xl font-bold text-green-600 animate-pulse">
-                                Abrindo...
-                            </div>
+                            <a
+                                href={whatsappLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-4 rounded-xl shadow-lg transition-all transform active:scale-95 flex items-center justify-center gap-2"
+                            >
+                                <span>📱</span>
+                                <span>Enviar no WhatsApp</span>
+                            </a>
+                            <p className="text-xs text-gray-400 mt-2">Clique acima para enviar o pedido</p>
                         </div>
 
-                        <p className="text-xs text-gray-400">Obrigado por comprar conosco! ❤️</p>
+                        <button
+                            onClick={() => window.location.reload()}
+                            className="text-sm text-gray-400 underline hover:text-gray-600"
+                        >
+                            Voltar para o início
+                        </button>
                     </div>
                 </div>
             )}
