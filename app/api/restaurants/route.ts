@@ -135,14 +135,26 @@ export async function PUT(req: NextRequest) {
             id, name, email, whatsapp, instagram, zipCode, address, hours, type,
             deliveryFee, deliveryTime, image, pixKey, approved, password,
             latitude, longitude, deliveryRadius, deliveryFeeTiers,
-            popularTitle, welcomeSubtitle
+            popularTitle, welcomeSubtitle, resetPassword
         } = body;
 
         if (!id) {
             return NextResponse.json({ error: "ID required" }, { status: 400 });
         }
 
-        // Use COALESCE to allow partial updates
+        // Generate a random 8-char password
+        const generated = Math.random().toString(36).slice(-8);
+
+        // Logic:
+        // 1. If resetPassword is true, force use generated password (first arg of COALESCE)
+        // 2. Else use provided password (if any)
+        // 3. Fallback to existing DB password
+        // 4. If DB password is null (new approval) AND approved=true, use generated
+
+        const forcePassword = resetPassword ? generated : password;
+        const fallbackPassword = (approved === true) ? generated : null;
+
+        // Use COALESCE to allow partial updates and handle password logic
         const { rows } = await sql`
             UPDATE restaurants SET
                 name = COALESCE(${name}, name),
@@ -158,7 +170,7 @@ export async function PUT(req: NextRequest) {
                 image = COALESCE(${image}, image),
                 pix_key = COALESCE(${pixKey}, pix_key),
                 approved = COALESCE(${approved}, approved),
-                password = COALESCE(${password}, password),
+                password = COALESCE(${forcePassword}, password, ${fallbackPassword}),
                 latitude = COALESCE(${latitude}, latitude),
                 longitude = COALESCE(${longitude}, longitude),
                 delivery_radius = COALESCE(${deliveryRadius}, delivery_radius),
@@ -170,7 +182,7 @@ export async function PUT(req: NextRequest) {
             RETURNING *
         `;
 
-        return NextResponse.json({ success: true, restaurant: rows[0] });
+        return NextResponse.json({ success: true, ...rows[0] });
 
     } catch (error) {
         console.error("Database Error:", error);
