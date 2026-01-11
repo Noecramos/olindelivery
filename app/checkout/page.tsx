@@ -17,6 +17,8 @@ export default function CheckoutPage() {
     const [whatsappLink, setWhatsappLink] = useState("");
 
     const [calculatedDistance, setCalculatedDistance] = useState<number | null>(null);
+    const [isCepOutOfRange, setIsCepOutOfRange] = useState(false);
+
 
     useEffect(() => {
         if (cart.length > 0) {
@@ -169,6 +171,7 @@ export default function CheckoutPage() {
                     console.error('❌ Distance exceeds delivery radius!');
                     console.error(`Distance: ${distance.toFixed(2)}km > Max: ${maxDeliveryRadius}km`);
                     setDeliveryFee(0);
+                    setIsCepOutOfRange(true); // Mark CEP as out of range
                     alert(
                         `⚠️ CEP FORA DA ÁREA DE ENTREGA\n\n` +
                         `Distância: ${distance.toFixed(1)} km\n` +
@@ -178,6 +181,9 @@ export default function CheckoutPage() {
                     );
                     return;
                 }
+
+                // CEP is within range
+                setIsCepOutOfRange(false);
 
                 // Find appropriate fee tier
                 const validTiers = tiers
@@ -223,6 +229,17 @@ export default function CheckoutPage() {
             alert("Por favor, preencha todos os dados (incluindo o CEP).");
             return;
         }
+
+        // Check if CEP is out of delivery range
+        if (isCepOutOfRange) {
+            alert(
+                "⚠️ CEP FORA DA ÁREA DE ENTREGA\n\n" +
+                "Este endereço está fora da nossa área de entrega.\n\n" +
+                "Por favor, entre em contato pelo WhatsApp para verificar possibilidades."
+            );
+            return;
+        }
+
 
         setLoading(true);
         const restaurantId = cart[0].restaurantId || 'default';
