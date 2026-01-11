@@ -1,7 +1,8 @@
 "use client";
 
-// Checkout page with geolocation delivery radius validation - v2.0
-// Deploy timestamp: 2026-01-10T16:55:00
+// Checkout page with geolocation delivery radius validation - v2.1 STRICT
+// Deploy timestamp: 2026-01-11T11:02:00
+// FIXED: Now blocks orders when validation fails or address can't be geocoded
 
 import { useState, useEffect } from "react";
 import { useCart } from "../context/CartContext";
@@ -225,8 +226,20 @@ export default function CheckoutPage() {
                                 console.log('Distance:', distance.toFixed(2), 'km ≤ Max:', maxRadius, 'km');
                             }
                         } else {
-                            console.warn('⚠️ Could not geocode address - allowing order to proceed');
-                            console.warn('This may happen if the address is too generic or not found in OSM database');
+                            console.error('❌ BLOCKED: Could not geocode address');
+                            console.error('Address not found in geocoding database');
+                            alert(
+                                `🚫 Não foi possível validar seu endereço.\n\n` +
+                                `📍 CEP informado: ${form.zipCode}\n` +
+                                `📮 Endereço: ${cepData.bairro}, ${cepData.localidade}\n\n` +
+                                `⚠️ Este endereço não foi encontrado no sistema de geolocalização.\n\n` +
+                                `Por favor:\n` +
+                                `1. Verifique se o CEP está correto\n` +
+                                `2. Tente novamente com um CEP mais específico\n` +
+                                `3. Ou entre em contato conosco pelo WhatsApp para confirmar a entrega`
+                            );
+                            setLoading(false);
+                            return;
                         }
                     } catch (geoError) {
                         console.error('❌ Geolocation validation error:', geoError);
@@ -234,8 +247,19 @@ export default function CheckoutPage() {
                             message: geoError instanceof Error ? geoError.message : 'Unknown error',
                             stack: geoError instanceof Error ? geoError.stack : undefined
                         });
-                        // Continue with order if geolocation fails (don't block customer)
-                        console.warn('⚠️ Allowing order to proceed despite geolocation error');
+                        // Block order if geolocation validation fails when it's required
+                        console.error('❌ BLOCKED: Geolocation validation failed');
+                        alert(
+                            `🚫 Erro ao validar área de entrega.\n\n` +
+                            `Não foi possível verificar se seu endereço está dentro da nossa área de entrega.\n\n` +
+                            `Por favor:\n` +
+                            `1. Verifique sua conexão com a internet\n` +
+                            `2. Confirme se o CEP está correto\n` +
+                            `3. Tente novamente em alguns instantes\n` +
+                            `4. Ou entre em contato conosco pelo WhatsApp`
+                        );
+                        setLoading(false);
+                        return;
                     }
                 }
             } else {
