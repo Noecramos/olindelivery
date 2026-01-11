@@ -49,9 +49,16 @@ export async function POST(request: Request) {
     try {
         const body = await request.json();
         // Body must now include restaurantId
+        // Log payload for debugging (Vercel logs)
+        console.log('📝 Received Order Paylod:', JSON.stringify(body).slice(0, 200) + '...');
 
         const sheet = await getSheetByTitle('Orders');
-        const ticketNumber = await generateTicketNumber(body.restaurantId || 'default'); // Fallback for now
+
+        // Ensure headers are loaded to prevent schema mismatch errors
+        await sheet.loadHeaderRow();
+        const headerValues = sheet.headerValues;
+
+        const ticketNumber = await generateTicketNumber(body.restaurantId || 'default');
 
         const newOrder = {
             id: Date.now().toString(),
@@ -61,26 +68,52 @@ export async function POST(request: Request) {
             ...body
         };
 
-        await sheet.addRow({
+        // Construct row object ONLY with keys present in the sheet header
+        // This is a defensive coding strategy to prevent 500 errors if columns are missing
+        const rowData: any = {};
+
+        // Map of potential keys to values
+        const potentialData: any = {
             id: newOrder.id,
             ticketNumber: newOrder.ticketNumber,
             restaurantId: newOrder.restaurantId || 'default',
             status: newOrder.status,
-            customerName: newOrder.customer.name,
-            customerPhone: newOrder.customer.phone,
-            customerAddress: newOrder.customer.address,
+            customerName: newOrder.customer?.name || '',
+            customerPhone: newOrder.customer?.phone || '',
+            customerAddress: newOrder.customer?.address || '',
             total: newOrder.total,
             paymentMethod: newOrder.paymentMethod,
             changeFor: newOrder.changeFor,
-            observations: newOrder.observations || '',         // Added
-            items: JSON.stringify(newOrder.items),
+            observations: newOrder.observations || '',
+            items: JSON.stringify(newOrder.items || []),
             createdAt: newOrder.createdAt
-        });
+        };
+
+        // Only add fields that exist in the sheet headers
+        if (headerValues && headerValues.length > 0) {
+            headerValues.forEach((header: string) => {
+                if (potentialData[header] !== undefined) {
+                    rowData[header] = potentialData[header];
+                }
+            });
+        } else {
+            // Fallback if headers couldn't be loaded (unlikely via Google API v4)
+            // Just use all data and hope for best
+            Object.assign(rowData, potentialData);
+        }
+
+        console.log('💾 Saving row to Sheets...');
+        await sheet.addRow(rowData);
+        console.log('✅ Order saved:', newOrder.id);
 
         return NextResponse.json(newOrder);
-    } catch (e) {
+    } catch (e: any) {
         console.error("Sheets Error:", e);
-        return NextResponse.json({ error: 'Failed to save order' }, { status: 500 });
+        // Returns 500 but log detailed error
+        return NextResponse.json(
+            { error: 'Failed to save order', details: e.message },
+            { status: 500 }
+        );
     }
 }
 
