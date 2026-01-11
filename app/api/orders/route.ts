@@ -1,175 +1,125 @@
-import { NextResponse } from 'next/server';
-import { getSheetByTitle } from '@/lib/googleSheets';
-import { generateTicketNumber } from '@/lib/ticket';
+import { NextRequest, NextResponse } from "next/server";
+import { sql } from "@vercel/postgres";
 
-export async function GET(request: Request) {
-    try {
-        const { searchParams } = new URL(request.url);
-        const restaurantId = searchParams.get('restaurantId');
-
-        // Return 400 if no restaurant specified (Security/Isolation)
-        if (!restaurantId) return NextResponse.json([], { status: 400 });
-
-        const sheet = await getSheetByTitle('Orders');
-        const rows = await sheet.getRows();
-
-        const orders = rows
-            .filter((row: any) => row.get('restaurantId') === restaurantId)
-            .map((row: any) => {
-                const get = (key: string) => row.get(key);
-
-                return {
-                    id: get('id'),
-                    ticketNumber: get('ticketNumber'),
-                    createdAt: get('createdAt'),
-                    status: get('status'),
-                    total: parseFloat(get('total') || '0'),
-                    paymentMethod: get('paymentMethod'),
-                    changeFor: get('changeFor'),
-                    observations: get('observations'),         // Added
-                    customer: {
-                        name: get('customerName'),
-                        phone: get('customerPhone'),
-                        address: get('customerAddress'),
-                    },
-                    items: get('items') ? JSON.parse(get('items')) : []
-                };
-            });
-
-        orders.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
-        return NextResponse.json(orders);
-    } catch (e) {
-        console.error("Sheets Error:", e);
-        return NextResponse.json([], { status: 200 });
-    }
+// Helper to get next ticket number
+async function getNextTicketNumber(restaurantId: string) {
+    const { rows } = await sql`
+        SELECT MAX(ticket_number) as max_ticket 
+        FROM orders 
+        WHERE restaurant_id = ${restaurantId}
+    `;
+    return (rows[0].max_ticket || 0) + 1;
 }
 
-export async function POST(request: Request) {
+export async function GET(req: NextRequest) {
     try {
-        const body = await request.json();
-        // Body must now include restaurantId
-        // Log payload for debugging (Vercel logs)
-        console.log('📝 Received Order Paylod:', JSON.stringify(body).slice(0, 200) + '...');
-
-        const sheet = await getSheetByTitle('Orders');
-
-        // Ensure headers are loaded to prevent schema mismatch errors
-        await sheet.loadHeaderRow();
-        const headerValues = sheet.headerValues;
-
-        const ticketNumber = await generateTicketNumber(body.restaurantId || 'default');
-
-        const newOrder = {
-            id: Date.now().toString(),
-            ticketNumber: ticketNumber,
-            createdAt: new Date().toISOString(),
-            status: 'pending',
-            ...body
-        };
-
-        // Construct row object ONLY with keys present in the sheet header
-        // This is a defensive coding strategy to prevent 500 errors if columns are missing
-        const rowData: any = {};
-
-        // Map of potential keys to values
-        const potentialData: any = {
-            id: newOrder.id,
-            ticketNumber: newOrder.ticketNumber,
-            restaurantId: newOrder.restaurantId || 'default',
-            status: newOrder.status,
-            customerName: newOrder.customer?.name || '',
-            customerPhone: newOrder.customer?.phone || '',
-            customerAddress: newOrder.customer?.address || '',
-            total: newOrder.total,
-            paymentMethod: newOrder.paymentMethod,
-            changeFor: newOrder.changeFor,
-            observations: newOrder.observations || '',
-            items: JSON.stringify(newOrder.items || []),
-            createdAt: newOrder.createdAt
-        };
-
-        // Only add fields that exist in the sheet headers
-        if (headerValues && headerValues.length > 0) {
-            headerValues.forEach((header: string) => {
-                if (potentialData[header] !== undefined) {
-                    rowData[header] = potentialData[header];
-                }
-            });
-        } else {
-            // Fallback if headers couldn't be loaded (unlikely via Google API v4)
-            // Just use all data and hope for best
-            Object.assign(rowData, potentialData);
-        }
-
-        console.log('💾 Saving row to Sheets...');
-        await sheet.addRow(rowData);
-        console.log('✅ Order saved:', newOrder.id);
-
-        return NextResponse.json(newOrder);
-    } catch (e: any) {
-        console.error("Sheets Error:", e);
-        // Returns 500 but log detailed error
-        return NextResponse.json(
-            { error: 'Failed to save order', details: e.message },
-            { status: 500 }
-        );
-    }
-}
-
-export async function PUT(request: Request) {
-    try {
-        const body = await request.json();
-        const { id, status } = body;
-
-        if (!id || !status) return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
-
-        const sheet = await getSheetByTitle('Orders');
-        const rows = await sheet.getRows();
-        const row = rows.find((r: any) => r.get('id') === id);
-
-        if (row) {
-            row.assign({ status });
-            await row.save();
-            return NextResponse.json({ id, status });
-        }
-
-        return NextResponse.json({ error: 'Order not found' }, { status: 404 });
-    } catch (e) {
-        console.error("Sheets Update Error:", e);
-        return NextResponse.json({ error: 'Failed' }, { status: 500 });
-    }
-}
-
-export async function DELETE(request: Request) {
-    try {
-        const { searchParams } = new URL(request.url);
+        const { searchParams } = new URL(req.url);
         const restaurantId = searchParams.get('restaurantId');
         const clearHistory = searchParams.get('clearHistory');
 
-        if (!restaurantId) return NextResponse.json({ error: 'Missing restaurantId' }, { status: 400 });
-
-        const sheet = await getSheetByTitle('Orders');
-        const rows = await sheet.getRows();
-
-        if (clearHistory === 'true') {
-            const rowsToDelete = rows.filter((r: any) =>
-                r.get('restaurantId') === restaurantId &&
-                ['sent', 'delivered', 'cancelled'].includes(r.get('status'))
-            );
-
-            // Delete in reverse to avoid index shifting issues if sequential?
-            // Actually, just awaiting each delete is safest for now.
-            for (const row of rowsToDelete) {
-                await row.delete();
-            }
-
-            return NextResponse.json({ success: true, count: rowsToDelete.length });
+        if (!restaurantId) {
+            return NextResponse.json({ error: "Restaurant ID required" }, { status: 400 });
         }
 
-        return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
-    } catch (e) {
-        console.error("Sheets Delete Error:", e);
-        return NextResponse.json({ error: 'Failed' }, { status: 500 });
+        if (clearHistory === 'true') {
+            await sql`
+                DELETE FROM orders 
+                WHERE restaurant_id = ${restaurantId} 
+                AND status IN ('delivered', 'cancelled', 'sent')
+            `;
+            return NextResponse.json({ success: true });
+        }
+
+        const { rows } = await sql`
+            SELECT 
+                id, restaurant_id as "restaurantId", ticket_number as "ticketNumber",
+                customer_name as "customerName", customer_phone as "customerPhone", 
+                customer_address as "customerAddress", customer_zip_code as "customerZipCode",
+                items, subtotal, delivery_fee as "deliveryFee", total, 
+                payment_method as "paymentMethod", change_for as "changeFor", observations,
+                status, created_at as "createdAt"
+            FROM orders 
+            WHERE restaurant_id = ${restaurantId} 
+            ORDER BY created_at DESC 
+            LIMIT 100
+        `;
+
+        // Parse items JSON if needed (pg usually returns object for JSONB)
+        const orders = rows.map(order => ({
+            ...order,
+            items: typeof order.items === 'string' ? JSON.parse(order.items) : order.items
+        }));
+
+        return NextResponse.json(orders);
+
+    } catch (error) {
+        console.error("Database Error:", error);
+        return NextResponse.json({ error: "Failed to fetch orders" }, { status: 500 });
+    }
+}
+
+export async function POST(req: NextRequest) {
+    try {
+        const body = await req.json();
+        const {
+            restaurantId, customerName, customerPhone, customerAddress, customerZipCode,
+            items, subtotal, deliveryFee, total, paymentMethod, changeFor, observations
+        } = body;
+
+        if (!restaurantId || !customerName || !items) {
+            return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+        }
+
+        const ticketNumber = await getNextTicketNumber(restaurantId);
+
+        const { rows } = await sql`
+            INSERT INTO orders (
+                restaurant_id, ticket_number, customer_name, customer_phone, 
+                customer_address, customer_zip_code, items, subtotal, 
+                delivery_fee, total, payment_method, change_for, observations, 
+                status
+            ) VALUES (
+                ${restaurantId}, ${ticketNumber}, ${customerName}, ${customerPhone},
+                ${customerAddress}, ${customerZipCode}, ${JSON.stringify(items)}, 
+                ${subtotal}, ${deliveryFee}, ${total}, ${paymentMethod}, 
+                ${changeFor}, ${observations}, 'pending'
+            ) RETURNING 
+                id, restaurant_id as "restaurantId", ticket_number as "ticketNumber",
+                customer_name as "customerName", customer_phone as "customerPhone",
+                customer_address as "customerAddress", customer_zip_code as "customerZipCode",
+                items, subtotal, delivery_fee as "deliveryFee", total,
+                payment_method as "paymentMethod", change_for as "changeFor",
+                observations, status, created_at as "createdAt"
+        `;
+
+        return NextResponse.json(rows[0]);
+
+    } catch (error) {
+        console.error("Database Error:", error);
+        return NextResponse.json({ error: "Failed to create order" }, { status: 500 });
+    }
+}
+
+export async function PUT(req: NextRequest) {
+    try {
+        const body = await req.json();
+        const { id, status } = body;
+
+        if (!id || !status) {
+            return NextResponse.json({ error: "ID and status required" }, { status: 400 });
+        }
+
+        const { rows } = await sql`
+            UPDATE orders 
+            SET status = ${status}, updated_at = NOW() 
+            WHERE id = ${id} 
+            RETURNING id, status, updated_at as "updatedAt"
+        `;
+
+        return NextResponse.json(rows[0]);
+
+    } catch (error) {
+        console.error("Database Error:", error);
+        return NextResponse.json({ error: "Failed to update order" }, { status: 500 });
     }
 }

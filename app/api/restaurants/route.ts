@@ -1,263 +1,196 @@
-import { NextResponse } from 'next/server';
-import { getSheetByTitle } from '@/lib/googleSheets';
-import { v4 as uuidv4 } from 'uuid';
+import { NextRequest, NextResponse } from "next/server";
+import { sql } from "@vercel/postgres";
 
-// API route for restaurant data - includes geolocation fields (latitude, longitude, deliveryRadius)
-
-export async function GET(request: Request) {
+export async function GET(req: NextRequest) {
     try {
-        const { searchParams } = new URL(request.url);
+        const { searchParams } = new URL(req.url);
         const slug = searchParams.get('slug');
         const id = searchParams.get('id');
-        const showAll = searchParams.get('all') === 'true';
 
-        const sheet = await getSheetByTitle('Restaurants');
-        const rows = await sheet.getRows();
+        const selectColumns = `
+            id, name, slug, responsible_name as "responsibleName", 
+            email, whatsapp, instagram, 
+            zip_code as "zipCode", address, hours, type, image, pix_key as "pixKey",
+            latitude, longitude, delivery_radius as "deliveryRadius",
+            delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
+            delivery_time as "deliveryTime", popular_title as "popularTitle",
+            welcome_subtitle as "welcomeSubtitle", password, approved,
+            created_at as "createdAt", updated_at as "updatedAt"
+        `;
 
-        let restaurant;
+        if (slug) {
+            // Safe interpolation with Vercel Postgres is tricky with dynamic columns.
+            // But here columns are static string.
+            // We can't use template literal for columns easily in sql`` tag without helpers.
+            // So we'll select * and map in JS or just write the query fully.
+            // Let's write the query fully for slug.
+            const { rows } = await sql`
+                SELECT 
+                    id, name, slug, responsible_name as "responsibleName", 
+                    email, whatsapp, instagram, 
+                    zip_code as "zipCode", address, hours, type, image, pix_key as "pixKey",
+                    latitude, longitude, delivery_radius as "deliveryRadius",
+                    delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
+                    delivery_time as "deliveryTime", popular_title as "popularTitle",
+                    welcome_subtitle as "welcomeSubtitle", password, approved,
+                    created_at as "createdAt", updated_at as "updatedAt"
+                FROM restaurants 
+                WHERE slug = ${slug} 
+                LIMIT 1
+            `;
+
+            if (rows.length === 0) {
+                return NextResponse.json({ error: "Restaurant not found" }, { status: 404 });
+            }
+
+            const restaurant = rows[0];
+            return NextResponse.json({
+                ...restaurant,
+                deliveryFee: Number(restaurant.deliveryFee),
+                deliveryRadius: Number(restaurant.deliveryRadius),
+                latitude: Number(restaurant.latitude),
+                longitude: Number(restaurant.longitude)
+            });
+        }
 
         if (id) {
-            restaurant = rows.find((r: any) => r.get('id') === id);
-        } else if (slug) {
-            restaurant = rows.find((r: any) => {
-                const dbSlug = r.get('slug');
-                return dbSlug === slug || dbSlug.replace(/-/g, '') === slug?.replace(/-/g, '');
-            });
-        } else {
-            // Return list for marketplace
-            // Filter by approved unless showAll is true
-            const all = rows
-                .filter((r: any) => showAll || r.get('approved') === 'TRUE')
-                .map((r: any) => {
-                    const data: any = {
-                        id: r.get('id'),
-                        name: r.get('name'),
-                        slug: r.get('slug'),
-                        image: r.get('image'),
-                        isOpen: r.get('isOpen') === 'TRUE',
-                        approved: r.get('approved') === 'TRUE',
-                        phone: r.get('phone'),
-                        address: r.get('address'),
-                        deliveryTime: r.get('deliveryTime') || '30-45 min',
-                        instagram: r.get('instagram'),
-                        zipCode: r.get('zipCode'),
-                        hours: r.get('hours'),
-                        responsibleName: r.get('responsibleName'),
-                        email: r.get('email'),
-                        whatsapp: r.get('whatsapp'),
-                        pixKey: r.get('pixKey'),
-                        type: r.get('type'),
-                        deliveryFee: r.get('deliveryFee'),
-                        ratingSum: parseInt(r.get('ratingSum') || '0'),
-                        ratingCount: parseInt(r.get('ratingCount') || '0'),
-                        latitude: r.get('latitude'),
-                        longitude: r.get('longitude'),
-                        deliveryRadius: r.get('deliveryRadius')
-                    };
-                    // Only return password if Super Admin (requesting all)
-                    if (showAll) {
-                        data.password = r.get('password');
-                    }
-                    return data;
-                });
-            return NextResponse.json(all);
+            const { rows } = await sql`
+                SELECT 
+                    id, name, slug, responsible_name as "responsibleName", 
+                    email, whatsapp, instagram, 
+                    zip_code as "zipCode", address, hours, type, image, pix_key as "pixKey",
+                    latitude, longitude, delivery_radius as "deliveryRadius",
+                    delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
+                    delivery_time as "deliveryTime", popular_title as "popularTitle",
+                    welcome_subtitle as "welcomeSubtitle", password, approved,
+                    created_at as "createdAt", updated_at as "updatedAt"
+                FROM restaurants 
+                WHERE id = ${id} 
+                LIMIT 1
+            `;
+            if (rows.length === 0) {
+                return NextResponse.json({ error: "Restaurant not found" }, { status: 404 });
+            }
+            return NextResponse.json(rows[0]);
         }
 
-        if (restaurant) {
-            // If fetching single, check approval or allow if direct access (could restrict too)
-            return NextResponse.json({
-                id: restaurant.get('id'),
-                name: restaurant.get('name'),
-                slug: restaurant.get('slug'),
-                isOpen: restaurant.get('isOpen') === 'TRUE',
-                image: restaurant.get('image'),
-                banner: restaurant.get('banner'),
-                approved: restaurant.get('approved') === 'TRUE',
-                phone: restaurant.get('phone'),
-                address: restaurant.get('address'),
-                deliveryTime: restaurant.get('deliveryTime') || '30-45 min',
-                instagram: restaurant.get('instagram'),
-                whatsapp: restaurant.get('whatsapp'),
-                pixKey: restaurant.get('pixKey'),
-                type: restaurant.get('type'),
-                deliveryFee: restaurant.get('deliveryFee'),
-                latitude: restaurant.get('latitude'),
-                longitude: restaurant.get('longitude'),
-                deliveryRadius: restaurant.get('deliveryRadius'),
-                // Password is NOT returned for single public view
-            });
-        }
+        // List all
+        const { rows } = await sql`
+            SELECT 
+                id, name, slug, responsible_name as "responsibleName", 
+                email, whatsapp, instagram, 
+                zip_code as "zipCode", address, hours, type, image, pix_key as "pixKey",
+                latitude, longitude, delivery_radius as "deliveryRadius",
+                delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
+                delivery_time as "deliveryTime", popular_title as "popularTitle",
+                welcome_subtitle as "welcomeSubtitle", password, approved,
+                created_at as "createdAt", updated_at as "updatedAt"
+            FROM restaurants 
+            ORDER BY created_at DESC
+        `;
+        return NextResponse.json(rows);
 
-        return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 });
-    } catch (e) {
-        return NextResponse.json({ error: 'Failed to fetch' }, { status: 500 });
+    } catch (error) {
+        console.error("Database Error:", error);
+        return NextResponse.json({ error: "Failed to fetch restaurants" }, { status: 500 });
     }
 }
 
-export async function POST(request: Request) {
+export async function POST(req: NextRequest) {
     try {
-        const body = await request.json();
-        const sheet = await getSheetByTitle('Restaurants');
+        const body = await req.json();
+        const {
+            name, slug, responsibleName, email, whatsapp, instagram,
+            zipCode, address, hours, type, image, pixKey
+        } = body;
 
-        console.log('=== Creating Restaurant ===');
-        console.log('Received data:', {
-            name: body.name,
-            slug: body.slug,
-            image: body.image,
-            whatsapp: body.whatsapp,
-            pixKey: body.pixKey,
-            email: body.email
-        });
-
-        if (!body.name || !body.slug) {
-            return NextResponse.json({ error: 'Name and slug required' }, { status: 400 });
+        // Check if slug exists
+        const { rows: existing } = await sql`SELECT slug FROM restaurants WHERE slug = ${slug}`;
+        if (existing.length > 0) {
+            return NextResponse.json({ error: "URL (slug) already taken" }, { status: 400 });
         }
 
-        const newRestaurant = {
-            id: uuidv4(),
-            slug: body.slug,
-            name: body.name,
-            password: body.password || '', // Password generated only on approval
-            isOpen: 'TRUE',
-            image: body.image || '',
-            banner: body.banner || '',
-            approved: 'FALSE', // Default to pending
-            phone: body.phone || body.whatsapp || '', // Fallback to whatsapp if phone not provided
-            address: body.address || '',
-            deliveryTime: body.deliveryTime || '30-45 min',
-            deliveryFee: body.deliveryFee || '0',
-            instagram: body.instagram || '',
-            zipCode: body.zipCode || '',
-            hours: body.hours || '',
-            responsibleName: body.responsibleName || '',
-            email: body.email || '',
-            whatsapp: body.whatsapp || '',
-            pixKey: body.pixKey || '',
-            type: body.type || 'Outro'
-        };
+        const { rows } = await sql`
+            INSERT INTO restaurants (
+                name, slug, responsible_name, email, whatsapp, instagram, 
+                zip_code, address, hours, type, image, pix_key, approved
+            ) VALUES (
+                ${name}, ${slug}, ${responsibleName}, ${email}, ${whatsapp}, ${instagram},
+                ${zipCode}, ${address}, ${hours}, ${type}, ${image}, ${pixKey}, false
+            ) RETURNING *
+        `;
 
-        console.log('Saving to Google Sheets with image:', newRestaurant.image);
+        return NextResponse.json({ success: true, restaurant: rows[0] });
 
-        await sheet.addRow({
-            id: newRestaurant.id,
-            slug: newRestaurant.slug,
-            name: newRestaurant.name,
-            password: newRestaurant.password,
-            isOpen: newRestaurant.isOpen,
-            image: newRestaurant.image,
-            banner: newRestaurant.banner,
-            approved: newRestaurant.approved,
-            phone: newRestaurant.phone,
-            address: newRestaurant.address,
-            deliveryTime: newRestaurant.deliveryTime,
-            deliveryFee: newRestaurant.deliveryFee,
-            instagram: newRestaurant.instagram,
-            zipCode: newRestaurant.zipCode,
-            hours: newRestaurant.hours,
-            responsibleName: newRestaurant.responsibleName,
-            email: newRestaurant.email,
-            whatsapp: newRestaurant.whatsapp,
-            pixKey: newRestaurant.pixKey,
-            type: newRestaurant.type
-        });
-
-        console.log('=== Restaurant Created Successfully ===');
-
-        return NextResponse.json(newRestaurant);
-    } catch (e: any) {
-        console.error('=== Restaurant Creation Error ===', e.message);
-        return NextResponse.json({ error: 'Create failed' }, { status: 500 });
+    } catch (error) {
+        console.error("Database Error:", error);
+        return NextResponse.json({ error: "Failed to create restaurant" }, { status: 500 });
     }
 }
 
-export async function PUT(request: Request) {
+export async function PUT(req: NextRequest) {
     try {
-        const body = await request.json();
-        const { id, isOpen, approved } = body;
+        const body = await req.json();
+        const {
+            id, name, email, whatsapp, instagram, zipCode, address, hours, type,
+            deliveryFee, deliveryTime, image, pixKey, approved, password,
+            latitude, longitude, deliveryRadius, deliveryFeeTiers,
+            popularTitle, welcomeSubtitle
+        } = body;
 
-        if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
-
-        const sheet = await getSheetByTitle('Restaurants');
-        const rows = await sheet.getRows();
-        const row = rows.find((r: any) => r.get('id') === id);
-
-        if (row) {
-            const updates: any = {};
-            let currentPassword = row.get('password');
-
-            if (typeof isOpen !== 'undefined') updates.isOpen = isOpen ? 'TRUE' : 'FALSE';
-
-            if (typeof approved !== 'undefined') {
-                const isApproving = approved === true || approved === 'TRUE';
-                updates.approved = isApproving ? 'TRUE' : 'FALSE';
-
-                // Always generate a new random password when approving
-                if (isApproving) {
-                    currentPassword = Math.random().toString(36).slice(-6).toUpperCase();
-                    updates.password = currentPassword;
-                }
-            }
-
-            if (body.resetPassword === true) {
-                currentPassword = Math.random().toString(36).slice(-6).toUpperCase();
-                updates.password = currentPassword;
-            }
-
-            if (typeof body.deliveryTime !== 'undefined') updates.deliveryTime = body.deliveryTime;
-
-            if (body.name) {
-                const newSlug = body.name.toLowerCase()
-                    .normalize('NFD').replace(/[\u0300-\u036f]/g, "")
-                    .replace(/[^a-z0-9]+/g, '-')
-                    .replace(/^-+|-+$/g, '');
-
-                // Update slug if name changed OR if current slug doesn't match expected slug (self-healing)
-                if (body.name !== row.get('name') || row.get('slug') !== newSlug) {
-                    updates.slug = newSlug;
-                }
-            }
-
-            // Allow updating other profile fields
-            const profileFields = [
-                'name', 'image', 'banner', 'phone', 'address', 'instagram',
-                'zipCode', 'hours', 'responsibleName', 'email', 'whatsapp',
-                'pixKey', 'type', 'deliveryFee', 'latitude', 'longitude', 'deliveryRadius'
-            ];
-
-            profileFields.forEach(field => {
-                if (typeof body[field] !== 'undefined') updates[field] = body[field];
-            });
-
-            row.assign(updates);
-            await row.save();
-
-            return NextResponse.json({ success: true, password: currentPassword, slug: updates.slug || row.get('slug') });
+        if (!id) {
+            return NextResponse.json({ error: "ID required" }, { status: 400 });
         }
 
-        return NextResponse.json({ error: 'NotFound' }, { status: 404 });
-    } catch (e) {
-        return NextResponse.json({ error: 'Update failed' }, { status: 500 });
+        // Use COALESCE to allow partial updates
+        const { rows } = await sql`
+            UPDATE restaurants SET
+                name = COALESCE(${name}, name),
+                email = COALESCE(${email}, email),
+                whatsapp = COALESCE(${whatsapp}, whatsapp),
+                instagram = COALESCE(${instagram}, instagram),
+                zip_code = COALESCE(${zipCode}, zip_code),
+                address = COALESCE(${address}, address),
+                hours = COALESCE(${hours}, hours),
+                type = COALESCE(${type}, type),
+                delivery_fee = COALESCE(${deliveryFee}, delivery_fee),
+                delivery_time = COALESCE(${deliveryTime}, delivery_time),
+                image = COALESCE(${image}, image),
+                pix_key = COALESCE(${pixKey}, pix_key),
+                approved = COALESCE(${approved}, approved),
+                password = COALESCE(${password}, password),
+                latitude = COALESCE(${latitude}, latitude),
+                longitude = COALESCE(${longitude}, longitude),
+                delivery_radius = COALESCE(${deliveryRadius}, delivery_radius),
+                delivery_fee_tiers = COALESCE(${JSON.stringify(deliveryFeeTiers) === undefined ? null : JSON.stringify(deliveryFeeTiers)}, delivery_fee_tiers),
+                popular_title = COALESCE(${popularTitle}, popular_title),
+                welcome_subtitle = COALESCE(${welcomeSubtitle}, welcome_subtitle),
+                updated_at = NOW()
+            WHERE id = ${id}
+            RETURNING *
+        `;
+
+        return NextResponse.json({ success: true, restaurant: rows[0] });
+
+    } catch (error) {
+        console.error("Database Error:", error);
+        return NextResponse.json({ error: "Failed to update restaurant" }, { status: 500 });
     }
 }
 
-export async function DELETE(request: Request) {
+export async function DELETE(req: NextRequest) {
     try {
-        const { searchParams } = new URL(request.url);
+        const { searchParams } = new URL(req.url);
         const id = searchParams.get('id');
 
-        if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
+        if (!id) return NextResponse.json({ error: "ID required" }, { status: 400 });
 
-        const sheet = await getSheetByTitle('Restaurants');
-        const rows = await sheet.getRows();
-        const row = rows.find((r: any) => r.get('id') === id);
+        await sql`DELETE FROM restaurants WHERE id = ${id}`;
 
-        if (row) {
-            await row.delete();
-            return NextResponse.json({ success: true });
-        }
+        return NextResponse.json({ success: true });
 
-        return NextResponse.json({ error: 'Not found' }, { status: 404 });
-    } catch (e) {
-        return NextResponse.json({ error: 'Delete failed' }, { status: 500 });
+    } catch (error) {
+        console.error("Database Error:", error);
+        return NextResponse.json({ error: "Failed to delete restaurant" }, { status: 500 });
     }
 }

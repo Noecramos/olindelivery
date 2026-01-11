@@ -1,113 +1,93 @@
-import { NextResponse } from 'next/server';
-import { getSheetByTitle } from '@/lib/googleSheets';
-import { v4 as uuidv4 } from 'uuid';
+import { NextRequest, NextResponse } from "next/server";
+import { sql } from "@vercel/postgres";
 
-export async function GET(request: Request) {
+export async function GET(req: NextRequest) {
     try {
-        const { searchParams } = new URL(request.url);
+        const { searchParams } = new URL(req.url);
         const restaurantId = searchParams.get('restaurantId');
 
-        if (!restaurantId) return NextResponse.json([], { status: 400 });
-
-        const sheet = await getSheetByTitle('Products');
-        const catSheet = await getSheetByTitle('Categories');
-
-        const rows = await sheet.getRows();
-        const catRows = await catSheet.getRows();
-
-        const catMap = catRows.reduce((acc: any, row: any) => {
-            acc[row.get('id')] = row.get('description');
-            return acc;
-        }, {});
-
-        // Filter by restaurant
-        const products = rows
-            .filter((row: any) => row.get('restaurantId') === restaurantId)
-            .map((row: any) => ({
-                id: row.get('id'),
-                restaurantId: row.get('restaurantId'),
-                name: row.get('name'),
-                description: row.get('description'),
-                price: parseFloat(row.get('price')),
-                image: row.get('image'),
-                categoryId: row.get('categoryId'),
-                category: catMap[row.get('categoryId')] || 'Outros',
-                available: row.get('available') === 'TRUE'
-            }));
-
-        return NextResponse.json(products);
-    } catch (e: any) {
-        console.error('Products GET Error:', e);
-        return NextResponse.json({ error: 'Failed to fetch products', details: e.message }, { status: 500 });
-    }
-}
-
-export async function POST(request: Request) {
-    try {
-        const body = await request.json();
-        const sheet = await getSheetByTitle('Products');
-
-        const newProduct = {
-            id: uuidv4(),
-            ...body, // Expects restaurantId, name, price, etc.
-            available: 'TRUE'
-        };
-
-        await sheet.addRow({
-            id: newProduct.id,
-            restaurantId: newProduct.restaurantId,
-            categoryId: newProduct.categoryId,
-            name: newProduct.name,
-            description: newProduct.description,
-            price: newProduct.price,
-            image: newProduct.image,
-            available: newProduct.available
-        });
-
-        return NextResponse.json(newProduct);
-    } catch (e) {
-        return NextResponse.json({ error: 'Failed to create product' }, { status: 500 });
-    }
-}
-
-export async function PUT(request: Request) {
-    try {
-        const body = await request.json();
-        const { id, ...updates } = body;
-
-        const sheet = await getSheetByTitle('Products');
-        const rows = await sheet.getRows();
-        const row = rows.find((r: any) => r.get('id') === id);
-
-        if (row) {
-            row.assign(updates);
-            await row.save();
-            return NextResponse.json({ success: true });
+        if (!restaurantId) {
+            return NextResponse.json({ error: "Restaurant ID required" }, { status: 400 });
         }
 
-        return NextResponse.json({ error: 'Product not found' }, { status: 404 });
-    } catch (e) {
-        return NextResponse.json({ error: 'Failed' }, { status: 500 });
+        const { rows } = await sql`
+            SELECT 
+                id, restaurant_id as "restaurantId", name, price, category, 
+                image, description, created_at as "createdAt"
+            FROM products 
+            WHERE restaurant_id = ${restaurantId} 
+            ORDER BY category, name
+        `;
+
+        return NextResponse.json(rows);
+
+    } catch (error) {
+        console.error("Database Error:", error);
+        return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 });
     }
 }
-export async function DELETE(request: Request) {
+
+export async function POST(req: NextRequest) {
     try {
-        const { searchParams } = new URL(request.url);
+        const body = await req.json();
+        const { restaurantId, name, price, category, image, description } = body;
+
+        if (!restaurantId || !name || !price) {
+            return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+        }
+
+        const { rows } = await sql`
+            INSERT INTO products (restaurant_id, name, price, category, image, description)
+            VALUES (${restaurantId}, ${name}, ${price}, ${category}, ${image}, ${description})
+            RETURNING id, restaurant_id as "restaurantId", name, price, category, image, description
+        `;
+
+        return NextResponse.json(rows[0]);
+
+    } catch (error) {
+        console.error("Database Error:", error);
+        return NextResponse.json({ error: "Failed to create product" }, { status: 500 });
+    }
+}
+
+export async function PUT(req: NextRequest) {
+    try {
+        const body = await req.json();
+        const { id, name, price, category, image, description } = body;
+
+        if (!id) {
+            return NextResponse.json({ error: "ID required" }, { status: 400 });
+        }
+
+        const { rows } = await sql`
+            UPDATE products 
+            SET name = ${name}, price = ${price}, category = ${category}, 
+                image = ${image}, description = ${description}, updated_at = NOW()
+            WHERE id = ${id}
+            RETURNING id, restaurant_id as "restaurantId", name, price, category, image, description
+        `;
+
+        return NextResponse.json(rows[0]);
+
+    } catch (error) {
+        console.error("Database Error:", error);
+        return NextResponse.json({ error: "Failed to update product" }, { status: 500 });
+    }
+}
+
+export async function DELETE(req: NextRequest) {
+    try {
+        const { searchParams } = new URL(req.url);
         const id = searchParams.get('id');
 
-        if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
+        if (!id) return NextResponse.json({ error: "ID required" }, { status: 400 });
 
-        const sheet = await getSheetByTitle('Products');
-        const rows = await sheet.getRows();
-        const row = rows.find((r: any) => r.get('id') === id);
+        await sql`DELETE FROM products WHERE id = ${id}`;
 
-        if (row) {
-            await row.delete();
-            return NextResponse.json({ success: true });
-        }
+        return NextResponse.json({ success: true });
 
-        return NextResponse.json({ error: 'Not found' }, { status: 404 });
-    } catch (e) {
-        return NextResponse.json({ error: 'Delete failed' }, { status: 500 });
+    } catch (error) {
+        console.error("Database Error:", error);
+        return NextResponse.json({ error: "Failed to delete product" }, { status: 500 });
     }
 }

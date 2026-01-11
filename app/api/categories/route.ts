@@ -1,85 +1,80 @@
-import { NextResponse } from 'next/server';
-import { getSheetByTitle } from '@/lib/googleSheets';
-import { v4 as uuidv4 } from 'uuid';
+import { NextRequest, NextResponse } from "next/server";
+import { sql } from "@vercel/postgres";
 
-export async function GET(request: Request) {
+export async function GET(req: NextRequest) {
     try {
-        const { searchParams } = new URL(request.url);
+        const { searchParams } = new URL(req.url);
         const restaurantId = searchParams.get('restaurantId');
 
-        if (!restaurantId) return NextResponse.json([], { status: 400 });
+        if (!restaurantId) {
+            return NextResponse.json({ error: "Restaurant ID required" }, { status: 400 });
+        }
 
-        const sheet = await getSheetByTitle('Categories');
-        const rows = await sheet.getRows();
+        const { rows } = await sql`
+            SELECT id, restaurant_id as "restaurantId", name, created_at as "createdAt"
+            FROM categories 
+            WHERE restaurant_id = ${restaurantId} 
+            ORDER BY name
+        `;
 
-        const categories = rows
-            .filter((row: any) => row.get('restaurantId') === restaurantId)
-            .map((row: any) => ({
-                id: row.get('id'),
-                description: row.get('description') // As requested: "Descrição da categoria"
-            }));
+        return NextResponse.json(rows);
 
-        return NextResponse.json(categories);
-    } catch (e) {
-        return NextResponse.json({ error: 'Failed to fetch categories' }, { status: 500 });
+    } catch (error) {
+        console.error("Database Error:", error);
+        return NextResponse.json({ error: "Failed to fetch categories" }, { status: 500 });
     }
 }
 
-export async function POST(request: Request) {
+export async function POST(req: NextRequest) {
     try {
-        const body = await request.json();
-        const sheet = await getSheetByTitle('Categories');
-        const rows = await sheet.getRows();
+        const body = await req.json();
+        const { restaurantId, name } = body;
 
-        const description = body.description?.trim();
-        if (!description) return NextResponse.json({ error: 'Description required' }, { status: 400 });
-
-        // Check for duplicates (case-insensitive)
-        const exists = rows.find((r: any) =>
-            r.get('restaurantId') === body.restaurantId &&
-            r.get('description')?.toLowerCase() === description.toLowerCase()
-        );
-
-        if (exists) {
-            return NextResponse.json({ error: 'Categoria já existe' }, { status: 409 });
+        if (!restaurantId || !name) {
+            return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
         }
 
-        const newCategory = {
-            id: uuidv4(),
-            restaurantId: body.restaurantId,
-            description: description
-        };
+        // Check duplicates
+        const { rows: existing } = await sql`
+            SELECT id FROM categories 
+            WHERE restaurant_id = ${restaurantId} AND name = ${name}
+        `;
 
-        await sheet.addRow({
-            id: newCategory.id,
-            restaurantId: newCategory.restaurantId,
-            description: newCategory.description
-        });
+        if (existing.length > 0) {
+            return NextResponse.json({ error: "Category already exists" }, { status: 400 });
+        }
 
-        return NextResponse.json(newCategory);
-    } catch (e) {
-        return NextResponse.json({ error: 'Failed to create category' }, { status: 500 });
+        const { rows } = await sql`
+            INSERT INTO categories (restaurant_id, name)
+            VALUES (${restaurantId}, ${name})
+            RETURNING id, restaurant_id as "restaurantId", name
+        `;
+
+        return NextResponse.json(rows[0]);
+
+    } catch (error) {
+        console.error("Database Error:", error);
+        return NextResponse.json({ error: "Failed to create category" }, { status: 500 });
     }
 }
 
-export async function DELETE(request: Request) {
+export async function DELETE(req: NextRequest) {
     try {
-        const { searchParams } = new URL(request.url);
-        const id = searchParams.get('id');
+        const { searchParams } = new URL(req.url);
+        const { id, restaurantId, name } = Object.fromEntries(searchParams);
 
-        if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
-
-        const sheet = await getSheetByTitle('Categories');
-        const rows = await sheet.getRows();
-        const row = rows.find((r: any) => r.get('id') === id);
-
-        if (row) {
-            await row.delete();
-            return NextResponse.json({ success: true });
+        if (id) {
+            await sql`DELETE FROM categories WHERE id = ${id}`;
+        } else if (restaurantId && name) {
+            await sql`DELETE FROM categories WHERE restaurant_id = ${restaurantId} AND name = ${name}`;
+        } else {
+            return NextResponse.json({ error: "ID or (restaurantId + name) required" }, { status: 400 });
         }
 
-        return NextResponse.json({ error: 'Not found' }, { status: 404 });
-    } catch (e) {
-        return NextResponse.json({ error: 'Delete failed' }, { status: 500 });
+        return NextResponse.json({ success: true });
+
+    } catch (error) {
+        console.error("Database Error:", error);
+        return NextResponse.json({ error: "Failed to delete category" }, { status: 500 });
     }
 }

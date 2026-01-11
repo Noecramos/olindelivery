@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { getSheetByTitle } from '@/lib/googleSheets';
 
 export async function POST(request: Request) {
     try {
@@ -10,32 +9,11 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Password required' }, { status: 400 });
         }
 
-        // Priority 1: Check environment variable
-        let masterPassword = process.env.SUPER_ADMIN_PASSWORD;
-
-        // Priority 2: Try to get from Google Sheets if env var not set
-        if (!masterPassword) {
-            try {
-                const sheet = await getSheetByTitle('GlobalSettings');
-                const rows = await sheet.getRows();
-                const row = rows.find((r: any) => r.get('key') === 'master_password');
-                if (row) {
-                    masterPassword = row.get('value');
-                }
-            } catch (e) {
-                console.warn('GlobalSettings sheet not found or accessible.');
-            }
-        }
-
-        // Priority 3: Fallback to hardcoded default
-        if (!masterPassword) {
-            masterPassword = 'master';
-        }
+        // Check environment variable or fallback
+        const masterPassword = process.env.SUPER_ADMIN_PASSWORD || 'master';
 
         console.log('Super admin login attempt:', {
-            providedPassword: password,
-            usingEnvVar: !!process.env.SUPER_ADMIN_PASSWORD,
-            passwordMatch: password === masterPassword
+            match: password === masterPassword
         });
 
         if (password === masterPassword) {
