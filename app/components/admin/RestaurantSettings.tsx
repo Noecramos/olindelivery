@@ -184,15 +184,70 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">Taxa de Entrega</label>
-                        <input className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
-                            value={form.deliveryFee || ''}
-                            onChange={e => setForm({ ...form, deliveryFee: e.target.value })}
-                            placeholder="Ex: 5.00"
-                        />
+                {/* Distance-Based Delivery Fee Tiers */}
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-2xl border border-green-200">
+                    <h3 className="text-sm font-bold text-green-900 mb-3 flex items-center gap-2">
+                        <span>🚚</span> Taxas de Entrega por Distância
+                    </h3>
+                    <p className="text-xs text-green-700 mb-4">
+                        Configure até 4 faixas de preço baseadas na distância. O sistema calculará automaticamente a taxa correta com base no CEP do cliente.
+                    </p>
+
+                    <div className="space-y-3">
+                        {[1, 2, 3, 4].map((tier) => {
+                            const tierData = form.deliveryFeeTiers?.[tier - 1] || { maxDistance: '', fee: '' };
+                            return (
+                                <div key={tier} className="grid grid-cols-2 gap-3 bg-white p-3 rounded-xl border border-green-100">
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">
+                                            Faixa {tier} - Até (km)
+                                        </label>
+                                        <input
+                                            className="w-full p-2 bg-gray-50 rounded-lg outline-none focus:ring-2 focus:ring-green-500 transition-all border border-gray-200 text-sm"
+                                            type="number"
+                                            step="0.1"
+                                            value={tierData.maxDistance}
+                                            onChange={e => {
+                                                const tiers = form.deliveryFeeTiers || [{}, {}, {}, {}];
+                                                tiers[tier - 1] = { ...tiers[tier - 1], maxDistance: e.target.value };
+                                                setForm({ ...form, deliveryFeeTiers: tiers });
+                                            }}
+                                            placeholder={tier === 1 ? "5" : tier === 2 ? "10" : tier === 3 ? "15" : "20"}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-700 mb-1">
+                                            Taxa (R$)
+                                        </label>
+                                        <input
+                                            className="w-full p-2 bg-gray-50 rounded-lg outline-none focus:ring-2 focus:ring-green-500 transition-all border border-gray-200 text-sm"
+                                            type="number"
+                                            step="0.01"
+                                            value={tierData.fee}
+                                            onChange={e => {
+                                                const tiers = form.deliveryFeeTiers || [{}, {}, {}, {}];
+                                                tiers[tier - 1] = { ...tiers[tier - 1], fee: e.target.value };
+                                                setForm({ ...form, deliveryFeeTiers: tiers });
+                                            }}
+                                            placeholder={tier === 1 ? "5.00" : tier === 2 ? "10.00" : tier === 3 ? "15.00" : "20.00"}
+                                        />
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
+
+                    <div className="mt-4 p-3 bg-white rounded-lg border border-green-100">
+                        <p className="text-xs text-gray-600">
+                            💡 <strong>Exemplo:</strong> Faixa 1: até 5km = R$ 5,00 | Faixa 2: até 10km = R$ 10,00 | Faixa 3: até 15km = R$ 15,00
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">
+                            ⚠️ Configure as faixas em ordem crescente de distância. Deixe em branco as faixas que não usar.
+                        </p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-1">Tempo de Entrega</label>
                         <input className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"

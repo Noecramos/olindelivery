@@ -9,12 +9,14 @@ import { useCart } from "../context/CartContext";
 import { useRouter } from "next/navigation";
 
 export default function CheckoutPage() {
-    const { items: cart, total, clearCart, removeOne, addToCart } = useCart();
+    const { items: cart, total, subtotal, deliveryFee, setDeliveryFee, clearCart, removeOne, addToCart } = useCart();
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [restaurant, setRestaurant] = useState<any>(null);
     const [showSuccess, setShowSuccess] = useState(false);
     const [whatsappLink, setWhatsappLink] = useState("");
+
+    const [calculatedDistance, setCalculatedDistance] = useState<number | null>(null);
 
     useEffect(() => {
         if (cart.length > 0) {
@@ -31,12 +33,16 @@ export default function CheckoutPage() {
                             deliveryRadius: data.deliveryRadius,
                             hasAll: !!(data.latitude && data.longitude && data.deliveryRadius)
                         });
+                        console.log('💰 Delivery Fee Tiers:', data.deliveryFeeTiers);
                         setRestaurant(data);
+
+                        // Initial delivery fee set to 0 - will be calculated after CEP is entered
+                        setDeliveryFee(0);
                     })
                     .catch(console.error);
             }
         }
-    }, [cart]);
+    }, [cart, setDeliveryFee]);
 
     const [form, setForm] = useState({
         name: "",
@@ -90,6 +96,103 @@ export default function CheckoutPage() {
             </div>
         );
     }
+
+    // Function to calculate delivery fee based on distance
+    const calculateDeliveryFee = async (zipCode: string) => {
+        if (!restaurant || !zipCode || zipCode.length < 8) {
+            return;
+        }
+
+        // Check if restaurant has delivery fee tiers configured
+        const tiers = restaurant.deliveryFeeTiers;
+        if (!tiers || !Array.isArray(tiers) || tiers.length === 0) {
+            console.log('ℹ️ No delivery fee tiers configured');
+            setDeliveryFee(0);
+            return;
+        }
+
+        // Check if geolocation is configured
+        if (!restaurant.latitude || !restaurant.longitude) {
+            console.log('ℹ️ Restaurant geolocation not configured');
+            setDeliveryFee(0);
+            return;
+        }
+
+        try {
+            // Get coordinates from CEP
+            const cepClean = zipCode.replace(/\D/g, '');
+            console.log('🔎 Calculating delivery fee for CEP:', cepClean);
+
+            const cepRes = await fetch(`https://viacep.com.br/ws/${cepClean}/json/`);
+            const cepData = await cepRes.json();
+
+            if (cepData.erro) {
+                console.log('❌ Invalid CEP');
+                return;
+            }
+
+            // Get coordinates from address
+            const fullAddress = `${cepData.logradouro}, ${cepData.bairro}, ${cepData.localidade}, ${cepData.uf}, Brazil`;
+            console.log('🌍 Geocoding address:', fullAddress);
+
+            const geoRes = await fetch(
+                `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(fullAddress)}&format=json&limit=1`,
+                { headers: { 'User-Agent': 'OlinDelivery/1.0' } }
+            );
+            const geoData = await geoRes.json();
+
+            if (geoData && geoData.length > 0) {
+                const customerLat = parseFloat(geoData[0].lat);
+                const customerLon = parseFloat(geoData[0].lon);
+                const restaurantLat = parseFloat(restaurant.latitude);
+                const restaurantLon = parseFloat(restaurant.longitude);
+
+                // Calculate distance using Haversine formula
+                const R = 6371; // Earth's radius in km
+                const dLat = (customerLat - restaurantLat) * Math.PI / 180;
+                const dLon = (customerLon - restaurantLon) * Math.PI / 180;
+                const a =
+                    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(restaurantLat * Math.PI / 180) * Math.cos(customerLat * Math.PI / 180) *
+                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                const distance = R * c;
+
+                console.log('📏 Distance calculated:', distance.toFixed(2), 'km');
+                setCalculatedDistance(distance);
+
+                // Find appropriate fee tier
+                const validTiers = tiers
+                    .filter((t: any) => t.maxDistance && t.fee)
+                    .sort((a: any, b: any) => parseFloat(a.maxDistance) - parseFloat(b.maxDistance));
+
+                let selectedFee = 0;
+                for (const tier of validTiers) {
+                    if (distance <= parseFloat(tier.maxDistance)) {
+                        selectedFee = parseFloat(tier.fee);
+                        console.log(`✅ Selected tier: up to ${tier.maxDistance}km = R$ ${tier.fee}`);
+                        break;
+                    }
+                }
+
+                if (selectedFee === 0 && validTiers.length > 0) {
+                    // Distance exceeds all tiers
+                    const maxTier = validTiers[validTiers.length - 1];
+                    console.log(`⚠️ Distance (${distance.toFixed(2)}km) exceeds maximum tier (${maxTier.maxDistance}km)`);
+                    // You could either use the highest tier or set to 0
+                    // For now, we'll use the highest tier
+                    selectedFee = parseFloat(maxTier.fee);
+                }
+
+                setDeliveryFee(selectedFee);
+                console.log('💰 Delivery fee set to:', selectedFee);
+            } else {
+                console.log('❌ Could not geocode address');
+            }
+        } catch (error) {
+            console.error('❌ Error calculating delivery fee:', error);
+        }
+    };
 
     const handleFinish = async () => {
         if (!form.name || !form.phone || !form.address || !form.zipCode) {
@@ -265,9 +368,12 @@ export default function CheckoutPage() {
                 customer: {
                     name: form.name,
                     phone: form.phone,
-                    address: form.address
+                    address: form.address,
+                    zipCode: form.zipCode
                 },
                 items: cart,
+                subtotal,
+                deliveryFee,
                 total,
                 paymentMethod: form.paymentMethod,
                 changeFor: form.paymentMethod === 'money' ? form.changeFor : '',
@@ -299,8 +405,10 @@ export default function CheckoutPage() {
                 `📍 *Endereço:* ${form.address}\n` +
                 `📮 *CEP:* ${form.zipCode}\n\n` +
                 `🛒 *ITENS DO PEDIDO:*\n${itemsList}\n\n` +
+                `💵 *Subtotal:* ${subtotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
+                `🚚 *Taxa de Entrega:* ${deliveryFee.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
+                `💰 *TOTAL: ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}*\n\n` +
                 (form.observations ? `📝 *Observações:* ${form.observations}\n\n` : '') +
-                `💰 *TOTAL: ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}*\n` +
                 `💳 *Pagamento:* ${paymentInfo}\n\n` +
                 `_Enviado via OlinDelivery 🚀_`;
 
@@ -405,6 +513,17 @@ export default function CheckoutPage() {
                                     if (val.length > 5) val = val.slice(0, 5) + '-' + val.slice(5, 8);
                                     else if (val.length > 8) val = val.slice(0, 9);
                                     setForm({ ...form, zipCode: val });
+
+                                    // Calculate delivery fee when CEP is complete
+                                    if (val.replace(/\D/g, '').length === 8) {
+                                        calculateDeliveryFee(val);
+                                    }
+                                }}
+                                onBlur={() => {
+                                    // Also calculate on blur if CEP is complete
+                                    if (form.zipCode.replace(/\D/g, '').length === 8) {
+                                        calculateDeliveryFee(form.zipCode);
+                                    }
                                 }}
                                 maxLength={9}
                             />
@@ -426,6 +545,41 @@ export default function CheckoutPage() {
                                 value={form.observations}
                                 onChange={e => setForm({ ...form, observations: e.target.value })}
                             />
+
+                            {/* Display Delivery Fee Tiers */}
+                            {restaurant?.deliveryFeeTiers && Array.isArray(restaurant.deliveryFeeTiers) && restaurant.deliveryFeeTiers.some((t: any) => t.maxDistance && t.fee) && (
+                                <div className="mt-4 p-4 bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-xl">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <span className="text-lg">🚚</span>
+                                        <span className="font-bold text-green-900 text-sm">Taxas de Entrega</span>
+                                    </div>
+                                    <div className="space-y-2">
+                                        {restaurant.deliveryFeeTiers
+                                            .filter((t: any) => t.maxDistance && t.fee)
+                                            .sort((a: any, b: any) => parseFloat(a.maxDistance) - parseFloat(b.maxDistance))
+                                            .map((tier: any, idx: number) => (
+                                                <div key={idx} className="flex justify-between items-center text-xs bg-white px-3 py-2 rounded-lg border border-green-100">
+                                                    <span className="text-gray-700">
+                                                        <span className="font-medium">Até {tier.maxDistance} km</span>
+                                                    </span>
+                                                    <span className="font-bold text-green-700">
+                                                        {parseFloat(tier.fee).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                    </div>
+                                    {calculatedDistance !== null && (
+                                        <div className="mt-3 pt-3 border-t border-green-200">
+                                            <div className="text-xs text-green-800">
+                                                <span className="font-medium">📍 Distância calculada:</span> {calculatedDistance.toFixed(2)} km
+                                            </div>
+                                        </div>
+                                    )}
+                                    <p className="text-xs text-green-700 mt-3">
+                                        💡 A taxa será calculada automaticamente após informar seu CEP.
+                                    </p>
+                                </div>
+                            )}
                         </div>
 
                         {/* Payment */}
@@ -494,8 +648,22 @@ export default function CheckoutPage() {
 
                         {/* Summary */}
                         <div className="pt-4 border-t border-gray-100">
-                            <div className="flex justify-between items-center mb-6">
-                                <span className="text-gray-500">Total a pagar</span>
+                            <div className="space-y-2 mb-4">
+                                <div className="flex justify-between items-center text-sm">
+                                    <span className="text-gray-500">Subtotal</span>
+                                    <span className="text-gray-800 font-medium">
+                                        {subtotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between items-center text-sm">
+                                    <span className="text-gray-500">Taxa de Entrega</span>
+                                    <span className="text-gray-800 font-medium">
+                                        {deliveryFee.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="flex justify-between items-center mb-6 pt-3 border-t border-gray-200">
+                                <span className="text-gray-700 font-bold">Total a pagar</span>
                                 <span className="text-2xl font-bold text-gray-800">
                                     {total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                 </span>

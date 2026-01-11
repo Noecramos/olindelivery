@@ -352,6 +352,9 @@ export default function StoreAdmin() {
             </div>
         `).join('');
 
+        const subtotal = order.subtotal || order.items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0);
+        const deliveryFee = order.deliveryFee || 0;
+
         const html = `
             <html>
                 <head>
@@ -389,6 +392,17 @@ export default function StoreAdmin() {
                     </div>
 
                     <div class="divider"></div>
+                    
+                    <div style="margin-bottom: 10px;">
+                        <div class="flex">
+                            <span>Subtotal:</span>
+                            <span>${subtotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                        </div>
+                        <div class="flex">
+                            <span>Taxa de Entrega:</span>
+                            <span>${deliveryFee.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                        </div>
+                    </div>
                     
                     <div class="flex bold" style="font-size: 14px;">
                         <span>TOTAL:</span>
@@ -656,6 +670,24 @@ export default function StoreAdmin() {
                                                             {order.observations && (
                                                                 <div className="mb-3 p-2 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700">
                                                                     ⚠️ {order.observations}
+                                                                </div>
+                                                            )}
+
+                                                            {/* Delivery Fee Display */}
+                                                            {(order.deliveryFee && order.deliveryFee > 0) && (
+                                                                <div className="mb-3 p-2 bg-blue-50 border border-blue-100 rounded-lg text-xs">
+                                                                    <div className="flex justify-between text-gray-600">
+                                                                        <span>Subtotal:</span>
+                                                                        <span className="font-medium">
+                                                                            {(order.subtotal || order.items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div className="flex justify-between text-gray-600 mt-1">
+                                                                        <span>Taxa de Entrega:</span>
+                                                                        <span className="font-medium">
+                                                                            {order.deliveryFee.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                                                        </span>
+                                                                    </div>
                                                                 </div>
                                                             )}
 
