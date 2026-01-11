@@ -193,7 +193,7 @@ export default function StoreAdmin() {
 
                         <div className="space-y-6">
                             <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Senha de Acesso</label>
+                                <label htmlFor="adminPassword" className="block text-sm font-bold text-gray-700 mb-2">Senha de Acesso</label>
                                 <input
                                     id="adminPassword"
                                     name="adminPassword"

@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
             latitude, longitude, delivery_radius as "deliveryRadius",
             delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
             delivery_time as "deliveryTime", popular_title as "popularTitle",
-            welcome_subtitle as "welcomeSubtitle", password, approved,
+            welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
             created_at as "createdAt", updated_at as "updatedAt"
         `;
 
@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
                     latitude, longitude, delivery_radius as "deliveryRadius",
                     delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
                     delivery_time as "deliveryTime", popular_title as "popularTitle",
-                    welcome_subtitle as "welcomeSubtitle", password, approved,
+                    welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
                     created_at as "createdAt", updated_at as "updatedAt"
                 FROM restaurants 
                 WHERE slug = ${slug} 
@@ -62,7 +62,7 @@ export async function GET(req: NextRequest) {
                     latitude, longitude, delivery_radius as "deliveryRadius",
                     delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
                     delivery_time as "deliveryTime", popular_title as "popularTitle",
-                    welcome_subtitle as "welcomeSubtitle", password, approved,
+                    welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
                     created_at as "createdAt", updated_at as "updatedAt"
                 FROM restaurants 
                 WHERE id = ${id} 
@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
                 latitude, longitude, delivery_radius as "deliveryRadius",
                 delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
                 delivery_time as "deliveryTime", popular_title as "popularTitle",
-                welcome_subtitle as "welcomeSubtitle", password, approved,
+                welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
                 created_at as "createdAt", updated_at as "updatedAt"
             FROM restaurants 
             ORDER BY created_at DESC
@@ -135,7 +135,7 @@ export async function PUT(req: NextRequest) {
             id, name, email, whatsapp, instagram, zipCode, address, hours, type,
             deliveryFee, deliveryTime, image, pixKey, approved, password,
             latitude, longitude, deliveryRadius, deliveryFeeTiers,
-            popularTitle, welcomeSubtitle, resetPassword
+            popularTitle, welcomeSubtitle, resetPassword, isOpen
         } = body;
 
         if (!id) {
@@ -170,6 +170,7 @@ export async function PUT(req: NextRequest) {
                 image = COALESCE(${image}, image),
                 pix_key = COALESCE(${pixKey}, pix_key),
                 approved = COALESCE(${approved}, approved),
+                is_open = COALESCE(${isOpen}, is_open),
                 password = COALESCE(${forcePassword}, password, ${fallbackPassword}),
                 latitude = COALESCE(${latitude}, latitude),
                 longitude = COALESCE(${longitude}, longitude),
