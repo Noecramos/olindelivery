@@ -189,7 +189,7 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                                 >
                                     <option value="" disabled>Selecione...</option>
                                     {categories.map(cat => (
-                                        <option key={cat.id} value={cat.id}>{cat.description}</option>
+                                        <option key={cat.id} value={cat.id}>{cat.name}</option>
                                     ))}
                                 </select>
                             </div>
@@ -243,7 +243,7 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                                     </div>
                                     <p className="text-xs text-gray-500 line-clamp-2 mt-1">{prod.description}</p>
                                     <div className="mt-2 flex justify-between items-center">
-                                        <span className="font-bold text-green-700">R$ {prod.price.toFixed(2)}</span>
+                                        <span className="font-bold text-green-700">R$ {Number(prod.price).toFixed(2)}</span>
                                         <span className="text-[10px] bg-gray-100 px-2 py-1 rounded-full text-gray-600 font-medium">{prod.category}</span>
                                     </div>
                                 </div>
