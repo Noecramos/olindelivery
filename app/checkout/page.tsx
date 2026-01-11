@@ -128,6 +128,8 @@ export default function CheckoutPage() {
 
             if (cepData.erro) {
                 console.log('❌ Invalid CEP');
+                setDeliveryFee(0);
+                setCalculatedDistance(null);
                 return;
             }
 
@@ -161,26 +163,44 @@ export default function CheckoutPage() {
                 console.log('📏 Distance calculated:', distance.toFixed(2), 'km');
                 setCalculatedDistance(distance);
 
+                // Check if distance exceeds delivery radius
+                const maxDeliveryRadius = parseFloat(restaurant.deliveryRadius);
+                if (maxDeliveryRadius && distance > maxDeliveryRadius) {
+                    console.error('❌ Distance exceeds delivery radius!');
+                    console.error(`Distance: ${distance.toFixed(2)}km > Max: ${maxDeliveryRadius}km`);
+                    setDeliveryFee(0);
+                    alert(
+                        `⚠️ CEP FORA DA ÁREA DE ENTREGA\n\n` +
+                        `Distância: ${distance.toFixed(1)} km\n` +
+                        `Raio máximo de entrega: ${maxDeliveryRadius} km\n\n` +
+                        `Este endereço está fora da nossa área de entrega.\n\n` +
+                        `Entre em contato pelo WhatsApp para verificar possibilidades.`
+                    );
+                    return;
+                }
+
                 // Find appropriate fee tier
                 const validTiers = tiers
                     .filter((t: any) => t.maxDistance && t.fee)
                     .sort((a: any, b: any) => parseFloat(a.maxDistance) - parseFloat(b.maxDistance));
 
                 let selectedFee = 0;
+                let tierFound = false;
+
                 for (const tier of validTiers) {
                     if (distance <= parseFloat(tier.maxDistance)) {
                         selectedFee = parseFloat(tier.fee);
+                        tierFound = true;
                         console.log(`✅ Selected tier: up to ${tier.maxDistance}km = R$ ${tier.fee}`);
                         break;
                     }
                 }
 
-                if (selectedFee === 0 && validTiers.length > 0) {
-                    // Distance exceeds all tiers
+                if (!tierFound && validTiers.length > 0) {
+                    // Distance exceeds all configured tiers but is within delivery radius
                     const maxTier = validTiers[validTiers.length - 1];
-                    console.log(`⚠️ Distance (${distance.toFixed(2)}km) exceeds maximum tier (${maxTier.maxDistance}km)`);
-                    // You could either use the highest tier or set to 0
-                    // For now, we'll use the highest tier
+                    console.log(`⚠️ Distance (${distance.toFixed(2)}km) exceeds all tiers (max: ${maxTier.maxDistance}km)`);
+                    console.log(`Using highest tier fee: R$ ${maxTier.fee}`);
                     selectedFee = parseFloat(maxTier.fee);
                 }
 
@@ -188,9 +208,13 @@ export default function CheckoutPage() {
                 console.log('💰 Delivery fee set to:', selectedFee);
             } else {
                 console.log('❌ Could not geocode address');
+                setDeliveryFee(0);
+                setCalculatedDistance(null);
             }
         } catch (error) {
             console.error('❌ Error calculating delivery fee:', error);
+            setDeliveryFee(0);
+            setCalculatedDistance(null);
         }
     };
 
