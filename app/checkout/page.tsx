@@ -148,6 +148,15 @@ export default function CheckoutPage() {
                 console.log('❌ Invalid CEP');
                 setDeliveryFee(0);
                 setCalculatedDistance(null);
+                // If delivery radius validation is enabled, block invalid CEPs
+                if (restaurant.deliveryRadius && restaurant.latitude && restaurant.longitude) {
+                    setIsCepOutOfRange(true);
+                    alert(
+                        `⚠️ CEP INVÁLIDO\n\n` +
+                        `O CEP informado não foi encontrado.\n\n` +
+                        `Por favor, verifique o CEP e tente novamente.`
+                    );
+                }
                 return;
             }
 
@@ -239,11 +248,24 @@ export default function CheckoutPage() {
                 console.log('❌ Could not geocode address');
                 setDeliveryFee(0);
                 setCalculatedDistance(null);
+                // If delivery radius validation is enabled, block when geocoding fails
+                if (restaurant.deliveryRadius && restaurant.latitude && restaurant.longitude) {
+                    setIsCepOutOfRange(true);
+                    alert(
+                        `⚠️ CEP FORA DA ÁREA DE ENTREGA\n\n` +
+                        `Não foi possível localizar este endereço.\n\n` +
+                        `Por favor, verifique o CEP ou entre em contato pelo WhatsApp.`
+                    );
+                }
             }
         } catch (error) {
             console.error('❌ Error calculating delivery fee:', error);
             setDeliveryFee(0);
             setCalculatedDistance(null);
+            // If delivery radius validation is enabled, block on errors
+            if (restaurant.deliveryRadius && restaurant.latitude && restaurant.longitude) {
+                setIsCepOutOfRange(true);
+            }
         }
     };
 
