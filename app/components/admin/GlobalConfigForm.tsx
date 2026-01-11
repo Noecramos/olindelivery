@@ -112,12 +112,71 @@ export default function GlobalConfigForm() {
         setConfig(prev => ({ ...prev, featuredItems: newItems }));
     };
 
+    const [uploading, setUploading] = useState(false);
+
+    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
+        if (!e.target.files?.[0]) return;
+        setUploading(true);
+        const formData = new FormData();
+        formData.append("file", e.target.files[0]);
+        try {
+            const res = await fetch('/api/upload', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (data.success) {
+                setConfig(prev => ({ ...prev, [field]: data.url }));
+            }
+        } catch (err) { alert("Erro ao fazer upload"); }
+        finally { setUploading(false); }
+    };
+
     return (
         <div className="space-y-8 animate-fade-in max-w-4xl mx-auto">
             <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold text-gray-800">Personalização do App</h2>
                 <div className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full border border-gray-200">
                     Modo Editor
+                </div>
+            </div>
+
+            {/* SEÇÃO 0: LOGO & SPLASH */}
+            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-200">
+                <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2 pb-4 border-b border-gray-100">
+                    🚀 Logo & Splash Screen
+                </h3>
+                <div className="flex flex-col md:flex-row gap-8 items-start">
+                    <div className="w-full md:w-1/3">
+                        <label className="block text-sm font-bold text-gray-700 mb-2">Logo Principal</label>
+                        <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:bg-gray-50 transition-colors bg-white relative">
+                            <input type="file" id="logo-upload" accept="image/*" onChange={(e) => handleUpload(e, 'headerImage')} className="hidden" />
+                            <label htmlFor="logo-upload" className="cursor-pointer block">
+                                {config.headerImage ? (
+                                    <div className="relative h-40 w-full flex items-center justify-center bg-gray-50 rounded-lg p-2">
+                                        <img src={config.headerImage} alt="Logo" className="max-h-full max-w-full object-contain" />
+                                        <div className="absolute inset-0 bg-black/50 text-white flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity rounded-lg font-bold text-sm">
+                                            Trocar Logo
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="py-10">
+                                        <div className="text-4xl mb-2">📸</div>
+                                        <p className="text-sm text-gray-500">Adicionar Logo</p>
+                                    </div>
+                                )}
+                            </label>
+                        </div>
+                    </div>
+                    <div className="w-full md:w-2/3">
+                        <div className="bg-yellow-50 p-4 rounded-xl text-xs text-yellow-800 mb-4">
+                            Esta logo aparecerá na tela de carregamento (Splash Screen) ao abrir o app.
+                        </div>
+                        <label className="block text-sm font-bold text-gray-700 mb-2">URL da Logo (Opcional)</label>
+                        <input
+                            value={config.headerImage}
+                            onChange={e => setConfig({ ...config, headerImage: e.target.value })}
+                            className="w-full p-3 bg-white border-2 border-gray-200 rounded-xl focus:border-gray-900 outline-none transition-colors"
+                            placeholder="https://..."
+                        />
+                    </div>
                 </div>
             </div>
 
@@ -148,14 +207,25 @@ export default function GlobalConfigForm() {
 
                         {config.headerBackgroundType === 'image' ? (
                             <div className="space-y-4 animate-fade-in">
-                                <input
-                                    value={config.headerBackgroundImage}
-                                    onChange={e => setConfig({ ...config, headerBackgroundImage: e.target.value })}
-                                    className="w-full p-3 bg-white border-2 border-gray-200 rounded-xl focus:border-gray-900 outline-none transition-colors"
-                                    placeholder="URL da Imagem de Fundo..."
-                                />
+                                <div className="flex gap-2">
+                                    <input
+                                        value={config.headerBackgroundImage}
+                                        onChange={e => setConfig({ ...config, headerBackgroundImage: e.target.value })}
+                                        className="flex-1 p-3 bg-white border-2 border-gray-200 rounded-xl focus:border-gray-900 outline-none transition-colors"
+                                        placeholder="URL da Imagem de Fundo..."
+                                    />
+                                    <div>
+                                        <input type="file" id="bg-upload" accept="image/*" onChange={(e) => handleUpload(e, 'headerBackgroundImage')} className="hidden" />
+                                        <label htmlFor="bg-upload" className="cursor-pointer bg-gray-900 text-white px-4 py-3.5 rounded-xl font-bold hover:bg-black transition-colors flex items-center gap-2 whitespace-nowrap">
+                                            {uploading ? '...' : '☁️ Upload'}
+                                        </label>
+                                    </div>
+                                </div>
+
                                 {config.headerBackgroundImage && (
-                                    <div className="h-32 rounded-xl bg-cover bg-center border-2 border-gray-100 shadow-inner" style={{ backgroundImage: `url('${config.headerBackgroundImage}')` }} />
+                                    <div className="h-32 rounded-xl bg-cover bg-center border-2 border-gray-100 shadow-inner relative group" style={{ backgroundImage: `url('${config.headerBackgroundImage}')` }}>
+                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors rounded-xl" />
+                                    </div>
                                 )}
                             </div>
                         ) : (
