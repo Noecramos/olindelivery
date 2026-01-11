@@ -258,6 +258,7 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                     </div>
                 </div>
 
+
                 <div>
                     <label className="block text-sm font-bold text-gray-700 mb-1">Chave PIX</label>
                     <input className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
@@ -266,12 +267,30 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                     />
                 </div>
 
-                <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">Endereço</label>
-                    <input className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
-                        value={form.address || ''}
-                        onChange={e => setForm({ ...form, address: e.target.value })}
-                    />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label className="block text-sm font-bold text-gray-700 mb-1">CEP</label>
+                        <input
+                            className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
+                            value={form.zipCode || ''}
+                            onChange={e => {
+                                // Mask 00000-000
+                                let val = e.target.value.replace(/\D/g, '');
+                                if (val.length > 5) val = val.slice(0, 5) + '-' + val.slice(5, 8);
+                                setForm({ ...form, zipCode: val });
+                            }}
+                            placeholder="00000-000"
+                            maxLength={9}
+                        />
+                    </div>
+                    <div className="md:col-span-2">
+                        <label className="block text-sm font-bold text-gray-700 mb-1">Endereço Completo</label>
+                        <input className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
+                            value={form.address || ''}
+                            onChange={e => setForm({ ...form, address: e.target.value })}
+                            placeholder="Rua, Número, Bairro, Cidade, Estado"
+                        />
+                    </div>
                 </div>
 
                 {/* Delivery Area Configuration */}
