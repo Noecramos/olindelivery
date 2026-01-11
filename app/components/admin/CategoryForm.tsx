@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 
 export default function CategoryForm({ restaurantId, onSave }: { restaurantId: string, onSave: () => void }) {
     const [loading, setLoading] = useState(false);
-    const [description, setDescription] = useState("");
+    const [name, setName] = useState("");
     const [categories, setCategories] = useState<any[]>([]);
 
     const fetchCategories = () => {
@@ -25,12 +25,12 @@ export default function CategoryForm({ restaurantId, onSave }: { restaurantId: s
         try {
             const res = await fetch('/api/categories', {
                 method: 'POST',
-                body: JSON.stringify({ restaurantId, description })
+                body: JSON.stringify({ restaurantId, name })
             });
             const data = await res.json();
 
             if (res.ok) {
-                setDescription("");
+                setName("");
                 fetchCategories(); // Refresh local list
                 onSave(); // Notify parent
             } else {
@@ -61,11 +61,11 @@ export default function CategoryForm({ restaurantId, onSave }: { restaurantId: s
                     <label htmlFor="categoryDescription" className="text-xs font-semibold text-gray-500 uppercase ml-1">Nova Categoria</label>
                     <input
                         id="categoryDescription"
-                        name="categoryDescription"
+                        name="categoryName"
                         className="w-full p-3 bg-white rounded-xl border-2 border-gray-100 focus:border-red-500 outline-none transition-all"
                         placeholder="Ex: Pizzas Premium"
-                        value={description}
-                        onChange={e => setDescription(e.target.value)}
+                        value={name}
+                        onChange={e => setName(e.target.value)}
                         required
                     />
                 </div>
@@ -82,7 +82,7 @@ export default function CategoryForm({ restaurantId, onSave }: { restaurantId: s
             <div className="flex flex-wrap gap-2">
                 {categories.map((cat: any) => (
                     <div key={cat.id} className="bg-white border border-gray-200 px-4 py-2 rounded-full flex items-center gap-2 shadow-sm">
-                        <span className="font-bold text-gray-700 text-sm">{cat.description}</span>
+                        <span className="font-bold text-gray-700 text-sm">{cat.name}</span>
                         <button
                             onClick={() => handleDelete(cat.id)}
                             className="text-gray-400 hover:text-red-600 transition-colors p-1"
