@@ -1,8 +1,8 @@
 "use client";
 
-// Checkout page with geolocation delivery radius validation - v2.1 STRICT
-// Deploy timestamp: 2026-01-11T11:02:00
-// FIXED: Now blocks orders when validation fails or address can't be geocoded
+// Checkout page with geolocation delivery radius validation - v2.2 STRICT
+// Deploy timestamp: 2026-01-11T15:54:00
+// FIXED: Simplified error messages - all scenarios show simple "CEP fora da área" message
 
 import { useState, useEffect } from "react";
 import { useCart } from "../context/CartContext";
@@ -213,11 +213,9 @@ export default function CheckoutPage() {
                                 console.error('❌ BLOCKED: Customer outside delivery area');
                                 console.error('Distance:', distance.toFixed(2), 'km > Max:', maxRadius, 'km');
                                 alert(
-                                    `🚫 Desculpe, você está fora da nossa área de entrega.\n\n` +
-                                    `📍 Seu endereço: ${cepData.bairro}, ${cepData.localidade}\n` +
-                                    `📏 Distância: ${distance.toFixed(1)} km\n` +
-                                    `🎯 Raio máximo de entrega: ${maxRadius} km\n\n` +
-                                    `💬 Por favor, entre em contato conosco pelo WhatsApp para verificar possibilidades de entrega.`
+                                    `CEP informado: ${form.zipCode}\n\n` +
+                                    `Este CEP está fora da área de entrega.\n\n` +
+                                    `Entre em contato conosco pelo WhatsApp para confirmar a entrega.`
                                 );
                                 setLoading(false);
                                 return;
@@ -229,14 +227,9 @@ export default function CheckoutPage() {
                             console.error('❌ BLOCKED: Could not geocode address');
                             console.error('Address not found in geocoding database');
                             alert(
-                                `🚫 Não foi possível validar seu endereço.\n\n` +
-                                `📍 CEP informado: ${form.zipCode}\n` +
-                                `📮 Endereço: ${cepData.bairro}, ${cepData.localidade}\n\n` +
-                                `⚠️ Este endereço não foi encontrado no sistema de geolocalização.\n\n` +
-                                `Por favor:\n` +
-                                `1. Verifique se o CEP está correto\n` +
-                                `2. Tente novamente com um CEP mais específico\n` +
-                                `3. Ou entre em contato conosco pelo WhatsApp para confirmar a entrega`
+                                `CEP informado: ${form.zipCode}\n\n` +
+                                `Este CEP está fora da área de entrega.\n\n` +
+                                `Entre em contato conosco pelo WhatsApp para confirmar a entrega.`
                             );
                             setLoading(false);
                             return;
@@ -250,13 +243,9 @@ export default function CheckoutPage() {
                         // Block order if geolocation validation fails when it's required
                         console.error('❌ BLOCKED: Geolocation validation failed');
                         alert(
-                            `🚫 Erro ao validar área de entrega.\n\n` +
-                            `Não foi possível verificar se seu endereço está dentro da nossa área de entrega.\n\n` +
-                            `Por favor:\n` +
-                            `1. Verifique sua conexão com a internet\n` +
-                            `2. Confirme se o CEP está correto\n` +
-                            `3. Tente novamente em alguns instantes\n` +
-                            `4. Ou entre em contato conosco pelo WhatsApp`
+                            `CEP informado: ${form.zipCode}\n\n` +
+                            `Este CEP está fora da área de entrega.\n\n` +
+                            `Entre em contato conosco pelo WhatsApp para confirmar a entrega.`
                         );
                         setLoading(false);
                         return;
