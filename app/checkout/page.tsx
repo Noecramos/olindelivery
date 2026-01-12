@@ -518,7 +518,7 @@ export default function CheckoutPage() {
                 deliveryFee,
                 total,
                 paymentMethod: form.paymentMethod,
-                changeFor: form.paymentMethod === 'money' ? form.changeFor : '',
+                changeFor: form.paymentMethod === 'money' ? (parseFloat(form.changeFor) || 0) : null,
                 observations: form.observations,
                 status: 'pending'
             };

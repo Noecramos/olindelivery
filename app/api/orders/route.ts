@@ -1,14 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@vercel/postgres";
 
+// Helper to check if a string is a valid UUID
+const isValidUUID = (id: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-4][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
+
 // Helper to get next ticket number
 async function getNextTicketNumber(restaurantId: string) {
-    const { rows } = await sql`
-        SELECT MAX(ticket_number) as max_ticket 
-        FROM orders 
-        WHERE restaurant_id = ${restaurantId}
-    `;
-    return (rows[0].max_ticket || 0) + 1;
+    if (!isValidUUID(restaurantId)) return 1;
+    try {
+        const { rows } = await sql`
+            SELECT MAX(ticket_number) as max_ticket 
+            FROM orders 
+            WHERE restaurant_id = ${restaurantId}
+        `;
+        return (rows[0]?.max_ticket || 0) + 1;
+    } catch (e) {
+        return 1;
+    }
 }
 
 export const dynamic = 'force-dynamic';
@@ -19,8 +27,8 @@ export async function GET(req: NextRequest) {
         const restaurantId = searchParams.get('restaurantId');
         const clearHistory = searchParams.get('clearHistory');
 
-        if (!restaurantId) {
-            return NextResponse.json({ error: "Restaurant ID required" }, { status: 400 });
+        if (!restaurantId || !isValidUUID(restaurantId)) {
+            return NextResponse.json({ error: "Restaurant ID required and must be a valid UUID" }, { status: 400 });
         }
 
         if (clearHistory === 'true') {
@@ -58,11 +66,11 @@ export async function GET(req: NextRequest) {
                 zipCode: order.customerZipCode
             },
             items: typeof order.items === 'string' ? JSON.parse(order.items) : order.items,
-            subtotal: order.subtotal,
-            deliveryFee: order.deliveryFee,
-            total: order.total,
+            subtotal: Number(order.subtotal),
+            deliveryFee: Number(order.deliveryFee),
+            total: Number(order.total),
             paymentMethod: order.paymentMethod,
-            changeFor: order.changeFor,
+            changeFor: order.changeFor ? Number(order.changeFor) : null,
             observations: order.observations,
             status: order.status,
             createdAt: order.createdAt
@@ -84,11 +92,21 @@ export async function POST(req: NextRequest) {
             items, subtotal, deliveryFee, total, paymentMethod, changeFor, observations
         } = body;
 
-        if (!restaurantId || !customerName || !items) {
-            return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+        // Validations
+        if (!restaurantId || !isValidUUID(restaurantId)) {
+            return NextResponse.json({ error: "ID do restaurante inválido ou ausente." }, { status: 400 });
+        }
+        if (!customerName || !items || !Array.isArray(items) || items.length === 0) {
+            return NextResponse.json({ error: "Dados do pedido incompletos." }, { status: 400 });
         }
 
         const ticketNumber = await getNextTicketNumber(restaurantId);
+
+        // Ensure numbers are numbers
+        const nSubtotal = parseFloat(subtotal) || 0;
+        const nDeliveryFee = parseFloat(deliveryFee) || 0;
+        const nTotal = parseFloat(total) || 0;
+        const nChangeFor = changeFor ? parseFloat(changeFor) : null;
 
         const { rows } = await sql`
             INSERT INTO orders (
@@ -99,8 +117,8 @@ export async function POST(req: NextRequest) {
             ) VALUES (
                 ${restaurantId}, ${ticketNumber}, ${customerName}, ${customerPhone},
                 ${customerAddress}, ${customerZipCode}, ${JSON.stringify(items)}, 
-                ${subtotal}, ${deliveryFee}, ${total}, ${paymentMethod}, 
-                ${changeFor}, ${observations}, 'pending'
+                ${nSubtotal}, ${nDeliveryFee}, ${nTotal}, ${paymentMethod}, 
+                ${nChangeFor}, ${observations}, 'pending'
             ) RETURNING 
                 id, restaurant_id as "restaurantId", ticket_number as "ticketNumber",
                 customer_name as "customerName", customer_phone as "customerPhone",
@@ -110,11 +128,29 @@ export async function POST(req: NextRequest) {
                 observations, status, created_at as "createdAt"
         `;
 
-        return NextResponse.json(rows[0]);
+        const order = rows[0];
+        // Mirror the structure expected by frontend (nested customer)
+        return NextResponse.json({
+            ...order,
+            customer: {
+                name: order.customerName,
+                phone: order.customerPhone,
+                address: order.customerAddress,
+                zipCode: order.customerZipCode
+            },
+            items: typeof order.items === 'string' ? JSON.parse(order.items) : order.items,
+            subtotal: Number(order.subtotal),
+            deliveryFee: Number(order.deliveryFee),
+            total: Number(order.total),
+            changeFor: order.changeFor ? Number(order.changeFor) : null
+        });
 
-    } catch (error) {
+    } catch (error: any) {
         console.error("Database Error:", error);
-        return NextResponse.json({ error: "Failed to create order" }, { status: 500 });
+        return NextResponse.json({
+            error: "Falha ao criar pedido no banco de dados.",
+            details: error.message
+        }, { status: 500 });
     }
 }
 
@@ -133,6 +169,10 @@ export async function PUT(req: NextRequest) {
             WHERE id = ${id} 
             RETURNING id, status, updated_at as "updatedAt"
         `;
+
+        if (rows.length === 0) {
+            return NextResponse.json({ error: "Order not found" }, { status: 404 });
+        }
 
         return NextResponse.json(rows[0]);
 
