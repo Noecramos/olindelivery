@@ -86,7 +86,7 @@ function MarketplaceContent() {
     return (
       <div className="fixed inset-0 bg-[#FFD700] flex flex-col items-center justify-center z-[9999]">
         <div className="w-72 h-32 flex items-center justify-center animate-bounce">
-          <Image src={config.headerImage || "https://i.imgur.com/yGLHWLL.png"} alt="Logo" width={240} height={100} style={{ objectFit: 'contain' }} priority />
+          <Image src={config.headerImage || "https://i.imgur.com/yGLHWLL.png"} alt="Logo" width={240} height={100} style={{ objectFit: 'contain' }} priority unoptimized />
         </div>
       </div>
     );
@@ -167,7 +167,7 @@ function MarketplaceContent() {
           }}
         >
           {/* User Profile / Login Button - Absolute Positioned */}
-          <div className="absolute top-4 right-4 z-50">
+          <div className="absolute top-4 right-4 z-[60]">
             {user ? (
               <div className="flex items-center gap-2 bg-white p-2 pr-4 rounded-full shadow-lg border border-gray-100 animate-fade-in">
                 <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-lg border border-gray-200">👤</div>

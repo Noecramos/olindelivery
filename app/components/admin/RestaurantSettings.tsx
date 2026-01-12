@@ -351,26 +351,51 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                             }
 
                             setLoading(true);
-                            try {
-                                // Try to geocode the address
-                                const geoRes = await fetch(
-                                    `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(form.address + ', Brazil')}&format=json&limit=1`,
-                                    { headers: { 'User-Agent': 'OlinDelivery/1.0' } }
-                                );
-                                const geoData = await geoRes.json();
+                            // Helper to fetch geo data
+                            const fetchGeo = async (query: string) => {
+                                console.log('Searching geo for:', query);
+                                const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`, {
+                                    headers: { 'User-Agent': 'OlinDelivery/1.0' }
+                                });
+                                return await res.json();
+                            };
 
+                            try {
+                                // 1. Try full address
+                                let geoData = await fetchGeo(form.address + ', Brazil');
+
+                                // 2. If valid, use it
                                 if (geoData && geoData.length > 0) {
-                                    setForm({
-                                        ...form,
-                                        latitude: geoData[0].lat,
-                                        longitude: geoData[0].lon
-                                    });
+                                    setForm({ ...form, latitude: geoData[0].lat, longitude: geoData[0].lon });
                                     alert('✅ Coordenadas obtidas com sucesso!');
-                                } else {
-                                    alert('❌ Não foi possível encontrar as coordenadas. Verifique se o endereço está completo (Rua, Número, Bairro, Cidade).');
+                                }
+                                else {
+                                    // 3. Fallback: Try splitting by commas to get street/city
+                                    // Assuming format "Street, Number, Neighborhood, City - State" or similar
+                                    // We will try to extract just Street + City/State
+                                    const parts = form.address.split(',');
+                                    if (parts.length >= 2) {
+                                        // Try constructing a simpler query: Part 0 (Street) + Part 3/Last (City/State)
+                                        // This is heuristic but better than failing
+                                        const street = parts[0].trim();
+                                        const city = parts[parts.length - 1].split('-')[0].trim(); // Get last part, ignore state if hyphenated
+
+                                        // Try searching Street + City
+                                        const simpleQuery = `${street}, ${city}, Brazil`;
+                                        geoData = await fetchGeo(simpleQuery);
+
+                                        if (geoData && geoData.length > 0) {
+                                            setForm({ ...form, latitude: geoData[0].lat, longitude: geoData[0].lon });
+                                            alert(`⚠️ Coordenadas aproximadas obtidas (baseado em '${street}'). Verifique no mapa se possível.`);
+                                            return;
+                                        }
+                                    }
+
+                                    alert('❌ Não foi possível encontrar as coordenadas automaticamente.\n\nTente simplificar o endereço (ex: Rua, Cidade) ou preencha a Latitude/Longitude manualmente usando o Google Maps.');
                                 }
                             } catch (error) {
-                                alert('❌ Erro ao buscar coordenadas. Tente novamente.');
+                                console.error(error);
+                                alert('❌ Erro de conexão ao buscar coordenadas. Tente novamente.');
                             } finally {
                                 setLoading(false);
                             }

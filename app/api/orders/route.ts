@@ -11,6 +11,8 @@ async function getNextTicketNumber(restaurantId: string) {
     return (rows[0].max_ticket || 0) + 1;
 }
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
     try {
         const { searchParams } = new URL(req.url);
@@ -44,10 +46,26 @@ export async function GET(req: NextRequest) {
             LIMIT 100
         `;
 
-        // Parse items JSON if needed (pg usually returns object for JSONB)
+        // Transform to nested structure expected by frontend
         const orders = rows.map(order => ({
-            ...order,
-            items: typeof order.items === 'string' ? JSON.parse(order.items) : order.items
+            id: order.id,
+            restaurantId: order.restaurantId,
+            ticketNumber: order.ticketNumber,
+            customer: {
+                name: order.customerName,
+                phone: order.customerPhone,
+                address: order.customerAddress,
+                zipCode: order.customerZipCode
+            },
+            items: typeof order.items === 'string' ? JSON.parse(order.items) : order.items,
+            subtotal: order.subtotal,
+            deliveryFee: order.deliveryFee,
+            total: order.total,
+            paymentMethod: order.paymentMethod,
+            changeFor: order.changeFor,
+            observations: order.observations,
+            status: order.status,
+            createdAt: order.createdAt
         }));
 
         return NextResponse.json(orders);
