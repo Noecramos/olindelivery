@@ -601,7 +601,8 @@ export default function StoreAdmin() {
                                                 {orders
                                                     .filter(o => {
                                                         const status = o.status?.toLowerCase() || '';
-                                                        const isHistory = ['delivered', 'cancelled'].includes(status);
+                                                        // Moved 'sent' to history so it disappears from main view when 'Enviar' is clicked
+                                                        const isHistory = ['sent', 'delivered', 'cancelled'].includes(status);
 
                                                         if (showHistory) return isHistory;
                                                         if (isHistory) return false;
@@ -755,15 +756,17 @@ export default function StoreAdmin() {
                                                 }
                                                 {orders.filter(o => {
                                                     const status = o.status?.toLowerCase() || '';
-                                                    const isCompleted = ['sent', 'delivered', 'cancelled'].includes(status);
+                                                    const isHistory = ['sent', 'delivered', 'cancelled'].includes(status);
 
-                                                    if (showHistory) return true;
-                                                    if (isCompleted) return false; // Match main filter
+                                                    if (showHistory) return isHistory;
+                                                    if (isHistory) return false;
 
                                                     try {
                                                         const orderDate = new Date(o.createdAt);
-                                                        const today = new Date();
-                                                        return orderDate.toDateString() === today.toDateString();
+                                                        const now = new Date();
+                                                        const hoursSince = (now.getTime() - orderDate.getTime()) / (1000 * 60 * 60);
+                                                        const isToday = orderDate.toDateString() === now.toDateString();
+                                                        return isToday || hoursSince < 18;
                                                     } catch (e) {
                                                         return true;
                                                     }
