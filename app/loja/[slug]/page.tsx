@@ -8,6 +8,8 @@ import CategoryNav from "../../components/CategoryNav";
 import ProductCard from "../../components/ProductCard";
 import FloatingCart from "../../components/FloatingCart";
 
+export const dynamic = 'force-dynamic';
+
 export default function StoreFront() {
     const { slug } = useParams();
     const router = useRouter();
