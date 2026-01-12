@@ -6,7 +6,7 @@ import { hashPassword, setSession } from "@/lib/auth";
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { name, email, password, phone, whatsapp, zipCode, address } = body;
+        const { name, email, password, phone, whatsapp, zipCode, address, cpf } = body;
 
         if (!name || !email || !password) {
             return NextResponse.json({ error: "Nome, email e senha são obrigatórios" }, { status: 400 });
@@ -23,9 +23,9 @@ export async function POST(req: NextRequest) {
         const finalPhone = phone || whatsapp;
 
         const { rows } = await sql`
-            INSERT INTO users (name, email, password, phone, whatsapp, zip_code, address)
-            VALUES (${name}, ${email}, ${hashedPassword}, ${finalPhone}, ${whatsapp}, ${zipCode}, ${address})
-            RETURNING id, name, email, phone, whatsapp, zip_code, address
+            INSERT INTO users (name, email, password, phone, whatsapp, zip_code, address, cpf)
+            VALUES (${name}, ${email}, ${hashedPassword}, ${finalPhone}, ${whatsapp}, ${zipCode}, ${address}, ${cpf})
+            RETURNING id, name, email, phone, whatsapp, zip_code, address, cpf
         `;
 
         const user = rows[0];

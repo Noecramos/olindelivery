@@ -11,12 +11,14 @@ function SignupForm() {
     const [loading, setLoading] = useState(false);
     const searchParams = useSearchParams();
     const returnUrl = searchParams.get('returnUrl') || '/';
+    const [cpfError, setCpfError] = useState("");
 
     const [form, setForm] = useState({
         name: "",
         email: "",
         password: "",
         phone: "",
+        cpf: "",
         zipCode: "",
         address: ""
     });
@@ -30,6 +32,62 @@ function SignupForm() {
         city: "",
         state: ""
     });
+
+    // CPF Validation Function - validates check digits
+    const validateCPF = (cpf: string): boolean => {
+        const cleanCPF = cpf.replace(/\D/g, '');
+
+        // Must have 11 digits
+        if (cleanCPF.length !== 11) return false;
+
+        // Check for known invalid patterns (all same digits)
+        if (/^(\d)\1+$/.test(cleanCPF)) return false;
+
+        // Validate first check digit
+        let sum = 0;
+        for (let i = 0; i < 9; i++) {
+            sum += parseInt(cleanCPF.charAt(i)) * (10 - i);
+        }
+        let remainder = (sum * 10) % 11;
+        if (remainder === 10 || remainder === 11) remainder = 0;
+        if (remainder !== parseInt(cleanCPF.charAt(9))) return false;
+
+        // Validate second check digit
+        sum = 0;
+        for (let i = 0; i < 10; i++) {
+            sum += parseInt(cleanCPF.charAt(i)) * (11 - i);
+        }
+        remainder = (sum * 10) % 11;
+        if (remainder === 10 || remainder === 11) remainder = 0;
+        if (remainder !== parseInt(cleanCPF.charAt(10))) return false;
+
+        return true;
+    };
+
+    // Format CPF as XXX.XXX.XXX-XX
+    const formatCPF = (value: string): string => {
+        const clean = value.replace(/\D/g, '').slice(0, 11);
+        if (clean.length <= 3) return clean;
+        if (clean.length <= 6) return `${clean.slice(0, 3)}.${clean.slice(3)}`;
+        if (clean.length <= 9) return `${clean.slice(0, 3)}.${clean.slice(3, 6)}.${clean.slice(6)}`;
+        return `${clean.slice(0, 3)}.${clean.slice(3, 6)}.${clean.slice(6, 9)}-${clean.slice(9)}`;
+    };
+
+    const handleCPFChange = (value: string) => {
+        const formatted = formatCPF(value);
+        setForm(prev => ({ ...prev, cpf: formatted }));
+
+        const clean = formatted.replace(/\D/g, '');
+        if (clean.length === 11) {
+            if (validateCPF(clean)) {
+                setCpfError("");
+            } else {
+                setCpfError("CPF inválido");
+            }
+        } else {
+            setCpfError("");
+        }
+    };
 
     const handleZipCode = async (val: string) => {
         const clean = val.replace(/\D/g, '');
@@ -67,6 +125,14 @@ function SignupForm() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Validate CPF before submission
+        const cleanCPF = form.cpf.replace(/\D/g, '');
+        if (cleanCPF.length === 11 && !validateCPF(cleanCPF)) {
+            setCpfError("CPF inválido. Por favor, verifique.");
+            return;
+        }
+
         setLoading(true);
 
         const finalAddress = updateAddress();
@@ -100,6 +166,27 @@ function SignupForm() {
                         value={form.name}
                         onChange={e => setForm({ ...form, name: e.target.value })}
                     />
+                </div>
+
+                {/* CPF Field */}
+                <div>
+                    <label htmlFor="cpf" className="block text-sm font-bold text-gray-700 mb-1">CPF</label>
+                    <div className="relative">
+                        <input
+                            id="cpf"
+                            name="cpf"
+                            required
+                            className={`w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 ${cpfError ? 'ring-2 ring-red-500 focus:ring-red-500' : 'focus:ring-[#EA1D2C]'}`}
+                            placeholder="000.000.000-00"
+                            value={form.cpf}
+                            onChange={e => handleCPFChange(e.target.value)}
+                            maxLength={14}
+                        />
+                        {form.cpf.replace(/\D/g, '').length === 11 && !cpfError && (
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500">✓</span>
+                        )}
+                    </div>
+                    {cpfError && <p className="text-red-500 text-xs mt-1">{cpfError}</p>}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

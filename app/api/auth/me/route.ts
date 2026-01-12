@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
 
         // Fetch fresh data
         const { rows } = await sql`
-            SELECT id, name, email, phone, whatsapp, zip_code as "zipCode", address 
+            SELECT id, name, email, phone, whatsapp, zip_code as "zipCode", address, cpf 
             FROM users WHERE id = ${session.id as string}
         `;
 
