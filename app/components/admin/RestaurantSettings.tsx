@@ -134,15 +134,15 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">Nome Fantasia</label>
-                        <input className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
+                        <label htmlFor="restaurantName" className="block text-sm font-bold text-gray-700 mb-1">Nome Fantasia</label>
+                        <input id="restaurantName" name="restaurantName" className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
                             value={form.name || ''}
                             onChange={e => setForm({ ...form, name: e.target.value })}
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">Tipo de Cozinha</label>
-                        <select className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
+                        <label htmlFor="kitchenType" className="block text-sm font-bold text-gray-700 mb-1">Tipo de Cozinha</label>
+                        <select id="kitchenType" name="kitchenType" className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
                             value={['Lanchonete', 'Restaurante', 'Hamburgueria', 'Pizzaria', 'Comida', 'Bebidas'].includes(form.type) ? form.type : 'Outro'}
                             onChange={e => setForm({ ...form, type: e.target.value })}
                         >
@@ -156,6 +156,7 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                         </select>
                         {(!['Lanchonete', 'Restaurante', 'Hamburgueria', 'Pizzaria', 'Comida', 'Bebidas'].includes(form.type)) && (
                             <input
+                                id="customType" name="customType"
                                 className="mt-2 w-full p-3 bg-white border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 animate-fade-in"
                                 placeholder="Especifique o tipo (ex: Japonês)"
                                 value={form.type === 'Outro' ? '' : (form.type || '')}
@@ -167,16 +168,16 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">WhatsApp</label>
-                        <input className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
+                        <label htmlFor="whatsapp" className="block text-sm font-bold text-gray-700 mb-1">WhatsApp</label>
+                        <input id="whatsapp" name="whatsapp" className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
                             value={form.whatsapp || ''}
                             onChange={e => setForm({ ...form, whatsapp: e.target.value })}
                             placeholder="5581999999999"
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">Instagram</label>
-                        <input className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
+                        <label htmlFor="instagram" className="block text-sm font-bold text-gray-700 mb-1">Instagram</label>
+                        <input id="instagram" name="instagram" className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
                             value={form.instagram || ''}
                             onChange={e => setForm({ ...form, instagram: e.target.value })}
                             placeholder="@loja"
@@ -199,10 +200,12 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                             return (
                                 <div key={tier} className="grid grid-cols-2 gap-3 bg-white p-3 rounded-xl border border-green-100">
                                     <div>
-                                        <label className="block text-xs font-bold text-gray-700 mb-1">
+                                        <label htmlFor={`tier-dist-${tier}`} className="block text-xs font-bold text-gray-700 mb-1">
                                             Faixa {tier} - Até (km)
                                         </label>
                                         <input
+                                            id={`tier-dist-${tier}`}
+                                            name={`tier-dist-${tier}`}
                                             className="w-full p-2 bg-gray-50 rounded-lg outline-none focus:ring-2 focus:ring-green-500 transition-all border border-gray-200 text-sm"
                                             type="number"
                                             step="0.1"
@@ -216,10 +219,12 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-bold text-gray-700 mb-1">
+                                        <label htmlFor={`tier-fee-${tier}`} className="block text-xs font-bold text-gray-700 mb-1">
                                             Taxa (R$)
                                         </label>
                                         <input
+                                            id={`tier-fee-${tier}`}
+                                            name={`tier-fee-${tier}`}
                                             className="w-full p-2 bg-gray-50 rounded-lg outline-none focus:ring-2 focus:ring-green-500 transition-all border border-gray-200 text-sm"
                                             type="number"
                                             step="0.01"
@@ -249,8 +254,8 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
 
                 <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">Tempo de Entrega</label>
-                        <input className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
+                        <label htmlFor="deliveryTime" className="block text-sm font-bold text-gray-700 mb-1">Tempo de Entrega</label>
+                        <input id="deliveryTime" name="deliveryTime" className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
                             value={form.deliveryTime || ''}
                             onChange={e => setForm({ ...form, deliveryTime: e.target.value })}
                             placeholder="30-45 min"
@@ -260,8 +265,8 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
 
 
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">Chave PIX</label>
-                    <input className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
+                    <label htmlFor="pixKey" className="block text-sm font-bold text-gray-700 mb-1">Chave PIX</label>
+                    <input id="pixKey" name="pixKey" className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
                         value={form.pixKey || ''}
                         onChange={e => setForm({ ...form, pixKey: e.target.value })}
                     />
@@ -269,8 +274,8 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">CEP</label>
-                        <input
+                        <label htmlFor="zipCode" className="block text-sm font-bold text-gray-700 mb-1">CEP</label>
+                        <input id="zipCode" name="zipCode"
                             className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
                             value={form.zipCode || ''}
                             onChange={e => {
@@ -284,8 +289,8 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                         />
                     </div>
                     <div className="md:col-span-2">
-                        <label className="block text-sm font-bold text-gray-700 mb-1">Endereço Completo</label>
-                        <input className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
+                        <label htmlFor="address" className="block text-sm font-bold text-gray-700 mb-1">Endereço Completo</label>
+                        <input id="address" name="address" className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
                             value={form.address || ''}
                             onChange={e => setForm({ ...form, address: e.target.value })}
                             placeholder="Rua, Número, Bairro, Cidade, Estado"
@@ -304,8 +309,8 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-1">Raio de Entrega (km)</label>
-                            <input
+                            <label htmlFor="deliveryRadius" className="block text-sm font-bold text-gray-700 mb-1">Raio de Entrega (km)</label>
+                            <input id="deliveryRadius" name="deliveryRadius"
                                 className="w-full p-3 bg-white rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-200"
                                 type="number"
                                 step="0.1"
@@ -316,8 +321,8 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                             <p className="text-xs text-gray-500 mt-1">Distância máxima em km</p>
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-1">Latitude</label>
-                            <input
+                            <label htmlFor="latitude" className="block text-sm font-bold text-gray-700 mb-1">Latitude</label>
+                            <input id="latitude" name="latitude"
                                 className="w-full p-3 bg-white rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-200"
                                 value={form.latitude || ''}
                                 onChange={e => setForm({ ...form, latitude: e.target.value })}
@@ -326,8 +331,8 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                             <p className="text-xs text-gray-500 mt-1">Coordenada Y</p>
                         </div>
                         <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-1">Longitude</label>
-                            <input
+                            <label htmlFor="longitude" className="block text-sm font-bold text-gray-700 mb-1">Longitude</label>
+                            <input id="longitude" name="longitude"
                                 className="w-full p-3 bg-white rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-200"
                                 value={form.longitude || ''}
                                 onChange={e => setForm({ ...form, longitude: e.target.value })}
@@ -387,15 +392,15 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">Responsável</label>
-                        <input className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
+                        <label htmlFor="responsibleName" className="block text-sm font-bold text-gray-700 mb-1">Responsável</label>
+                        <input id="responsibleName" name="responsibleName" className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
                             value={form.responsibleName || ''}
                             onChange={e => setForm({ ...form, responsibleName: e.target.value })}
                         />
                     </div>
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 mb-1">Email</label>
-                        <input className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
+                        <label htmlFor="email" className="block text-sm font-bold text-gray-700 mb-1">Email</label>
+                        <input id="email" name="email" className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
                             value={form.email || ''}
                             onChange={e => setForm({ ...form, email: e.target.value })}
                         />
@@ -403,8 +408,8 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                 </div>
 
                 <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">Horário de Funcionamento</label>
-                    <input className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
+                    <label htmlFor="hours" className="block text-sm font-bold text-gray-700 mb-1">Horário de Funcionamento</label>
+                    <input id="hours" name="hours" className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
                         value={form.hours || ''}
                         onChange={e => setForm({ ...form, hours: e.target.value })}
                     />
