@@ -275,18 +275,46 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label htmlFor="zipCode" className="block text-sm font-bold text-gray-700 mb-1">CEP</label>
-                        <input id="zipCode" name="zipCode"
-                            className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
-                            value={form.zipCode || ''}
-                            onChange={e => {
-                                // Mask 00000-000
-                                let val = e.target.value.replace(/\D/g, '');
-                                if (val.length > 5) val = val.slice(0, 5) + '-' + val.slice(5, 8);
-                                setForm({ ...form, zipCode: val });
-                            }}
-                            placeholder="00000-000"
-                            maxLength={9}
-                        />
+                        <div className="relative">
+                            <input id="zipCode" name="zipCode" className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
+                                value={form.zipCode || ''}
+                                onChange={async (e) => {
+                                    // Mask 00000-000
+                                    let val = e.target.value.replace(/\D/g, '');
+                                    if (val.length > 5) val = val.slice(0, 5) + '-' + val.slice(5, 8);
+                                    setForm({ ...form, zipCode: val });
+
+                                    // Auto-fill address when CEP is complete (8 digits)
+                                    const cleanCep = val.replace(/\D/g, '');
+                                    if (cleanCep.length === 8) {
+                                        try {
+                                            const res = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+                                            const data = await res.json();
+
+                                            if (!data.erro) {
+                                                // Build full address from ViaCEP data
+                                                const parts = [];
+                                                if (data.logradouro) parts.push(data.logradouro);
+                                                if (data.bairro) parts.push(data.bairro);
+                                                if (data.localidade) parts.push(data.localidade);
+                                                if (data.uf) parts.push(data.uf);
+
+                                                const fullAddress = parts.join(', ');
+                                                setForm(prev => ({ ...prev, address: fullAddress }));
+                                            }
+                                        } catch (err) {
+                                            console.error('CEP fetch error:', err);
+                                        }
+                                    }
+                                }}
+                                placeholder="00000-000"
+                                maxLength={9}
+                            />
+                            {form.zipCode?.replace(/\D/g, '').length === 8 && (
+                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500">✓</span>
+                            )}
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">Digite o CEP para preencher o endereço automaticamente</p>
                     </div>
                     <div className="md:col-span-2">
                         <label htmlFor="address" className="block text-sm font-bold text-gray-700 mb-1">Endereço Completo</label>
@@ -295,6 +323,7 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                             onChange={e => setForm({ ...form, address: e.target.value })}
                             placeholder="Rua, Número, Bairro, Cidade, Estado"
                         />
+                        <p className="text-xs text-gray-500 mt-1">Adicione o número e complemento após preencher o CEP</p>
                     </div>
                 </div>
 
