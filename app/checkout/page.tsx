@@ -198,11 +198,10 @@ export default function CheckoutPage() {
                     setDeliveryFee(0);
                     setIsCepOutOfRange(true); // Mark CEP as out of range
                     alert(
-                        `⚠️ CEP FORA DA ÁREA DE ENTREGA\n\n` +
+                        `⚠️ CEP FORA DE ÁREA DE ENTREGA\n\n` +
                         `Distância: ${distance.toFixed(1)} km\n` +
                         `Raio máximo de entrega: ${maxDeliveryRadius} km\n\n` +
-                        `Este endereço está fora da nossa área de entrega.\n\n` +
-                        `Entre em contato pelo WhatsApp para verificar possibilidades.`
+                        `Por favor, verifique o CEP ou entre em contato pelo WhatsApp.`
                     );
                     return;
                 }
@@ -252,8 +251,7 @@ export default function CheckoutPage() {
                 if (restaurant.deliveryRadius && restaurant.latitude && restaurant.longitude) {
                     setIsCepOutOfRange(true);
                     alert(
-                        `⚠️ CEP FORA DA ÁREA DE ENTREGA\n\n` +
-                        `Não foi possível localizar este endereço.\n\n` +
+                        `⚠️ CEP FORA DE ÁREA DE ENTREGA\n\n` +
                         `Por favor, verifique o CEP ou entre em contato pelo WhatsApp.`
                     );
                 }
@@ -278,9 +276,8 @@ export default function CheckoutPage() {
         // Check if CEP is out of delivery range
         if (isCepOutOfRange) {
             alert(
-                "⚠️ CEP FORA DA ÁREA DE ENTREGA\n\n" +
-                "Este endereço está fora da nossa área de entrega.\n\n" +
-                "Por favor, entre em contato pelo WhatsApp para verificar possibilidades."
+                "⚠️ CEP FORA DE ÁREA DE ENTREGA\n\n" +
+                "Por favor, verifique o CEP ou entre em contato pelo WhatsApp."
             );
             return;
         }
@@ -402,9 +399,8 @@ export default function CheckoutPage() {
                                 console.error('❌ BLOCKED: Customer outside delivery area');
                                 console.error('Distance:', distance.toFixed(2), 'km > Max:', maxRadius, 'km');
                                 alert(
-                                    `CEP informado: ${form.zipCode}\n\n` +
-                                    `Este CEP está fora da área de entrega.\n\n` +
-                                    `Entre em contato conosco pelo WhatsApp para confirmar a entrega.`
+                                    `⚠️ CEP FORA DE ÁREA DE ENTREGA\n\n` +
+                                    `Por favor, verifique o CEP ou entre em contato pelo WhatsApp.`
                                 );
                                 setLoading(false);
                                 return;
