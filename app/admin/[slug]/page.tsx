@@ -772,7 +772,7 @@ export default function StoreAdmin() {
                                                     }
                                                 }).length === 0 && (
                                                         <div className="p-10 text-center text-gray-400">
-                                                            {showHistory ? 'Nenhum pedido encontrado.' : 'Nenhum pedido hoje.'}
+                                                            {showHistory ? 'Nenhum pedido encontrado.' : 'Aguardando novos pedidos...'}
                                                         </div>
                                                     )}
                                             </div>
