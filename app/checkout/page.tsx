@@ -6,10 +6,12 @@
 
 import { useState, useEffect } from "react";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 import { useRouter } from "next/navigation";
 
 export default function CheckoutPage() {
     const { items: cart, total, subtotal, deliveryFee, setDeliveryFee, clearCart, removeOne, addToCart } = useCart();
+    const { user } = useAuth();
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [restaurant, setRestaurant] = useState<any>(null);
@@ -18,6 +20,48 @@ export default function CheckoutPage() {
 
     const [calculatedDistance, setCalculatedDistance] = useState<number | null>(null);
     const [isCepOutOfRange, setIsCepOutOfRange] = useState(false);
+    const [isGuest, setIsGuest] = useState(false);
+    const { loading: authLoading } = useAuth();
+
+    if (authLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-[#F5F5F7]">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-500"></div>
+            </div>
+        );
+    }
+
+    // Interstitial for Login/Register vs Guest
+    if (!user && !isGuest && cart.length > 0) {
+        return (
+            <div className="fixed inset-0 bg-[#F2F4F8] z-50 flex flex-col items-center justify-center p-6 animate-fade-in">
+                <div className="bg-white p-8 rounded-3xl shadow-xl max-w-sm w-full text-center">
+                    <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">
+                        ⚡
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-800 mb-2">Agilize seu pedido</h2>
+                    <p className="text-gray-500 mb-8">
+                        Entre ou cadastre-se para preencher seus dados automaticamente e salvar seu endereço.
+                    </p>
+
+                    <div className="space-y-3">
+                        <button
+                            onClick={() => router.push(`/login?returnUrl=${encodeURIComponent('/checkout')}`)}
+                            className="w-full bg-[#EA1D2C] text-white font-bold py-4 rounded-xl shadow-lg hover:bg-[#C51623] transition-all"
+                        >
+                            Entrar / Cadastrar
+                        </button>
+                        <button
+                            onClick={() => setIsGuest(true)}
+                            className="w-full bg-white text-gray-500 font-bold py-4 rounded-xl border border-gray-200 hover:bg-gray-50 transition-all"
+                        >
+                            Continuar como Visitante
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
 
     useEffect(() => {
@@ -55,6 +99,24 @@ export default function CheckoutPage() {
         changeFor: "",
         observations: ""
     });
+
+    useEffect(() => {
+        if (user) {
+            setForm(prev => ({
+                ...prev,
+                name: prev.name || user.name || "",
+                phone: prev.phone || user.phone || "",
+                zipCode: prev.zipCode || user.zipCode || "",
+                address: prev.address || user.address || ""
+            }));
+        }
+    }, [user]);
+
+    useEffect(() => {
+        if (user?.zipCode && restaurant && deliveryFee === 0) {
+            calculateDeliveryFee(user.zipCode);
+        }
+    }, [user, restaurant]);
 
     if (cart.length === 0) {
         return (

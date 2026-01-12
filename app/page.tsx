@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import StarRating from "./components/StarRating";
+import { useAuth } from "./context/AuthContext";
 
 function MarketplaceContent() {
   const [restaurants, setRestaurants] = useState<any[]>([]);
@@ -20,6 +21,8 @@ function MarketplaceContent() {
     headerBgColor: '#FFD700'
   });
   const [selectedCategory, setSelectedCategory] = useState("Todos");
+
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     if (searchParams.get('orderSuccess')) {
@@ -130,7 +133,6 @@ function MarketplaceContent() {
       'Vegano': '🥦'
     };
     // Case insensitive lookup
-    // Case insensitive lookup
     if (!cat || typeof cat !== 'string') return '🍽️';
     const normalizedCat = Object.keys(map).find(key => key.toLowerCase() === cat.toLowerCase());
     return normalizedCat ? map[normalizedCat] : '🍽️';
@@ -158,12 +160,31 @@ function MarketplaceContent() {
       <main className="mobile-container relative bg-white pb-20">
         {/* Top Bar */}
         <div
-          className="pt-8 px-6 pb-4 flex justify-center items-center sticky top-0 z-40 bg-opacity-95 backdrop-blur-md transition-all duration-300 shadow-lg rounded-b-3xl bg-center bg-cover bg-no-repeat h-56"
+          className="relative pt-8 px-6 pb-4 flex justify-center items-center sticky top-0 z-40 bg-opacity-95 backdrop-blur-md transition-all duration-300 shadow-lg rounded-b-3xl bg-center bg-cover bg-no-repeat h-56"
           style={{
             backgroundColor: config.headerBackgroundType === 'image' ? 'transparent' : (config.headerBgColor || '#FFD700'),
             backgroundImage: config.headerBackgroundType === 'image' ? `url('${config.headerBackgroundImage}')` : 'none',
           }}
         >
+          {/* User Profile / Login Button - Absolute Positioned */}
+          <div className="absolute top-4 right-4 z-50">
+            {user ? (
+              <div className="flex items-center gap-2 bg-white p-2 pr-4 rounded-full shadow-lg border border-gray-100 animate-fade-in">
+                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-lg border border-gray-200">👤</div>
+                <div className="flex flex-col items-start">
+                  <span className="text-xs font-bold text-gray-800 leading-none">{user.name?.split(' ')[0]}</span>
+                  <button onClick={logout} className="text-[10px] font-bold text-red-500 hover:underline leading-none mt-1">Sair</button>
+                </div>
+              </div>
+            ) : (
+              <Link href="/login">
+                <div className="bg-white text-gray-800 px-4 py-2 rounded-full shadow-lg border border-gray-200 text-sm font-bold flex items-center gap-2 hover:bg-gray-50 transition-transform hover:scale-105 active:scale-95">
+                  <span className="text-lg">👤</span>
+                  <span>Entrar</span>
+                </div>
+              </Link>
+            )}
+          </div>
         </div>
 
         {/* Greeting */}
@@ -176,6 +197,8 @@ function MarketplaceContent() {
         <div className="px-6 mb-10 relative">
           <svg className="absolute left-10 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           <input
+            id="searchRestaurants"
+            name="search"
             type="text"
             placeholder="Buscar restaurantes..."
             className="search-input-modern"
