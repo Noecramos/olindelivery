@@ -25,13 +25,13 @@ export default function ProductCard({ item, onAdd }: ProductCardProps) {
                         src={item.image}
                         alt={item.name}
                         fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        className="object-cover product-image-transition"
+                        sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                        className="product-image-transition"
                         style={{ objectFit: "cover" }}
                     />
                 ) : (
                     <div style={{ width: "100%", height: "100%", background: "#f2f2f2", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <span style={{ fontSize: "2rem", color: "#ccc" }}>🍔</span>
+                        <span style={{ fontSize: "2.5rem", color: "#ccc" }}>🍔</span>
                     </div>
                 )}
             </div>
