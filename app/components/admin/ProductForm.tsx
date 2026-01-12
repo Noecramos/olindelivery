@@ -69,7 +69,12 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
         setLoading(true);
         const url = editingId ? '/api/products' : '/api/products';
         const method = editingId ? 'PUT' : 'POST';
-        const body: any = { ...form, restaurantId, price: parseFloat(form.price) };
+
+        // Find category name from ID
+        const selectedCat = categories.find(c => c.id === form.categoryId);
+        const categoryName = selectedCat ? selectedCat.name : "Geral";
+
+        const body: any = { ...form, restaurantId, price: parseFloat(form.price), category: categoryName };
         if (editingId) body.id = editingId;
 
         try {
@@ -93,11 +98,16 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
 
     const handleEdit = (prod: any) => {
         setEditingId(prod.id);
+
+        // Find ID from category name
+        const foundCat = categories.find(c => c.name === prod.category);
+        const catId = foundCat ? foundCat.id : (categories.length > 0 ? categories[0].id : "");
+
         setForm({
             name: prod.name,
             description: prod.description || "",
             price: prod.price,
-            categoryId: prod.categoryId,
+            categoryId: catId,
             image: prod.image || ""
         });
         window.scrollTo({ top: 0, behavior: 'smooth' });
