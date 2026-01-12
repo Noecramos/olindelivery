@@ -38,7 +38,8 @@ export default function StoreFront() {
     if (!restaurant) return <div className="p-10 text-center">Carregando loja...</div>;
 
     // Group available items by category
-    const activeProducts = products.filter(p => p.available);
+    // Group available items by category (default to true if available status is missing)
+    const activeProducts = products.filter(p => p.available !== false);
     const categories = Array.from(new Set(activeProducts.map((item: any) => item.category))).filter((c: any) => c && c.trim() !== "");
 
     const handleAdd = (item: any) => {
