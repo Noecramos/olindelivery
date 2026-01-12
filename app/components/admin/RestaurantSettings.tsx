@@ -351,48 +351,106 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                             }
 
                             setLoading(true);
+
+                            // Helper to normalize Brazilian address for geocoding
+                            const normalizeAddress = (addr: string): string => {
+                                let normalized = addr
+                                    // Expand common abbreviations
+                                    .replace(/^R\./i, 'Rua')
+                                    .replace(/^Av\./i, 'Avenida')
+                                    .replace(/^Trav\./i, 'Travessa')
+                                    .replace(/^Al\./i, 'Alameda')
+                                    .replace(/^Pç\./i, 'Praça')
+                                    // Remove "n." or "nº" before numbers
+                                    .replace(/\bn\.?\s*(\d+)/gi, '$1')
+                                    .replace(/\bnº\s*(\d+)/gi, '$1')
+                                    // Remove CEP (5 digits dash 3 digits)
+                                    .replace(/\d{5}-?\d{3}/g, '')
+                                    // Clean up multiple spaces
+                                    .replace(/\s+/g, ' ')
+                                    .trim();
+                                return normalized;
+                            };
+
                             // Helper to fetch geo data
                             const fetchGeo = async (query: string) => {
-                                console.log('Searching geo for:', query);
-                                const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`, {
+                                console.log('🔍 Searching geo for:', query);
+                                const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&addressdetails=1`, {
                                     headers: { 'User-Agent': 'OlinDelivery/1.0' }
                                 });
                                 return await res.json();
                             };
 
                             try {
-                                // 1. Try full address
-                                let geoData = await fetchGeo(form.address + ', Brazil');
+                                const normalizedAddr = normalizeAddress(form.address);
+                                console.log('📍 Normalized address:', normalizedAddr);
 
-                                // 2. If valid, use it
+                                // Strategy 1: Try full normalized address
+                                let geoData = await fetchGeo(normalizedAddr + ', Pernambuco, Brazil');
+
                                 if (geoData && geoData.length > 0) {
                                     setForm({ ...form, latitude: geoData[0].lat, longitude: geoData[0].lon });
                                     alert('✅ Coordenadas obtidas com sucesso!');
+                                    setLoading(false);
+                                    return;
                                 }
-                                else {
-                                    // 3. Fallback: Try splitting by commas to get street/city
-                                    // Assuming format "Street, Number, Neighborhood, City - State" or similar
-                                    // We will try to extract just Street + City/State
-                                    const parts = form.address.split(',');
-                                    if (parts.length >= 2) {
-                                        // Try constructing a simpler query: Part 0 (Street) + Part 3/Last (City/State)
-                                        // This is heuristic but better than failing
-                                        const street = parts[0].trim();
-                                        const city = parts[parts.length - 1].split('-')[0].trim(); // Get last part, ignore state if hyphenated
 
-                                        // Try searching Street + City
-                                        const simpleQuery = `${street}, ${city}, Brazil`;
-                                        geoData = await fetchGeo(simpleQuery);
+                                // Strategy 2: Try with just city/neighborhood
+                                // Extract city from patterns like "Olinda - PE" or "Olinda, PE"
+                                const cityMatch = normalizedAddr.match(/,\s*([^,]+(?:\s*-\s*[A-Z]{2})?)\s*$/i);
+                                if (cityMatch) {
+                                    const cityPart = cityMatch[1].replace(/\s*-\s*[A-Z]{2}/i, '').trim();
+                                    const streetPart = normalizedAddr.split(',')[0].trim();
+
+                                    const simpleQuery = `${streetPart}, ${cityPart}, Pernambuco, Brazil`;
+                                    console.log('🔍 Strategy 2:', simpleQuery);
+                                    geoData = await fetchGeo(simpleQuery);
+
+                                    if (geoData && geoData.length > 0) {
+                                        setForm({ ...form, latitude: geoData[0].lat, longitude: geoData[0].lon });
+                                        alert(`✅ Coordenadas obtidas! (baseado em ${streetPart}, ${cityPart})`);
+                                        setLoading(false);
+                                        return;
+                                    }
+                                }
+
+                                // Strategy 3: Try neighborhood + city only (for approximate location)
+                                const parts = normalizedAddr.split(/[,\-]/);
+                                if (parts.length >= 3) {
+                                    // Try parts[2] (usually neighborhood) + parts[3] (usually city)
+                                    const neighborhood = parts[2]?.trim();
+                                    const city = parts[3]?.replace(/[A-Z]{2}$/i, '').trim() || 'Olinda';
+
+                                    if (neighborhood) {
+                                        const neighborhoodQuery = `${neighborhood}, ${city}, Pernambuco, Brazil`;
+                                        console.log('🔍 Strategy 3:', neighborhoodQuery);
+                                        geoData = await fetchGeo(neighborhoodQuery);
 
                                         if (geoData && geoData.length > 0) {
                                             setForm({ ...form, latitude: geoData[0].lat, longitude: geoData[0].lon });
-                                            alert(`⚠️ Coordenadas aproximadas obtidas (baseado em '${street}'). Verifique no mapa se possível.`);
+                                            alert(`⚠️ Coordenadas APROXIMADAS obtidas (centro do bairro ${neighborhood}).\nRecomendamos verificar no Google Maps.`);
+                                            setLoading(false);
                                             return;
                                         }
                                     }
-
-                                    alert('❌ Não foi possível encontrar as coordenadas automaticamente.\n\nTente simplificar o endereço (ex: Rua, Cidade) ou preencha a Latitude/Longitude manualmente usando o Google Maps.');
                                 }
+
+                                // Strategy 4: Try just the city
+                                const justCity = normalizedAddr.match(/Olinda|Recife|Paulista|Abreu e Lima|Igarassu/i);
+                                if (justCity) {
+                                    const cityQuery = `${justCity[0]}, Pernambuco, Brazil`;
+                                    console.log('🔍 Strategy 4:', cityQuery);
+                                    geoData = await fetchGeo(cityQuery);
+
+                                    if (geoData && geoData.length > 0) {
+                                        setForm({ ...form, latitude: geoData[0].lat, longitude: geoData[0].lon });
+                                        alert(`⚠️ Coordenadas MUITO APROXIMADAS (centro de ${justCity[0]}).\nVocê DEVE ajustar manualmente via Google Maps.`);
+                                        setLoading(false);
+                                        return;
+                                    }
+                                }
+
+                                alert('❌ Não foi possível encontrar as coordenadas automaticamente.\n\n💡 SOLUÇÃO: Abra o Google Maps, pesquise seu endereço, clique com botão direito no local e copie as coordenadas. Cole a Latitude e Longitude nos campos acima.');
                             } catch (error) {
                                 console.error(error);
                                 alert('❌ Erro de conexão ao buscar coordenadas. Tente novamente.');
