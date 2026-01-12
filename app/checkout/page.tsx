@@ -476,9 +476,21 @@ export default function CheckoutPage() {
             const ticketNumber = order.ticketNumber || '###';
 
             // Format Message
-            const itemsList = cart.map(i => {
+            const getIcon = (cat: string) => {
+                const lower = (cat || '').toLowerCase();
+                if (lower.includes('pizza')) return '🍕';
+                if (lower.includes('lanche') || lower.includes('burger') || lower.includes('hamb')) return '🍔';
+                if (lower.includes('bebida') || lower.includes('suco') || lower.includes('refr')) return '🥤';
+                if (lower.includes('açaí') || lower.includes('doce') || lower.includes('sobremesa')) return '🍧';
+                if (lower.includes('combo')) return '🍱';
+                if (lower.includes('porção') || lower.includes('petisco')) return '🍟';
+                return '🍽️';
+            };
+
+            const itemsList = cart.map((i: any) => {
+                const icon = getIcon(i.category);
                 const itemTotal = i.price * i.quantity;
-                return `${i.quantity}x ${i.name} - ${itemTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+                return `${icon} *${i.quantity}x ${i.name}* - ${itemTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
             }).join('\n');
 
             const paymentInfo = form.paymentMethod === 'pix' ? 'PIX' :
