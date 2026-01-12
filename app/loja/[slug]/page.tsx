@@ -92,7 +92,7 @@ export default function StoreFront() {
                         {categories.map((cat: any) => (
                             <section key={cat} id={cat} style={{ marginBottom: "2rem" }}>
                                 <h2 style={{ fontSize: "1.25rem", marginBottom: "1rem", color: "#3e3e3e" }}>{cat}</h2>
-                                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1.5rem" }}>
+                                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(196px, 1fr))", gap: "1rem" }}>
                                     {activeProducts.filter((item: any) => item.category === cat).map((item: any) => (
                                         <div key={item.id} style={{ opacity: restaurant.isOpen ? 1 : 0.6, pointerEvents: restaurant.isOpen ? 'auto' : 'none' }}>
                                             <ProductCard item={item} onAdd={() => handleAdd(item)} />
