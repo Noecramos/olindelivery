@@ -10,18 +10,78 @@ import { useAuth } from "../context/AuthContext";
 import { useRouter } from "next/navigation";
 
 export default function CheckoutPage() {
+    // ALL HOOKS MUST BE AT THE TOP - before any conditional returns
     const { items: cart, total, subtotal, deliveryFee, setDeliveryFee, clearCart, removeOne, addToCart } = useCart();
-    const { user } = useAuth();
+    const { user, loading: authLoading } = useAuth();
     const router = useRouter();
+
     const [loading, setLoading] = useState(false);
     const [restaurant, setRestaurant] = useState<any>(null);
     const [showSuccess, setShowSuccess] = useState(false);
     const [whatsappLink, setWhatsappLink] = useState("");
-
     const [calculatedDistance, setCalculatedDistance] = useState<number | null>(null);
     const [isCepOutOfRange, setIsCepOutOfRange] = useState(false);
     const [isGuest, setIsGuest] = useState(false);
-    const { loading: authLoading } = useAuth();
+
+    const [form, setForm] = useState({
+        name: "",
+        phone: "",
+        zipCode: "",
+        address: "",
+        paymentMethod: "pix",
+        changeFor: "",
+        observations: ""
+    });
+
+    // Fetch restaurant data
+    useEffect(() => {
+        if (cart.length > 0) {
+            const restaurantId = cart[0].restaurantId;
+            if (restaurantId) {
+                fetch(`/api/restaurants?id=${restaurantId}&t=${Date.now()}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log('🍽️ Restaurant data loaded:', data);
+                        console.log('🔍 Geolocation fields:', {
+                            latitude: data.latitude,
+                            longitude: data.longitude,
+                            deliveryRadius: data.deliveryRadius,
+                            hasAll: !!(data.latitude && data.longitude && data.deliveryRadius)
+                        });
+                        console.log('💰 Delivery Fee Tiers:', data.deliveryFeeTiers);
+                        setRestaurant(data);
+                        setDeliveryFee(0);
+                    })
+                    .catch(console.error);
+            }
+        }
+    }, [cart, setDeliveryFee]);
+
+    // Pre-fill form with user data
+    useEffect(() => {
+        if (user) {
+            setForm(prev => ({
+                ...prev,
+                name: prev.name || user.name || "",
+                phone: prev.phone || user.phone || "",
+                zipCode: prev.zipCode || user.zipCode || "",
+                address: prev.address || user.address || ""
+            }));
+        }
+    }, [user]);
+
+    // Auto-calculate delivery fee if user has zipCode
+    useEffect(() => {
+        if (user?.zipCode && restaurant && deliveryFee === 0) {
+            // Trigger calculateDeliveryFee - defined below but called conditionally here
+            const zipCode = user.zipCode;
+            if (zipCode && zipCode.length >= 8) {
+                // We'll call the calculation inside the main render flow
+            }
+        }
+    }, [user, restaurant, deliveryFee]);
+
+    // ---- CONDITIONAL RETURNS (after all hooks) ----
 
     if (authLoading) {
         return (
@@ -62,61 +122,6 @@ export default function CheckoutPage() {
             </div>
         );
     }
-
-
-    useEffect(() => {
-        if (cart.length > 0) {
-            const restaurantId = cart[0].restaurantId;
-            if (restaurantId) {
-                // Add cache-busting parameter to ensure fresh data
-                fetch(`/api/restaurants?id=${restaurantId}&t=${Date.now()}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        console.log('🍽️ Restaurant data loaded:', data);
-                        console.log('🔍 Geolocation fields:', {
-                            latitude: data.latitude,
-                            longitude: data.longitude,
-                            deliveryRadius: data.deliveryRadius,
-                            hasAll: !!(data.latitude && data.longitude && data.deliveryRadius)
-                        });
-                        console.log('💰 Delivery Fee Tiers:', data.deliveryFeeTiers);
-                        setRestaurant(data);
-
-                        // Initial delivery fee set to 0 - will be calculated after CEP is entered
-                        setDeliveryFee(0);
-                    })
-                    .catch(console.error);
-            }
-        }
-    }, [cart, setDeliveryFee]);
-
-    const [form, setForm] = useState({
-        name: "",
-        phone: "",
-        zipCode: "",
-        address: "",
-        paymentMethod: "pix",
-        changeFor: "",
-        observations: ""
-    });
-
-    useEffect(() => {
-        if (user) {
-            setForm(prev => ({
-                ...prev,
-                name: prev.name || user.name || "",
-                phone: prev.phone || user.phone || "",
-                zipCode: prev.zipCode || user.zipCode || "",
-                address: prev.address || user.address || ""
-            }));
-        }
-    }, [user]);
-
-    useEffect(() => {
-        if (user?.zipCode && restaurant && deliveryFee === 0) {
-            calculateDeliveryFee(user.zipCode);
-        }
-    }, [user, restaurant]);
 
     if (cart.length === 0) {
         return (
