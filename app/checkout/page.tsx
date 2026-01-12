@@ -220,8 +220,7 @@ export default function CheckoutPage() {
                     setIsCepOutOfRange(true);
                     alert(
                         `⚠️ CEP INVÁLIDO\n\n` +
-                        `O CEP informado não foi encontrado.\n\n` +
-                        `Por favor, verifique o CEP e tente novamente.`
+                        `Por favor, verifique o CEP informado e tente novamente.`
                     );
                 }
                 return;
@@ -265,10 +264,8 @@ export default function CheckoutPage() {
                     setDeliveryFee(0);
                     setIsCepOutOfRange(true); // Mark CEP as out of range
                     alert(
-                        `⚠️ CEP FORA DE ÁREA DE ENTREGA\n\n` +
-                        `Distância: ${distance.toFixed(1)} km\n` +
-                        `Raio máximo de entrega: ${maxDeliveryRadius} km\n\n` +
-                        `Por favor, verifique o CEP ou entre em contato pelo WhatsApp.`
+                        `⚠️ CEP FORA DA ÁREA DE ENTREGA\n\n` +
+                        `Este CEP está fora da nossa área de entrega automática. Por favor, entre em contato via WhatsApp para realizar seu pedido.`
                     );
                     return;
                 }
@@ -318,8 +315,8 @@ export default function CheckoutPage() {
                 if (restaurant.deliveryRadius && restaurant.latitude && restaurant.longitude) {
                     setIsCepOutOfRange(true);
                     alert(
-                        `⚠️ CEP FORA DE ÁREA DE ENTREGA\n\n` +
-                        `Por favor, verifique o CEP ou entre em contato pelo WhatsApp.`
+                        `⚠️ CEP FORA DA ÁREA DE ENTREGA\n\n` +
+                        `Este CEP está fora da nossa área de entrega automática. Por favor, entre em contato via WhatsApp para realizar seu pedido.`
                     );
                 }
             }
@@ -343,8 +340,8 @@ export default function CheckoutPage() {
         // Check if CEP is out of delivery range
         if (isCepOutOfRange) {
             alert(
-                "⚠️ CEP FORA DE ÁREA DE ENTREGA\n\n" +
-                "Por favor, verifique o CEP ou entre em contato pelo WhatsApp."
+                "⚠️ CEP FORA DA ÁREA DE ENTREGA\n\n" +
+                "Este CEP está fora da nossa área de entrega automática. Por favor, entre em contato via WhatsApp para realizar seu pedido."
             );
             return;
         }
@@ -466,8 +463,8 @@ export default function CheckoutPage() {
                                 console.error('❌ BLOCKED: Customer outside delivery area');
                                 console.error('Distance:', distance.toFixed(2), 'km > Max:', maxRadius, 'km');
                                 alert(
-                                    `⚠️ CEP FORA DE ÁREA DE ENTREGA\n\n` +
-                                    `Por favor, verifique o CEP ou entre em contato pelo WhatsApp.`
+                                    `⚠️ CEP FORA DA ÁREA DE ENTREGA\n\n` +
+                                    `Este CEP está fora da nossa área de entrega automática. Por favor, entre em contato via WhatsApp para realizar seu pedido.`
                                 );
                                 setLoading(false);
                                 return;
@@ -479,9 +476,8 @@ export default function CheckoutPage() {
                             console.error('❌ BLOCKED: Could not geocode address');
                             console.error('Address not found in geocoding database');
                             alert(
-                                `CEP informado: ${form.zipCode}\n\n` +
-                                `Este CEP está fora da área de entrega.\n\n` +
-                                `Entre em contato conosco pelo WhatsApp para confirmar a entrega.`
+                                `⚠️ CEP FORA DA ÁREA DE ENTREGA\n\n` +
+                                `Este CEP está fora da nossa área de entrega automática. Por favor, entre em contato via WhatsApp para realizar seu pedido.`
                             );
                             setLoading(false);
                             return;
@@ -495,9 +491,8 @@ export default function CheckoutPage() {
                         // Block order if geolocation validation fails when it's required
                         console.error('❌ BLOCKED: Geolocation validation failed');
                         alert(
-                            `CEP informado: ${form.zipCode}\n\n` +
-                            `Este CEP está fora da área de entrega.\n\n` +
-                            `Entre em contato conosco pelo WhatsApp para confirmar a entrega.`
+                            `⚠️ CEP FORA DA ÁREA DE ENTREGA\n\n` +
+                            `Este CEP está fora da nossa área de entrega automática. Por favor, entre em contato via WhatsApp para realizar seu pedido.`
                         );
                         setLoading(false);
                         return;
@@ -514,12 +509,10 @@ export default function CheckoutPage() {
 
             const orderData = {
                 restaurantId,
-                customer: {
-                    name: form.name,
-                    phone: form.phone,
-                    address: form.address,
-                    zipCode: form.zipCode
-                },
+                customerName: form.name,
+                customerPhone: form.phone,
+                customerAddress: form.address,
+                customerZipCode: form.zipCode,
                 items: cart,
                 subtotal,
                 deliveryFee,
@@ -532,8 +525,14 @@ export default function CheckoutPage() {
 
             const res = await fetch('/api/orders', {
                 method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(orderData)
             });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.error || "Erro ao salvar pedido no banco de dados.");
+            }
 
             const order = await res.json();
             const ticketNumber = order.ticketNumber || '###';

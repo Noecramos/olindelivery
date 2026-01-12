@@ -8,6 +8,8 @@ import ProductForm from "../../components/admin/ProductForm";
 import CategoryForm from "../../components/admin/CategoryForm";
 import RestaurantSettings from "../../components/admin/RestaurantSettings";
 
+export const dynamic = 'force-dynamic';
+
 export default function StoreAdmin() {
     const params = useParams();
     const slug = params?.slug as string;
@@ -598,20 +600,18 @@ export default function StoreAdmin() {
                                             <div className="p-4 space-y-6">
                                                 {orders
                                                     .filter(o => {
-                                                        // Normalize status
                                                         const status = o.status?.toLowerCase() || '';
-                                                        const isCompleted = ['sent', 'delivered', 'cancelled'].includes(status);
+                                                        const isHistory = ['delivered', 'cancelled'].includes(status);
 
-                                                        // Show ONLY history in history mode
-                                                        if (showHistory) return isCompleted;
-
-                                                        // Hide completed/sent orders from main view
-                                                        if (isCompleted) return false;
+                                                        if (showHistory) return isHistory;
+                                                        if (isHistory) return false;
 
                                                         try {
                                                             const orderDate = new Date(o.createdAt);
-                                                            const today = new Date();
-                                                            return orderDate.toDateString() === today.toDateString();
+                                                            const now = new Date();
+                                                            const hoursSince = (now.getTime() - orderDate.getTime()) / (1000 * 60 * 60);
+                                                            const isToday = orderDate.toDateString() === now.toDateString();
+                                                            return isToday || hoursSince < 18;
                                                         } catch (e) {
                                                             return true;
                                                         }
