@@ -11,8 +11,8 @@ export const metadata: Metadata = {
   description: "Peça sua comida favorita pelo WhatsApp.",
   manifest: "/manifest.json",
   icons: {
-    icon: 'https://i.imgur.com/iWSJGep.png',
-    apple: 'https://i.imgur.com/iWSJGep.png',
+    icon: '/icon.jpg',
+    apple: '/icon.jpg',
   },
 };
 
