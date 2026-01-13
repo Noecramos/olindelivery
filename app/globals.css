@@ -224,8 +224,8 @@ h4 {
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  aspect-ratio: 1 / 1;
-  /* Square cards */
+  aspect-ratio: 1 / 1.35;
+  /* Taller cards to fit content */
   width: 100%;
 }
 
@@ -240,8 +240,8 @@ h4 {
 .product-image-wrapper {
   position: relative;
   width: 100%;
-  flex: 0 0 60%;
-  /* Image takes 60% of card height */
+  flex: 0 0 45%;
+  /* Image takes 45% of taller card (visually similar size to before) */
   overflow: hidden;
   background: #f8f8f8;
 }
