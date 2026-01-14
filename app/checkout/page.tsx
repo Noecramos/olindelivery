@@ -24,6 +24,7 @@ export default function CheckoutPage() {
     const [isGuest, setIsGuest] = useState(false);
 
     const [orderType, setOrderType] = useState<'delivery' | 'pickup' | 'dine_in'>('delivery');
+    const [tableNumber, setTableNumber] = useState("");
 
 
     const [form, setForm] = useState({
@@ -367,8 +368,8 @@ export default function CheckoutPage() {
             }
         }
 
-        if (orderType === 'dine_in' && !form.observations) {
-            alert("Por favor, informe o número da mesa no campo de observações.");
+        if (orderType === 'dine_in' && !tableNumber) {
+            alert("Por favor, informe o número da mesa.");
             return;
         }
 
@@ -396,15 +397,15 @@ export default function CheckoutPage() {
                 contextNote = "[RETIRADA NO BALCÃO]";
                 finalObservations = `${contextNote} ${form.observations}`.trim();
             } else if (orderType === 'dine_in') {
-                contextNote = `[NA MESA: ${form.observations}]`;
-                finalObservations = contextNote;
+                contextNote = `[NA MESA: ${tableNumber}]`;
+                finalObservations = `${contextNote} ${form.observations}`.trim();
             }
 
             const orderData = {
                 restaurantId,
                 customerName: form.name,
                 customerPhone: form.phone,
-                customerAddress: orderType === 'delivery' ? form.address : (orderType === 'pickup' ? 'Retirada' : `Mesa ${form.observations}`),
+                customerAddress: orderType === 'delivery' ? form.address : (orderType === 'pickup' ? 'Retirada' : `Mesa ${tableNumber}`),
                 customerZipCode: orderType === 'delivery' ? form.zipCode : '00000-000',
                 items: cart,
                 subtotal,
@@ -461,7 +462,7 @@ export default function CheckoutPage() {
                 locationInfo = "🏪 *Retirada no Balcão*\n";
             } else if (orderType === 'dine_in') {
                 typeHeader = "🍽️ *NA MESA*";
-                locationInfo = `🪑 *Mesa:* ${form.observations}\n`;
+                locationInfo = `🪑 *Mesa:* ${tableNumber}\n`;
             }
 
             const message = `🎫 *PEDIDO #${ticketNumber}* - ${typeHeader}\n\n` +
@@ -554,31 +555,37 @@ export default function CheckoutPage() {
                                 <button
                                     onClick={() => setOrderType('delivery')}
                                     className={`p-3 rounded-xl flex flex-col items-center justify-center gap-2 transition-all transform hover:scale-105 ${orderType === 'delivery'
-                                        ? 'bg-blue-500 text-white shadow-lg ring-2 ring-blue-300'
-                                        : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
+                                            ? 'bg-blue-500 text-white shadow-lg ring-2 ring-blue-300'
+                                            : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
                                         }`}
                                 >
-                                    <span className="text-2xl">🛵</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                    </svg>
                                     <span className="font-bold text-xs uppercase">Entrega</span>
                                 </button>
                                 <button
                                     onClick={() => setOrderType('pickup')}
                                     className={`p-3 rounded-xl flex flex-col items-center justify-center gap-2 transition-all transform hover:scale-105 ${orderType === 'pickup'
-                                        ? 'bg-orange-500 text-white shadow-lg ring-2 ring-orange-300'
-                                        : 'bg-orange-50 text-orange-600 hover:bg-orange-100'
+                                            ? 'bg-orange-500 text-white shadow-lg ring-2 ring-orange-300'
+                                            : 'bg-orange-50 text-orange-600 hover:bg-orange-100'
                                         }`}
                                 >
-                                    <span className="text-2xl">🛍️</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                    </svg>
                                     <span className="font-bold text-xs uppercase">Retirada</span>
                                 </button>
                                 <button
                                     onClick={() => setOrderType('dine_in')}
                                     className={`p-3 rounded-xl flex flex-col items-center justify-center gap-2 transition-all transform hover:scale-105 ${orderType === 'dine_in'
-                                        ? 'bg-green-500 text-white shadow-lg ring-2 ring-green-300'
-                                        : 'bg-green-50 text-green-600 hover:bg-green-100'
+                                            ? 'bg-green-500 text-white shadow-lg ring-2 ring-green-300'
+                                            : 'bg-green-50 text-green-600 hover:bg-green-100'
                                         }`}
                                 >
-                                    <span className="text-2xl">🍽️</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                    </svg>
                                     <span className="font-bold text-xs uppercase">Na Mesa</span>
                                 </button>
                             </div>
@@ -644,11 +651,26 @@ export default function CheckoutPage() {
 
 
 
+                            {orderType === 'dine_in' && (
+                                <div className="animate-fade-in">
+                                    <input
+                                        id="tableNumber"
+                                        name="tableNumber"
+                                        type="number"
+                                        className="w-full p-3 bg-green-50 rounded-xl border border-green-200 focus:ring-2 focus:ring-green-500 outline-none transition-all text-center text-lg font-bold text-green-800 placeholder-green-700/50"
+                                        placeholder="Número da Mesa"
+                                        value={tableNumber}
+                                        onChange={e => setTableNumber(e.target.value)}
+                                    />
+                                    <p className="text-xs text-green-600 mt-1 text-center">Informe o número da sua mesa.</p>
+                                </div>
+                            )}
+
                             <textarea
                                 id="observations"
                                 name="observations"
                                 className="w-full p-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                                placeholder={orderType === 'dine_in' ? "Observações (número da sua mesa)" : "Observações (ex: tirar cebola...)"}
+                                placeholder="Observações (ex: tirar cebola...)"
                                 rows={2}
                                 value={form.observations}
                                 onChange={e => setForm({ ...form, observations: e.target.value })}
