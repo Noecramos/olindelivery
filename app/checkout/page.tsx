@@ -24,7 +24,7 @@ export default function CheckoutPage() {
     const [isGuest, setIsGuest] = useState(false);
 
     const [orderType, setOrderType] = useState<'delivery' | 'pickup' | 'dine_in'>('delivery');
-    const [tableNumber, setTableNumber] = useState("");
+
 
     const [form, setForm] = useState({
         name: "",
@@ -367,8 +367,8 @@ export default function CheckoutPage() {
             }
         }
 
-        if (orderType === 'dine_in' && !tableNumber) {
-            alert("Por favor, informe o número da mesa.");
+        if (orderType === 'dine_in' && !form.observations) {
+            alert("Por favor, informe o número da mesa no campo de observações.");
             return;
         }
 
@@ -390,16 +390,21 @@ export default function CheckoutPage() {
 
             // Construct Order Notes with Context
             let contextNote = "";
-            if (orderType === 'pickup') contextNote = "[RETIRADA NO BALCÃO]";
-            else if (orderType === 'dine_in') contextNote = `[NA MESA: ${tableNumber}]`;
+            let finalObservations = form.observations;
 
-            const finalObservations = `${contextNote} ${form.observations}`.trim();
+            if (orderType === 'pickup') {
+                contextNote = "[RETIRADA NO BALCÃO]";
+                finalObservations = `${contextNote} ${form.observations}`.trim();
+            } else if (orderType === 'dine_in') {
+                contextNote = `[NA MESA: ${form.observations}]`;
+                finalObservations = contextNote;
+            }
 
             const orderData = {
                 restaurantId,
                 customerName: form.name,
                 customerPhone: form.phone,
-                customerAddress: orderType === 'delivery' ? form.address : (orderType === 'pickup' ? 'Retirada' : `Mesa ${tableNumber}`),
+                customerAddress: orderType === 'delivery' ? form.address : (orderType === 'pickup' ? 'Retirada' : `Mesa ${form.observations}`),
                 customerZipCode: orderType === 'delivery' ? form.zipCode : '00000-000',
                 items: cart,
                 subtotal,
@@ -456,7 +461,7 @@ export default function CheckoutPage() {
                 locationInfo = "🏪 *Retirada no Balcão*\n";
             } else if (orderType === 'dine_in') {
                 typeHeader = "🍽️ *NA MESA*";
-                locationInfo = `🪑 *Mesa:* ${tableNumber}\n`;
+                locationInfo = `🪑 *Mesa:* ${form.observations}\n`;
             }
 
             const message = `🎫 *PEDIDO #${ticketNumber}* - ${typeHeader}\n\n` +
@@ -637,20 +642,7 @@ export default function CheckoutPage() {
                                 </div>
                             )}
 
-                            {orderType === 'dine_in' && (
-                                <div className="animate-fade-in">
-                                    <input
-                                        id="tableNumber"
-                                        name="tableNumber"
-                                        type="number"
-                                        className="w-full p-3 bg-green-50 rounded-xl border border-green-200 focus:ring-2 focus:ring-green-500 outline-none transition-all text-center text-lg font-bold text-green-800 placeholder-green-700/50"
-                                        placeholder="Número da Mesa"
-                                        value={tableNumber}
-                                        onChange={e => setTableNumber(e.target.value)}
-                                    />
-                                    <p className="text-xs text-green-600 mt-1 text-center">Informe o número da sua mesa.</p>
-                                </div>
-                            )}
+
 
                             <textarea
                                 id="observations"
