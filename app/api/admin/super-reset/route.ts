@@ -11,7 +11,7 @@ export async function POST() {
             INSERT INTO global_settings (key, value)
             VALUES ('super_admin_password', ${newPassword})
             ON CONFLICT (key) 
-            DO UPDATE SET value = ${newPassword}, updated_at = NOW()
+            DO UPDATE SET value = ${newPassword}
         `;
 
         // Try to send email (if configured)
