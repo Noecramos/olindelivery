@@ -6,6 +6,7 @@ export async function GET(req: NextRequest) {
         const { searchParams } = new URL(req.url);
         const slug = searchParams.get('slug');
         const id = searchParams.get('id');
+        const isAdminAccess = searchParams.get('admin') === 'true';
 
         const selectColumns = `
             id, name, slug, responsible_name as "responsibleName", 
@@ -19,25 +20,38 @@ export async function GET(req: NextRequest) {
         `;
 
         if (slug) {
-            // Safe interpolation with Vercel Postgres is tricky with dynamic columns.
-            // But here columns are static string.
-            // We can't use template literal for columns easily in sql`` tag without helpers.
-            // So we'll select * and map in JS or just write the query fully.
-            // Let's write the query fully for slug.
-            const { rows } = await sql`
-                SELECT 
-                    id, name, slug, responsible_name as "responsibleName", 
-                    email, whatsapp, instagram, 
-                    zip_code as "zipCode", address, hours, type, image, pix_key as "pixKey",
-                    latitude, longitude, delivery_radius as "deliveryRadius",
-                    delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
-                    delivery_time as "deliveryTime", popular_title as "popularTitle",
-                    welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
-                    created_at as "createdAt", updated_at as "updatedAt"
-                FROM restaurants 
-                WHERE slug = ${slug} 
-                LIMIT 1
-            `;
+            // Fetch restaurant by slug
+            // If admin=true, bypass approval check (for restaurant admin panel)
+            // Otherwise, only return approved restaurants (for public frontend)
+            const { rows } = isAdminAccess
+                ? await sql`
+                    SELECT 
+                        id, name, slug, responsible_name as "responsibleName", 
+                        email, whatsapp, instagram, 
+                        zip_code as "zipCode", address, hours, type, image, pix_key as "pixKey",
+                        latitude, longitude, delivery_radius as "deliveryRadius",
+                        delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
+                        delivery_time as "deliveryTime", popular_title as "popularTitle",
+                        welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
+                        created_at as "createdAt", updated_at as "updatedAt"
+                    FROM restaurants 
+                    WHERE slug = ${slug}
+                    LIMIT 1
+                `
+                : await sql`
+                    SELECT 
+                        id, name, slug, responsible_name as "responsibleName", 
+                        email, whatsapp, instagram, 
+                        zip_code as "zipCode", address, hours, type, image, pix_key as "pixKey",
+                        latitude, longitude, delivery_radius as "deliveryRadius",
+                        delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
+                        delivery_time as "deliveryTime", popular_title as "popularTitle",
+                        welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
+                        created_at as "createdAt", updated_at as "updatedAt"
+                    FROM restaurants 
+                    WHERE slug = ${slug} AND approved = true
+                    LIMIT 1
+                `;
 
             if (rows.length === 0) {
                 return NextResponse.json({ error: "Restaurant not found" }, { status: 404 });
@@ -54,6 +68,7 @@ export async function GET(req: NextRequest) {
         }
 
         if (id) {
+            // Fetch approved restaurant by id (for public frontend)
             const { rows } = await sql`
                 SELECT 
                     id, name, slug, responsible_name as "responsibleName", 
@@ -65,7 +80,7 @@ export async function GET(req: NextRequest) {
                     welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
                     created_at as "createdAt", updated_at as "updatedAt"
                 FROM restaurants 
-                WHERE id = ${id} 
+                WHERE id = ${id} AND approved = true
                 LIMIT 1
             `;
             if (rows.length === 0) {
@@ -74,7 +89,7 @@ export async function GET(req: NextRequest) {
             return NextResponse.json(rows[0]);
         }
 
-        // List all
+        // List all approved restaurants (for public frontend)
         const { rows } = await sql`
             SELECT 
                 id, name, slug, responsible_name as "responsibleName", 
@@ -86,6 +101,7 @@ export async function GET(req: NextRequest) {
                 welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
                 created_at as "createdAt", updated_at as "updatedAt"
             FROM restaurants 
+            WHERE approved = true
             ORDER BY created_at DESC
         `;
         return NextResponse.json(rows);

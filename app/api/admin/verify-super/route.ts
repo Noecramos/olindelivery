@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { sql } from '@vercel/postgres';
 
 export async function POST(request: Request) {
     try {
@@ -9,8 +10,27 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Password required' }, { status: 400 });
         }
 
-        // Check environment variable or fallback
-        const masterPassword = process.env.SUPER_ADMIN_PASSWORD || 'master';
+        // Check database first (for reset passwords)
+        let masterPassword = process.env.SUPER_ADMIN_PASSWORD || 'master';
+
+        try {
+            const { rows } = await sql`
+                SELECT value FROM global_settings 
+                WHERE key = 'super_admin_password'
+                LIMIT 1
+            `;
+
+            if (rows.length > 0 && rows[0].value) {
+                // Use database password if it exists
+                masterPassword = rows[0].value;
+                console.log('Using database password');
+            } else {
+                console.log('Using environment variable password');
+            }
+        } catch (dbError) {
+            console.error('Database check error:', dbError);
+            // Continue with environment variable if database fails
+        }
 
         console.log('Super admin login attempt:', {
             match: password === masterPassword
