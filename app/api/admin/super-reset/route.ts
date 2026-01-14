@@ -14,52 +14,57 @@ export async function POST() {
             DO UPDATE SET value = ${newPassword}
         `;
 
-        // Try to send email (if configured)
-        const emailConfigured = process.env.SMTP_HOST && process.env.SMTP_USER;
+        // Send email using Resend API
+        const resendApiKey = process.env.RESEND_API_KEY;
 
-        if (emailConfigured) {
+        if (resendApiKey) {
             try {
-                // Send email using a mail service
-                const nodemailer = require('nodemailer');
-
-                const transporter = nodemailer.createTransporter({
-                    host: process.env.SMTP_HOST,
-                    port: parseInt(process.env.SMTP_PORT || '587'),
-                    secure: process.env.SMTP_SECURE === 'true',
-                    auth: {
-                        user: process.env.SMTP_USER,
-                        pass: process.env.SMTP_PASS
-                    }
-                });
-
-                await transporter.sendMail({
-                    from: process.env.SMTP_FROM || process.env.SMTP_USER,
-                    to: 'noecramos@gmail.com', // Hardcoded admin email
-                    subject: 'OlinDelivery - Nova Senha de Super Admin',
-                    html: `
-                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                            <h2 style="color: #EA1D2C;">🔐 Nova Senha de Super Admin</h2>
-                            <p>Sua senha de super administrador foi resetada com sucesso.</p>
-                            <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                                <p style="margin: 0; font-size: 14px; color: #666;">Nova Senha:</p>
-                                <p style="margin: 10px 0 0 0; font-size: 24px; font-weight: bold; color: #EA1D2C; font-family: monospace;">${newPassword}</p>
+                const response = await fetch('https://api.resend.com/emails', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${resendApiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        from: 'OlinDelivery <onboarding@resend.dev>',
+                        to: ['noecramos@gmail.com'],
+                        subject: 'OlinDelivery - Nova Senha de Super Admin',
+                        html: `
+                            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                                <h2 style="color: #EA1D2C;">🔐 Nova Senha de Super Admin</h2>
+                                <p>Sua senha de super administrador foi resetada com sucesso.</p>
+                                <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                                    <p style="margin: 0; font-size: 14px; color: #666;">Nova Senha:</p>
+                                    <p style="margin: 10px 0 0 0; font-size: 24px; font-weight: bold; color: #EA1D2C; font-family: monospace;">${newPassword}</p>
+                                </div>
+                                <p style="color: #666; font-size: 14px;">
+                                    Por favor, guarde esta senha em um local seguro.<br>
+                                    Acesse: <a href="https://olindelivery.vercel.app/admin/super">https://olindelivery.vercel.app/admin/super</a>
+                                </p>
+                                <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+                                <p style="color: #999; font-size: 12px;">
+                                    © 2025 OlinDelivery - Sistema de Gestão
+                                </p>
                             </div>
-                            <p style="color: #666; font-size: 14px;">
-                                Por favor, guarde esta senha em um local seguro.<br>
-                                Acesse: <a href="https://olindelivery.vercel.app/admin/super">https://olindelivery.vercel.app/admin/super</a>
-                            </p>
-                            <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
-                            <p style="color: #999; font-size: 12px;">
-                                © 2025 OlinDelivery - Sistema de Gestão
-                            </p>
-                        </div>
-                    `
+                        `
+                    })
                 });
 
-                return NextResponse.json({
-                    success: true,
-                    message: 'Nova senha gerada e enviada para o e-mail cadastrado com sucesso!'
-                });
+                if (response.ok) {
+                    return NextResponse.json({
+                        success: true,
+                        message: 'Nova senha gerada e enviada para o e-mail cadastrado com sucesso!'
+                    });
+                } else {
+                    const error = await response.json();
+                    console.error('Resend API error:', error);
+                    // If email fails, return the password in the response
+                    return NextResponse.json({
+                        success: true,
+                        message: 'Nova senha gerada, mas não foi possível enviar o e-mail.',
+                        tempPassword: newPassword
+                    });
+                }
             } catch (emailError) {
                 console.error('Email error:', emailError);
                 // If email fails, return the password in the response
