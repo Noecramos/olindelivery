@@ -549,8 +549,8 @@ export default function CheckoutPage() {
                                 <button
                                     onClick={() => setOrderType('delivery')}
                                     className={`p-3 rounded-xl flex flex-col items-center justify-center gap-2 transition-all transform hover:scale-105 ${orderType === 'delivery'
-                                            ? 'bg-blue-500 text-white shadow-lg ring-2 ring-blue-300'
-                                            : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
+                                        ? 'bg-blue-500 text-white shadow-lg ring-2 ring-blue-300'
+                                        : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
                                         }`}
                                 >
                                     <span className="text-2xl">🛵</span>
@@ -559,8 +559,8 @@ export default function CheckoutPage() {
                                 <button
                                     onClick={() => setOrderType('pickup')}
                                     className={`p-3 rounded-xl flex flex-col items-center justify-center gap-2 transition-all transform hover:scale-105 ${orderType === 'pickup'
-                                            ? 'bg-orange-500 text-white shadow-lg ring-2 ring-orange-300'
-                                            : 'bg-orange-50 text-orange-600 hover:bg-orange-100'
+                                        ? 'bg-orange-500 text-white shadow-lg ring-2 ring-orange-300'
+                                        : 'bg-orange-50 text-orange-600 hover:bg-orange-100'
                                         }`}
                                 >
                                     <span className="text-2xl">🛍️</span>
@@ -569,8 +569,8 @@ export default function CheckoutPage() {
                                 <button
                                     onClick={() => setOrderType('dine_in')}
                                     className={`p-3 rounded-xl flex flex-col items-center justify-center gap-2 transition-all transform hover:scale-105 ${orderType === 'dine_in'
-                                            ? 'bg-green-500 text-white shadow-lg ring-2 ring-green-300'
-                                            : 'bg-green-50 text-green-600 hover:bg-green-100'
+                                        ? 'bg-green-500 text-white shadow-lg ring-2 ring-green-300'
+                                        : 'bg-green-50 text-green-600 hover:bg-green-100'
                                         }`}
                                 >
                                     <span className="text-2xl">🍽️</span>
@@ -656,7 +656,7 @@ export default function CheckoutPage() {
                                 id="observations"
                                 name="observations"
                                 className="w-full p-3 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                                placeholder="Observações (ex: tirar cebola...)"
+                                placeholder={orderType === 'dine_in' ? "Observações (número da sua mesa)" : "Observações (ex: tirar cebola...)"}
                                 rows={2}
                                 value={form.observations}
                                 onChange={e => setForm({ ...form, observations: e.target.value })}
