@@ -31,7 +31,10 @@ export async function POST() {
                         subject: 'OlinDelivery - Nova Senha de Super Admin',
                         html: `
                             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                                <h2 style="color: #EA1D2C;">🔐 Nova Senha de Super Admin</h2>
+                                <div style="text-align: center; margin-bottom: 20px;">
+                                    <img src="https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olindelivery-favicon.jpg" alt="OlinDelivery Logo" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid #EA1D2C;" />
+                                </div>
+                                <h2 style="color: #EA1D2C; text-align: center;">🔐 Nova Senha de Super Admin</h2>
                                 <p>Sua senha de super administrador foi resetada com sucesso.</p>
                                 <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
                                     <p style="margin: 0; font-size: 14px; color: #666;">Nova Senha:</p>
@@ -42,7 +45,7 @@ export async function POST() {
                                     Acesse: <a href="https://olindelivery.vercel.app/admin/super">https://olindelivery.vercel.app/admin/super</a>
                                 </p>
                                 <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
-                                <p style="color: #999; font-size: 12px;">
+                                <p style="color: #999; font-size: 12px; text-align: center;">
                                     © 2025 OlinDelivery - Sistema de Gestão
                                 </p>
                             </div>

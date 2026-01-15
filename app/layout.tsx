@@ -14,6 +14,17 @@ export const metadata: Metadata = {
     icon: 'https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olindelivery-favicon.jpg',
     apple: 'https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olindelivery-favicon.jpg',
   },
+  openGraph: {
+    title: 'OlinDelivery',
+    description: 'Peça sua comida favorita pelo WhatsApp.',
+    images: ['https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olindelivery-favicon.jpg'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'OlinDelivery',
+    description: 'Peça sua comida favorita pelo WhatsApp.',
+    images: ['https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olindelivery-favicon.jpg'],
+  },
 };
 
 export const viewport = {
