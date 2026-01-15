@@ -95,7 +95,11 @@ export async function GET(req: NextRequest) {
             changeFor: order.changeFor ? Number(order.changeFor) : null,
             observations: order.observations,
             status: order.status,
-            createdAt: order.createdAt
+            createdAt: order.createdAt,
+            // Add restaurant info for cross-restaurant listings (History/Order Again)
+            restaurantName: order.restaurantName,
+            restaurantSlug: order.restaurantSlug,
+            restaurantImage: order.restaurantImage
         }));
 
         return NextResponse.json(orders);
