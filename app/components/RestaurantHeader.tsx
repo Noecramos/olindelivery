@@ -62,17 +62,8 @@ export default function RestaurantHeader({ name = "OlinDelivery", image, banner,
                 </div>
             </div>
 
-            {/* Banner Section */}
-            <div className="h-48 md:h-64 lg:h-72 w-full relative">
-                <div className="absolute inset-0 bg-center" style={{
-                    backgroundImage: `url('${banner || 'https://i.imgur.com/7Z4y7Qk.png'}')`,
-                    backgroundSize: '100% 100%'
-                }} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-            </div>
-
-            {/* Content Section - Overlapping Banner */}
-            <div className="container relative -mt-20 md:-mt-24 pb-4 px-4 flex flex-col items-center md:items-start md:flex-row gap-6 z-10">
+            {/* Content Section - Displayed below Top Bar */}
+            <div className="container relative mt-4 pb-4 px-4 flex flex-col items-center md:items-start md:flex-row gap-6 z-10">
                 {/* Logo */}
                 <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white shadow-xl overflow-hidden bg-white flex-shrink-0">
                     <Image
