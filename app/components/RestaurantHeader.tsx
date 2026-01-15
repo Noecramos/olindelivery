@@ -1,4 +1,6 @@
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import StarRating from "./StarRating";
 
 interface HeaderProps {
@@ -14,8 +16,38 @@ interface HeaderProps {
 }
 
 export default function RestaurantHeader({ name = "OlinDelivery", image, banner, rating = "4.9", address, deliveryTime = "30-45 min", restaurantId, ratingSum, ratingCount }: HeaderProps) {
+    const router = useRouter();
+
     return (
         <div className="relative mb-8">
+            {/* Branded Top Bar (Marketplace Identity) */}
+            <div className="h-28 relative bg-[#FFD700] rounded-b-3xl shadow-md flex items-center justify-center mb-4 pt-4 overflow-hidden">
+                {/* Back Button */}
+                <button
+                    onClick={() => router.back()}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/30 p-2 rounded-full backdrop-blur-md text-white hover:bg-white/50 transition-all"
+                >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M15 18l-6-6 6-6" />
+                    </svg>
+                </button>
+
+                {/* Logo */}
+                <img
+                    src="https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olindelivery-favicon.jpg"
+                    alt="OlinDelivery"
+                    className="h-16 object-contain"
+                />
+
+                {/* Login Button */}
+                <Link
+                    href="/login"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white text-gray-800 px-4 py-2 rounded-full shadow-sm text-xs font-bold hover:bg-gray-50 transition-all border border-gray-100"
+                >
+                    Entrar
+                </Link>
+            </div>
+
             {/* Banner Section */}
             <div className="h-48 md:h-64 lg:h-72 w-full relative">
                 <div className="absolute inset-0 bg-center" style={{
