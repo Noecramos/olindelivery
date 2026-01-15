@@ -11,8 +11,8 @@ export const metadata: Metadata = {
   description: "Peça sua comida favorita pelo WhatsApp.",
   manifest: "/manifest.json",
   icons: {
-    icon: '/icon.jpg',
-    apple: '/icon.jpg',
+    icon: 'https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olindelivery-favicon.jpg',
+    apple: 'https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olindelivery-favicon.jpg',
   },
 };
 
