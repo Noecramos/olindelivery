@@ -18,7 +18,7 @@ function MarketplaceContent() {
     welcomeTitle: 'O que vamos\npedir hoje?',
     welcomeSubtitle: 'Entregar em Casa',
     footerText: '© 2025 OlindAki Delivery',
-    headerBgColor: '#FFD700'
+    headerBgColor: 'transparent'
   });
   const [selectedCategory, setSelectedCategory] = useState("Todos");
 
@@ -162,7 +162,7 @@ function MarketplaceContent() {
         <div
           className="relative pt-8 px-6 pb-4 flex justify-center items-center sticky top-0 z-40 bg-opacity-95 backdrop-blur-md transition-all duration-300 shadow-lg rounded-b-3xl bg-center bg-cover bg-no-repeat h-56"
           style={{
-            backgroundColor: config.headerBackgroundType === 'image' ? 'transparent' : (config.headerBgColor || '#FFD700'),
+            backgroundColor: config.headerBackgroundType === 'image' ? 'transparent' : (config.headerBgColor || 'transparent'),
             backgroundImage: config.headerBackgroundType === 'image' ? `url('${config.headerBackgroundImage}')` : 'none',
           }}
         >
