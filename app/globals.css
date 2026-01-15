@@ -224,7 +224,7 @@ h4 {
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  aspect-ratio: 1 / 1.35;
+  aspect-ratio: 1 / 1.55;
   /* Taller cards to fit content */
   width: 100%;
 }
