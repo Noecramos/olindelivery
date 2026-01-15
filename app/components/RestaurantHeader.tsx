@@ -15,9 +15,9 @@ interface HeaderProps {
 
 export default function RestaurantHeader({ name = "OlinDelivery", image, banner, rating = "4.9", address, deliveryTime = "30-45 min", restaurantId, ratingSum, ratingCount }: HeaderProps) {
     return (
-        <div className="relative mb-8">
+        <div className="relative mb-8 mt-2">
             {/* Banner Section */}
-            <div className="h-48 md:h-64 lg:h-72 w-full relative">
+            <div className="h-32 md:h-48 lg:h-56 w-full relative">
                 <div className="absolute inset-0 bg-center" style={{
                     backgroundImage: `url('${banner || 'https://i.imgur.com/7Z4y7Qk.png'}')`,
                     backgroundSize: '100% 100%'
