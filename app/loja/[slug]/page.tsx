@@ -13,7 +13,7 @@ export const dynamic = 'force-dynamic';
 export default function StoreFront() {
     const { slug } = useParams();
     const router = useRouter();
-    const { addToCart, count, total } = useCart();
+    const { addToCart, count, total, items } = useCart();
 
     const [restaurant, setRestaurant] = useState<any>(null);
     const [products, setProducts] = useState<any[]>([]);
@@ -134,7 +134,7 @@ export default function StoreFront() {
                 </div>
             )}
 
-            {restaurant.isOpen && <FloatingCart count={count} total={total} />}
+            {restaurant.isOpen && (!items.length || items[0].restaurantId === restaurant.id) && <FloatingCart count={count} total={total} />}
 
             {toast && (
                 <div className="animate-fade-in" style={{
