@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { SalesChart, TopProductsChart, StatusPieChart } from "../../components/admin/Charts";
 import ProductForm from "../../components/admin/ProductForm";
 import CategoryForm from "../../components/admin/CategoryForm";
+import ComboForm from "../../components/admin/ComboForm";
 import RestaurantSettings from "../../components/admin/RestaurantSettings";
 
 export const dynamic = 'force-dynamic';
@@ -478,6 +479,10 @@ export default function StoreAdmin() {
                         <span className="text-xl">🍔</span> <span className="hidden lg:block">Produtos</span>
                     </button>
 
+                    <button onClick={() => setTab('combos')} className={`p-3 rounded-xl transition-all flex items-center gap-3 ${tab === 'combos' ? 'bg-red-50 text-[#EA1D2C] font-bold shadow-sm' : 'hover:bg-gray-100 text-gray-600'}`}>
+                        <span className="text-xl">🎁</span> <span className="hidden lg:block">Combos</span>
+                    </button>
+
                     <button onClick={() => setTab('settings')} className={`p-3 rounded-xl transition-all flex items-center gap-3 ${tab === 'settings' ? 'bg-red-50 text-[#EA1D2C] font-bold shadow-sm' : 'hover:bg-gray-100 text-gray-600'}`}>
                         <span className="text-xl">⚙️</span> <span className="hidden lg:block">Configurações</span>
                     </button>
@@ -802,6 +807,18 @@ export default function StoreAdmin() {
                                                         <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-orange-600">Catálogo de Produtos</h2>
                                                     </div>
                                                     <ProductForm restaurantId={restaurant.id} onSave={() => alert('Salvo!')} refreshCategories={catRefresh} />
+                                                </div>
+                                            </div>
+                                        )}
+                                        {tab === 'combos' && (
+                                            <div className="space-y-12">
+                                                <div>
+                                                    <div className="flex justify-between items-center mb-6">
+                                                        <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-orange-600">Gerenciar Combos</h2>
+                                                    </div>
+                                                    <div className="bg-gray-50/50 p-6 rounded-3xl border border-gray-100/50 hover:bg-white hover:shadow-lg transition-all duration-300">
+                                                        <ComboForm restaurantId={restaurant.id} onSave={() => fetchRestaurant()} />
+                                                    </div>
                                                 </div>
                                             </div>
                                         )}
