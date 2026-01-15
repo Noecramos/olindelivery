@@ -50,19 +50,24 @@ export async function POST() {
                     })
                 });
 
+                const result = await response.json();
+                console.log('Resend API response:', result);
+
                 if (response.ok) {
                     return NextResponse.json({
                         success: true,
-                        message: 'Nova senha gerada e enviada para o e-mail cadastrado com sucesso!'
+                        message: 'Nova senha gerada e enviada para o e-mail cadastrado com sucesso!',
+                        emailId: result.id,
+                        tempPassword: newPassword // Include password in response for now
                     });
                 } else {
-                    const error = await response.json();
-                    console.error('Resend API error:', error);
+                    console.error('Resend API error:', result);
                     // If email fails, return the password in the response
                     return NextResponse.json({
                         success: true,
                         message: 'Nova senha gerada, mas não foi possível enviar o e-mail.',
-                        tempPassword: newPassword
+                        tempPassword: newPassword,
+                        error: result
                     });
                 }
             } catch (emailError) {
