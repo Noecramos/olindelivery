@@ -530,10 +530,17 @@ export default function StoreAdmin() {
                                                 >
                                                     🖨️ Fechar Caixa
                                                 </button>
-                                                <span className="text-xs text-green-700 bg-white backdrop-blur px-4 py-2 rounded-full font-bold flex items-center gap-2 shadow-lg">
-                                                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                                                    Online
-                                                </span>
+                                                {restaurant.isOpen ? (
+                                                    <span className="text-xs text-green-700 bg-white backdrop-blur px-4 py-2 rounded-full font-bold flex items-center gap-2 shadow-lg">
+                                                        <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                                        Online
+                                                    </span>
+                                                ) : (
+                                                    <span className="text-xs text-red-700 bg-white backdrop-blur px-4 py-2 rounded-full font-bold flex items-center gap-2 shadow-lg">
+                                                        <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+                                                        Fechado
+                                                    </span>
+                                                )}
                                             </div>
                                         </header>
 
