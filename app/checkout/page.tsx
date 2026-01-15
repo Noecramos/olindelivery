@@ -407,6 +407,7 @@ export default function CheckoutPage() {
                 customerPhone: form.phone,
                 customerAddress: orderType === 'delivery' ? form.address : (orderType === 'pickup' ? 'Retirada' : `Mesa ${tableNumber}`),
                 customerZipCode: orderType === 'delivery' ? form.zipCode : '00000-000',
+                customerEmail: user?.email || '',
                 items: cart,
                 subtotal,
                 deliveryFee,
@@ -555,8 +556,8 @@ export default function CheckoutPage() {
                                 <button
                                     onClick={() => setOrderType('delivery')}
                                     className={`p-3 rounded-xl flex flex-col items-center justify-center gap-2 transition-all transform hover:scale-105 ${orderType === 'delivery'
-                                            ? 'bg-blue-500 text-white shadow-lg ring-2 ring-blue-300'
-                                            : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
+                                        ? 'bg-blue-500 text-white shadow-lg ring-2 ring-blue-300'
+                                        : 'bg-blue-50 text-blue-600 hover:bg-blue-100'
                                         }`}
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -567,8 +568,8 @@ export default function CheckoutPage() {
                                 <button
                                     onClick={() => setOrderType('pickup')}
                                     className={`p-3 rounded-xl flex flex-col items-center justify-center gap-2 transition-all transform hover:scale-105 ${orderType === 'pickup'
-                                            ? 'bg-orange-500 text-white shadow-lg ring-2 ring-orange-300'
-                                            : 'bg-orange-50 text-orange-600 hover:bg-orange-100'
+                                        ? 'bg-orange-500 text-white shadow-lg ring-2 ring-orange-300'
+                                        : 'bg-orange-50 text-orange-600 hover:bg-orange-100'
                                         }`}
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -579,8 +580,8 @@ export default function CheckoutPage() {
                                 <button
                                     onClick={() => setOrderType('dine_in')}
                                     className={`p-3 rounded-xl flex flex-col items-center justify-center gap-2 transition-all transform hover:scale-105 ${orderType === 'dine_in'
-                                            ? 'bg-green-500 text-white shadow-lg ring-2 ring-green-300'
-                                            : 'bg-green-50 text-green-600 hover:bg-green-100'
+                                        ? 'bg-green-500 text-white shadow-lg ring-2 ring-green-300'
+                                        : 'bg-green-50 text-green-600 hover:bg-green-100'
                                         }`}
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

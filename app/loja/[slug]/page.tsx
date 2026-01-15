@@ -19,6 +19,7 @@ export default function StoreFront() {
     const [products, setProducts] = useState<any[]>([]);
     const [activeCategory, setActiveCategory] = useState("Lanches");
     const [toast, setToast] = useState<string | null>(null);
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         if (!slug) return;
@@ -39,10 +40,16 @@ export default function StoreFront() {
 
     if (!restaurant) return <div className="p-10 text-center">Carregando loja...</div>;
 
+    // Filter products by search term
+    const filteredProducts = products.filter(p =>
+        (p.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            p.description?.toLowerCase().includes(searchTerm.toLowerCase())) &&
+        p.available !== false
+    );
+
     // Group available items by category
-    // Group available items by category (default to true if available status is missing)
-    const activeProducts = products.filter(p => p.available !== false);
-    const categories = Array.from(new Set(activeProducts.map((item: any) => item.category))).filter((c: any) => c && c.trim() !== "");
+    const categories = Array.from(new Set(filteredProducts.map((item: any) => item.category)))
+        .filter((c: any) => c && c.trim() !== "");
 
     const handleAdd = (item: any) => {
         addToCart(item);
@@ -82,6 +89,20 @@ export default function StoreFront() {
                 </div>
             )}
 
+            {/* Search Bar - Store Level */}
+            <div className="px-4 mb-6">
+                <div className="relative max-w-md mx-auto">
+                    <svg className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input
+                        type="text"
+                        placeholder={`O que você procura em ${restaurant.name}?`}
+                        className="w-full pl-12 pr-4 py-4 bg-gray-100/50 rounded-2xl outline-none focus:ring-2 focus:ring-yellow-500 transition-all text-sm font-medium border border-gray-100 shadow-sm"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+            </div>
+
             {categories.length > 0 ? (
                 <>
                     <CategoryNav
@@ -93,9 +114,9 @@ export default function StoreFront() {
                     <div className="container" style={{ paddingTop: "1.5rem" }}>
                         {categories.map((cat: any) => (
                             <section key={cat} id={cat} style={{ marginBottom: "2rem" }}>
-                                <h2 style={{ fontSize: "1.25rem", marginBottom: "1rem", color: "#3e3e3e" }}>{cat}</h2>
-                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                                    {activeProducts.filter((item: any) => item.category === cat).map((item: any) => (
+                                <h2 style={{ fontSize: "1.25rem", marginBottom: "1rem", color: "#3e3e3e", fontWeight: "bold", paddingLeft: "1rem" }}>{cat}</h2>
+                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-2">
+                                    {filteredProducts.filter((item: any) => item.category === cat).map((item: any) => (
                                         <div key={item.id} style={{ opacity: restaurant.isOpen ? 1 : 0.6, pointerEvents: restaurant.isOpen ? 'auto' : 'none' }}>
                                             <ProductCard item={item} onAdd={() => handleAdd(item)} />
                                         </div>
@@ -106,7 +127,11 @@ export default function StoreFront() {
                     </div>
                 </>
             ) : (
-                <div className="text-center p-10 text-secondary">Nenhum produto disponível.</div>
+                <div className="text-center p-20 text-gray-400">
+                    <div className="text-4xl mb-4">🔍</div>
+                    <p className="font-medium text-lg">Nenhum produto encontrado.</p>
+                    <p className="text-sm">Tente buscar por termos diferentes ou confira outras categorias.</p>
+                </div>
             )}
 
             {restaurant.isOpen && <FloatingCart count={count} total={total} />}

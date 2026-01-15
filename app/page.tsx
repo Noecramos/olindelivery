@@ -10,6 +10,8 @@ import { useAuth } from "./context/AuthContext";
 function MarketplaceContent() {
   const [restaurants, setRestaurants] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [recentOrders, setRecentOrders] = useState<any[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState("Todos");
   const searchParams = useSearchParams();
   const router = useRouter();
   const [showSuccess, setShowSuccess] = useState(false);
@@ -20,20 +22,33 @@ function MarketplaceContent() {
     footerText: '© 2025 OlindAki Delivery',
     headerBgColor: 'transparent'
   });
-  const [selectedCategory, setSelectedCategory] = useState("Todos");
 
   const { user, logout } = useAuth();
 
   useEffect(() => {
+    if (user?.email) {
+      fetch(`/api/orders?customerEmail=${user.email}`)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) setRecentOrders(data.slice(0, 3));
+        })
+        .catch(console.error);
+    } else {
+      setRecentOrders([]);
+    }
+  }, [user]);
+
+  useEffect(() => {
     if (searchParams.get('orderSuccess')) {
       setShowSuccess(true);
+      // Remove query param without refresh
+      window.history.replaceState({}, '', window.location.pathname);
       const timer = setTimeout(() => {
         setShowSuccess(false);
-        router.replace('/');
       }, 5000);
       return () => clearTimeout(timer);
     }
-  }, [searchParams, router]);
+  }, [searchParams]);
 
   // Loading Splash Screen Logic - Only show once per session
   const [loading, setLoading] = useState(true);
@@ -192,6 +207,39 @@ function MarketplaceContent() {
           <p className="text-yellow-600 font-bold text-base mb-1 uppercase tracking-wider">{config.welcomeSubtitle}</p>
           <h1 className="text-3xl font-bold text-gray-800 tracking-tight" style={{ whiteSpace: 'pre-line' }}>{config.welcomeTitle}</h1>
         </div>
+
+        {/* Order Again Section */}
+        {user && recentOrders.length > 0 && (
+          <div className="mb-10 px-6 animate-fade-in">
+            <div className="flex justify-between items-end mb-4">
+              <h2 className="font-bold text-lg text-gray-800">Pedir novamente ⚡</h2>
+            </div>
+            <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+              {recentOrders.map((order: any) => (
+                <Link key={order.id} href={`/loja/${order.restaurantSlug}`}>
+                  <div className="bg-white border border-gray-100 shadow-sm w-[260px] p-4 rounded-3xl flex items-center gap-3 cursor-pointer hover:shadow-md transition-all">
+                    <div className="w-12 h-12 rounded-2xl overflow-hidden flex-shrink-0 bg-gray-50 border border-gray-100">
+                      {order.restaurantImage ? (
+                        <img src={order.restaurantImage} alt={order.restaurantName} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-xl">🏬</div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-bold text-gray-800 text-sm truncate">{order.restaurantName}</h3>
+                      <p className="text-gray-500 text-xs truncate">
+                        {(order.items && typeof order.items === 'string' ? JSON.parse(order.items) : (order.items || [])).length} {(order.items && typeof order.items === 'string' ? JSON.parse(order.items) : (order.items || [])).length === 1 ? 'item' : 'itens'} • {new Date(order.createdAt).toLocaleDateString('pt-BR')}
+                      </p>
+                    </div>
+                    <div className="bg-yellow-400 w-8 h-8 rounded-full flex items-center justify-center text-white shadow-sm flex-shrink-0">
+                      <span className="text-lg">↺</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Search */}
         <div className="px-6 mb-10 relative">
