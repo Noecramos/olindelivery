@@ -26,6 +26,7 @@ export default function ComboForm({ restaurantId, onSave }: { restaurantId: stri
     const [categories, setCategories] = useState<string[]>([]);
 
     // Form State
+    const [editingId, setEditingId] = useState<string | null>(null);
     const [comboName, setComboName] = useState('');
     const [comboPrice, setComboPrice] = useState('');
     const [comboCategory, setComboCategory] = useState('');
@@ -133,6 +134,27 @@ export default function ComboForm({ restaurantId, onSave }: { restaurantId: stri
         return (savings / total) * 100;
     };
 
+    const handleEdit = (combo: Product) => {
+        setEditingId(combo.id);
+        setComboName(combo.name);
+        setComboPrice(combo.price.toString());
+        setComboCategory(combo.category);
+        setComboDescription(combo.description || '');
+        setComboImage(combo.image || '');
+        setSelectedItems(combo.comboItems || []);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleCancel = () => {
+        setEditingId(null);
+        setComboName('');
+        setComboPrice('');
+        setComboCategory('');
+        setComboDescription('');
+        setComboImage('');
+        setSelectedItems([]);
+    };
+
     const handleSave = async () => {
         if (!comboName || !comboPrice || !comboCategory) {
             alert('Preencha nome, preço e categoria do combo');
@@ -146,33 +168,35 @@ export default function ComboForm({ restaurantId, onSave }: { restaurantId: stri
 
         setSaving(true);
         try {
+            const method = editingId ? 'PUT' : 'POST';
+            const body: any = {
+                restaurantId,
+                name: comboName,
+                price: parseFloat(comboPrice),
+                category: comboCategory,
+                description: comboDescription,
+                image: comboImage,
+                is_combo: true,
+                combo_items: selectedItems
+            };
+
+            if (editingId) {
+                body.id = editingId;
+            }
+
             const res = await fetch('/api/products', {
-                method: 'POST',
+                method: method,
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    restaurantId,
-                    name: comboName,
-                    price: parseFloat(comboPrice),
-                    category: comboCategory,
-                    description: comboDescription,
-                    image: comboImage,
-                    is_combo: true,
-                    combo_items: selectedItems
-                })
+                body: JSON.stringify(body)
             });
 
             if (res.ok) {
-                alert('✅ Combo criado com sucesso!');
-                setComboName('');
-                setComboPrice('');
-                setComboCategory('');
-                setComboDescription('');
-                setComboImage('');
-                setSelectedItems([]);
+                alert(editingId ? '✅ Combo atualizado com sucesso!' : '✅ Combo criado com sucesso!');
+                handleCancel();
                 fetchData();
                 onSave();
             } else {
-                alert('Erro ao criar combo');
+                alert('Erro ao salvar combo');
             }
         } catch (error) {
             alert('Erro ao salvar combo');
@@ -196,11 +220,21 @@ export default function ComboForm({ restaurantId, onSave }: { restaurantId: stri
             {/* Left Column: Form */}
             <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-bold text-gray-800">Criar Novo Combo</h3>
+                    <h3 className="text-xl font-bold text-gray-800">
+                        {editingId ? 'Editar Combo' : 'Criar Novo Combo'}
+                    </h3>
+                    {editingId && (
+                        <button
+                            onClick={handleCancel}
+                            className="text-sm text-red-600 font-bold hover:underline"
+                        >
+                            Cancelar Edição
+                        </button>
+                    )}
                 </div>
 
                 {/* Combo Basic Info */}
-                <div className="space-y-4 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                <div className={`space-y-4 bg-white p-6 rounded-2xl border shadow-sm ${editingId ? 'border-orange-200 ring-2 ring-orange-50' : 'border-gray-100'}`}>
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-2">Nome do Combo</label>
                         <input
@@ -283,11 +317,15 @@ export default function ComboForm({ restaurantId, onSave }: { restaurantId: stri
             {/* Right Column: Preview & List */}
             <div className="space-y-6">
                 {/* Current Combo Preview */}
-                <div className="bg-blue-50 p-6 rounded-2xl border border-blue-200 shadow-sm h-fit sticky top-4">
-                    <h4 className="text-sm font-bold text-blue-900 mb-4 uppercase tracking-wider">Resumo do Novo Combo</h4>
+                <div className={`p-6 rounded-2xl border shadow-sm h-fit sticky top-4 transition-all ${editingId ? 'bg-orange-50 border-orange-200' : 'bg-blue-50 border-blue-200'}`}>
+                    <h4 className={`text-sm font-bold mb-4 uppercase tracking-wider ${editingId ? 'text-orange-900' : 'text-blue-900'}`}>
+                        {editingId ? 'Editando Combo' : 'Resumo do Novo Combo'}
+                    </h4>
 
                     {selectedItems.length === 0 ? (
-                        <p className="text-center text-blue-300 py-8 text-sm">Selecione produtos para começar</p>
+                        <p className={`text-center py-8 text-sm ${editingId ? 'text-orange-400' : 'text-blue-300'}`}>
+                            Selecione produtos para começar
+                        </p>
                     ) : (
                         <div className="space-y-3">
                             {selectedItems.map(item => (
@@ -309,14 +347,14 @@ export default function ComboForm({ restaurantId, onSave }: { restaurantId: stri
                                 </div>
                             ))}
 
-                            <hr className="border-blue-200 my-4" />
+                            <hr className={`my-4 ${editingId ? 'border-orange-200' : 'border-blue-200'}`} />
 
                             <div className="space-y-1 text-sm">
-                                <div className="flex justify-between text-blue-800/70">
+                                <div className={`flex justify-between ${editingId ? 'text-orange-800/70' : 'text-blue-800/70'}`}>
                                     <span>Valor Itens:</span>
                                     <span className="font-bold">R$ {calculateTotal().toFixed(2)}</span>
                                 </div>
-                                <div className="flex justify-between text-blue-900 text-lg">
+                                <div className={`flex justify-between text-lg ${editingId ? 'text-orange-900' : 'text-blue-900'}`}>
                                     <span className="font-bold">Preço Combo:</span>
                                     <span className="font-black text-red-600">R$ {(parseFloat(comboPrice) || 0).toFixed(2)}</span>
                                 </div>
@@ -333,9 +371,9 @@ export default function ComboForm({ restaurantId, onSave }: { restaurantId: stri
                             <button
                                 onClick={handleSave}
                                 disabled={saving || selectedItems.length < 2}
-                                className="w-full mt-4 py-3 bg-[#EA1D2C] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:bg-[#C51623] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                className={`w-full mt-4 py-3 text-white font-bold rounded-xl shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all ${editingId ? 'bg-orange-500 hover:bg-orange-600' : 'bg-[#EA1D2C] hover:bg-[#C51623]'}`}
                             >
-                                {saving ? 'Salvando...' : '💾 Finalizar Combo'}
+                                {saving ? 'Salvando...' : editingId ? '💾 Salvar Alterações' : '💾 Finalizar Combo'}
                             </button>
                         </div>
                     )}
@@ -346,7 +384,7 @@ export default function ComboForm({ restaurantId, onSave }: { restaurantId: stri
                     <h3 className="font-bold text-gray-800 mb-4">Combos Cadastrados ({combos.length})</h3>
                     <div className="space-y-3 max-h-96 overflow-y-auto pr-2 custom-scrollbar">
                         {combos.map(combo => (
-                            <div key={combo.id} className="bg-white p-4 rounded-xl border border-gray-100 hover:shadow-md transition-all flex gap-4">
+                            <div key={combo.id} className={`bg-white p-4 rounded-xl border transition-all flex gap-4 ${editingId === combo.id ? 'border-orange-300 ring-2 ring-orange-100 shadow-md transform scale-[1.01]' : 'border-gray-100 hover:shadow-md'}`}>
                                 <div className="w-16 h-16 bg-gray-100 rounded-lg flex-shrink-0 overflow-hidden">
                                     {combo.image ? (
                                         <img src={combo.image} className="w-full h-full object-cover" alt="" />
@@ -357,13 +395,22 @@ export default function ComboForm({ restaurantId, onSave }: { restaurantId: stri
                                 <div className="flex-1 min-w-0">
                                     <div className="flex justify-between items-start">
                                         <h4 className="font-bold text-gray-900 truncate">{combo.name}</h4>
-                                        <button
-                                            onClick={() => handleDeleteCombo(combo.id)}
-                                            className="text-red-500 hover:bg-red-50 p-1 rounded transition-colors"
-                                            title="Excluir"
-                                        >
-                                            🗑️
-                                        </button>
+                                        <div className="flex gap-1">
+                                            <button
+                                                onClick={() => handleEdit(combo)}
+                                                className="text-blue-500 hover:bg-blue-50 p-1.5 rounded-lg transition-colors"
+                                                title="Editar"
+                                            >
+                                                ✏️
+                                            </button>
+                                            <button
+                                                onClick={() => handleDeleteCombo(combo.id)}
+                                                className="text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition-colors"
+                                                title="Excluir"
+                                            >
+                                                🗑️
+                                            </button>
+                                        </div>
                                     </div>
                                     <p className="text-xs text-gray-500 line-clamp-1">{combo.description || 'Sem descrição'}</p>
                                     <div className="flex items-center gap-2 mt-2">

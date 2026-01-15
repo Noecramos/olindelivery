@@ -278,11 +278,11 @@ function MarketplaceContent() {
               ]
             ).map((item: any) => (
               <Link key={item.id} href={item.link || '#'}>
-                <div className={`${item.bg || 'bg-white'} w-[240px] h-[110px] p-4 rounded-3xl flex items-center justify-between gap-3 cursor-pointer hover:shadow-lg transition-all transform hover:-translate-y-1 flex-shrink-0 border border-black/5`}>
+                <div className={`${item.bg || 'bg-white'} w-[240px] min-h-[130px] p-5 rounded-3xl flex items-center justify-between gap-4 cursor-pointer hover:shadow-lg transition-all transform hover:-translate-y-1 flex-shrink-0 border border-black/5`}>
                   <div className="text-4xl drop-shadow-sm">{item.icon}</div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-bold text-gray-800 text-sm truncate">{item.name}</h3>
-                    <p className="text-gray-900 font-bold mt-1">
+                  <div className="flex-1 min-w-0 flex flex-col justify-center">
+                    <h3 className="font-bold text-gray-800 text-sm leading-tight line-clamp-2">{item.name}</h3>
+                    <p className="text-gray-900 font-bold mt-2">
                       {typeof item.price === 'number' ? `R$ ${item.price.toFixed(2)}` : item.price}
                     </p>
                   </div>
@@ -332,8 +332,8 @@ function MarketplaceContent() {
           ) : (
             filteredRestaurants.map(rest => (
               <Link key={rest.id} href={`/loja/${rest.slug}`}>
-                <div className="item-card-row group">
-                  <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-gray-100 shadow-inner">
+                <div className="item-card-row group min-h-[100px]">
+                  <div className="relative w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 bg-gray-100 shadow-inner">
                     {rest.image ? (
                       <Image
                         src={rest.image}
