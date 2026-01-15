@@ -84,7 +84,7 @@ function MarketplaceContent() {
   };
 
   useEffect(() => {
-    fetch('/api/restaurants')
+    fetch(`/api/restaurants?_t=${new Date().getTime()}`)
       .then(res => res.json())
       .then(setRestaurants)
       .catch(console.error);
