@@ -20,32 +20,29 @@ export default function RestaurantHeader({ name = "OlinDelivery", image, banner,
 
     return (
         <div className="relative mb-8">
-            {/* Branded Top Bar (Marketplace Identity) */}
-            <div className="h-28 relative bg-[#FFD700] rounded-b-3xl shadow-md flex items-center justify-center mb-4 pt-4 overflow-hidden">
+            {/* Marketplace Header (Matches Main Page) */}
+            <div
+                className="relative pt-8 px-6 pb-4 flex justify-center items-center sticky top-0 z-40 bg-opacity-95 backdrop-blur-md transition-all duration-300 shadow-lg rounded-b-3xl bg-center bg-cover bg-no-repeat h-56 bg-[#FFD700]"
+            >
                 {/* Back Button */}
                 <button
                     onClick={() => router.back()}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/30 p-2 rounded-full backdrop-blur-md text-white hover:bg-white/50 transition-all"
+                    className="absolute top-4 left-4 z-[60] bg-white text-gray-800 p-2 rounded-full shadow-lg border border-gray-200 hover:bg-gray-50 transition-transform hover:scale-105 active:scale-95 flex items-center justify-center"
                 >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M15 18l-6-6 6-6" />
                     </svg>
                 </button>
 
-                {/* Logo */}
-                <img
-                    src="https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olindelivery-favicon.jpg"
-                    alt="OlinDelivery"
-                    className="h-16 object-contain"
-                />
-
-                {/* Login Button */}
-                <Link
-                    href="/login"
-                    className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white text-gray-800 px-4 py-2 rounded-full shadow-sm text-xs font-bold hover:bg-gray-50 transition-all border border-gray-100"
-                >
-                    Entrar
-                </Link>
+                {/* Login Button - Absolute Positioned to match structure */}
+                <div className="absolute top-4 right-4 z-[60]">
+                    <Link href="/login">
+                        <div className="bg-white text-gray-800 px-4 py-2 rounded-full shadow-lg border border-gray-200 text-sm font-bold flex items-center gap-2 hover:bg-gray-50 transition-transform hover:scale-105 active:scale-95">
+                            <span className="text-lg">👤</span>
+                            <span>Entrar</span>
+                        </div>
+                    </Link>
+                </div>
             </div>
 
             {/* Banner Section */}

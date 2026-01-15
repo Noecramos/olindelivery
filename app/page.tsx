@@ -85,16 +85,8 @@ function MarketplaceContent() {
   if (loading) {
     return (
       <div className="fixed inset-0 bg-[#FFD700] flex flex-col items-center justify-center z-[9999]">
-        <div className="w-64 h-64 flex items-center justify-center animate-pulse">
-          <Image
-            src={config.headerImage || "https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olindelivery-favicon.jpg"}
-            alt="Logo"
-            width={256}
-            height={256}
-            style={{ objectFit: 'contain' }}
-            priority
-            unoptimized
-          />
+        <div className="w-72 h-32 flex items-center justify-center animate-bounce">
+          <Image src={config.headerImage || "https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olindelivery-favicon.jpg"} alt="Logo" width={240} height={100} style={{ objectFit: 'contain' }} priority unoptimized />
         </div>
       </div>
     );
@@ -174,14 +166,6 @@ function MarketplaceContent() {
             backgroundImage: config.headerBackgroundType === 'image' ? `url('${config.headerBackgroundImage}')` : 'none',
           }}
         >
-          {/* Branded Logo in Header */}
-          <div className="absolute inset-0 flex items-center justify-center p-12 pointer-events-none">
-            <img
-              src="https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olindelivery-favicon.jpg"
-              alt="OlinDelivery"
-              className="max-h-32 w-auto object-contain"
-            />
-          </div>
           {/* User Profile / Login Button - Absolute Positioned */}
           <div className="absolute top-4 right-4 z-[60]">
             {user ? (
