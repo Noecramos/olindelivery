@@ -12,7 +12,7 @@ type CartItem = {
 
 type CartContextType = {
     items: CartItem[];
-    addToCart: (item: Omit<CartItem, 'quantity'>) => void;
+    addToCart: (item: Omit<CartItem, 'quantity'> & { quantity?: number }) => void;
     removeFromCart: (id: string) => void;
     removeOne: (id: string) => void;
     clearCart: () => void;
@@ -29,13 +29,33 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const [items, setItems] = useState<CartItem[]>([]);
     const [deliveryFee, setDeliveryFee] = useState<number>(0);
 
-    const addToCart = (product: Omit<CartItem, 'quantity'>) => {
+    const addToCart = (product: Omit<CartItem, 'quantity'> & { quantity?: number }) => {
+        const qty = product.quantity || 1;
+
+        // Check for Restaurant Conflict
+        if (items.length > 0) {
+            const currentRestaurantId = items[0].restaurantId;
+            const newRestaurantId = product.restaurantId;
+
+            console.log('🛒 OlinDelivery AddToCart Check:', { current: currentRestaurantId, new: newRestaurantId });
+
+            if (newRestaurantId) {
+                if (currentRestaurantId !== newRestaurantId) {
+                    if (window.confirm("Seu carrinho contém itens de outra loja. Deseja limpar o carrinho para adicionar este item?")) {
+                        setItems([{ ...product, quantity: qty }]);
+                        setDeliveryFee(0);
+                    }
+                    return;
+                }
+            }
+        }
+
         setItems(prev => {
             const existing = prev.find(i => i.id === product.id);
             if (existing) {
-                return prev.map(i => i.id === product.id ? { ...i, quantity: i.quantity + 1 } : i);
+                return prev.map(i => i.id === product.id ? { ...i, quantity: i.quantity + qty } : i);
             }
-            return [...prev, { ...product, quantity: 1 }];
+            return [...prev, { ...product, quantity: qty }];
         });
     };
 
