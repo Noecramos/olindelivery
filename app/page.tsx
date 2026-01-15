@@ -14,7 +14,7 @@ function MarketplaceContent() {
   const router = useRouter();
   const [showSuccess, setShowSuccess] = useState(false);
   const [config, setConfig] = useState<any>({
-    headerImage: 'https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olindelivery-favicon.jpg',
+    headerImage: 'https://i.imgur.com/Fyccvly.gif',
     welcomeTitle: 'O que vamos\npedir hoje?',
     welcomeSubtitle: 'Entregar em Casa',
     footerText: '© 2025 OlindAki Delivery',
@@ -86,7 +86,7 @@ function MarketplaceContent() {
     return (
       <div className="fixed inset-0 bg-[#FFD700] flex flex-col items-center justify-center z-[9999]">
         <div className="w-72 h-32 flex items-center justify-center animate-bounce">
-          <Image src={config.headerImage || "https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olindelivery-favicon.jpg"} alt="Logo" width={240} height={100} style={{ objectFit: 'contain' }} priority unoptimized />
+          <Image src="https://i.imgur.com/Fyccvly.gif" alt="Logo" width={240} height={100} style={{ objectFit: 'contain' }} priority unoptimized />
         </div>
       </div>
     );
