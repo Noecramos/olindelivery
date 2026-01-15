@@ -7,7 +7,6 @@ import RestaurantHeader from "../../components/RestaurantHeader";
 import CategoryNav from "../../components/CategoryNav";
 import ProductCard from "../../components/ProductCard";
 import FloatingCart from "../../components/FloatingCart";
-import MainHeader from "../../components/MainHeader";
 
 export const dynamic = 'force-dynamic';
 
@@ -63,7 +62,7 @@ export default function StoreFront() {
 
     return (
         <main style={{ paddingBottom: "100px", minHeight: "100vh" }}>
-            <MainHeader />
+
             {/* Pass dynamic data to header if needed, for now resizing to match */}
             <RestaurantHeader
                 name={restaurant.name}
