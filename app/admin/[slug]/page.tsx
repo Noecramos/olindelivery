@@ -493,13 +493,7 @@ export default function StoreAdmin() {
                         <span className="text-xl">🔐</span> <span className="hidden lg:block">Fecho de Loja</span>
                     </button>
 
-                    <button onClick={() => setTab('raspadinha')} className={`p-3 rounded-xl transition-all flex items-center gap-3 ${tab === 'raspadinha' ? 'bg-red-50 text-[#EA1D2C] font-bold shadow-sm' : 'hover:bg-gray-100 text-gray-600'}`}>
-                        <span className="text-xl">🎲</span> <span className="hidden lg:block">Raspadinha</span>
-                    </button>
 
-                    <button onClick={printDailyReport} className={`p-3 rounded-xl transition-all flex items-center gap-3 hover:bg-blue-50 text-gray-600 hover:text-blue-600`}>
-                        <span className="text-xl">🔐</span> <span className="hidden lg:block">Fecho de Loja</span>
-                    </button>
 
                     <button onClick={() => setTab('settings')} className={`p-3 rounded-xl transition-all flex items-center gap-3 ${tab === 'settings' ? 'bg-red-50 text-[#EA1D2C] font-bold shadow-sm' : 'hover:bg-gray-100 text-gray-600'}`}>
                         <span className="text-xl">⚙️</span> <span className="hidden lg:block">Configurações</span>
