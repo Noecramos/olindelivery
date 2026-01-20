@@ -46,15 +46,18 @@ export default function RaspadinhaPage() {
 
     const getHourlyCode = () => {
         const now = new Date();
-        const seed = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}-${now.getHours()}`;
+        const SALT = "OLIN_DYNA_CODE_v1_SECRET_KEY_8823";
+        const timeComponent = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}-${now.getHours()}`;
+        const input = `${SALT}-${timeComponent}`;
 
-        let hash = 0;
-        for (let i = 0; i < seed.length; i++) {
-            const char = seed.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
-            hash = hash & hash;
+        let hash = 5381;
+        for (let i = 0; i < input.length; i++) {
+            hash = ((hash << 5) + hash) + input.charCodeAt(i); /* hash * 33 + c */
         }
-        return Math.abs(hash % 10000).toString().padStart(4, '0');
+
+        // Additional mixing for randomness
+        hash = Math.abs(hash ^ 2747636419);
+        return (hash % 10000).toString().padStart(4, '0');
     };
 
     const generateTicket = () => {

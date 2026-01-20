@@ -13,19 +13,19 @@ export default function RaspadinhaValidator() {
             const now = new Date();
             // Create a seed based on the current hour (e.g. 2023-10-27-14)
             // This rotates the code every hour for security
-            // Or use getDay() for daily rotation. Let's do Hourly for better security/testing.
-            const seed = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}-${now.getHours()}`;
+            // Added Salt for better randomness as requested
+            const SALT = "OLIN_DYNA_CODE_v1_SECRET_KEY_8823";
+            const timeComponent = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}-${now.getHours()}`;
+            const input = `${SALT}-${timeComponent}`;
 
-            // Simple hash function to generate 4 digits
-            let hash = 0;
-            for (let i = 0; i < seed.length; i++) {
-                const char = seed.charCodeAt(i);
-                hash = ((hash << 5) - hash) + char;
-                hash = hash & hash; // Convert to 32bit integer
+            let hash = 5381;
+            for (let i = 0; i < input.length; i++) {
+                hash = ((hash << 5) + hash) + input.charCodeAt(i); /* hash * 33 + c */
             }
 
-            // Absolute value and mod 10000 to get 4 digits
-            const fourDigitCode = Math.abs(hash % 10000).toString().padStart(4, '0');
+            // Additional mixing
+            hash = Math.abs(hash ^ 2747636419);
+            const fourDigitCode = (hash % 10000).toString().padStart(4, '0');
             setCode(fourDigitCode);
 
             // Calculate time until next rotation (next hour)
