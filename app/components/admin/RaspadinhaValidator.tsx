@@ -6,20 +6,27 @@ export default function RaspadinhaValidator() {
     const [code, setCode] = useState("");
     const [timeLeft, setTimeLeft] = useState(0);
 
-    useEffect(() => {
-        // Fetch code from API
-        const fetchCode = async () => {
-            try {
-                const res = await fetch('/api/raspadinha/code');
-                const data = await res.json();
-                if (data.code) {
-                    setCode(data.code);
-                }
-            } catch (e) {
-                console.error("Failed to fetch code", e);
-            }
-        };
+    const [lastUpdated, setLastUpdated] = useState(new Date());
 
+    const fetchCode = async () => {
+        try {
+            const res = await fetch('/api/raspadinha/code');
+            const data = await res.json();
+            if (data.code) {
+                setCode(prev => {
+                    if (prev !== data.code) {
+                        // Flash or animate could go here
+                    }
+                    return data.code;
+                });
+                setLastUpdated(new Date());
+            }
+        } catch (e) {
+            console.error("Failed to fetch code", e);
+        }
+    };
+
+    useEffect(() => {
         fetchCode();
         const interval = setInterval(fetchCode, 3000); // Poll every 3 seconds
         return () => clearInterval(interval);
@@ -33,17 +40,27 @@ export default function RaspadinhaValidator() {
 
     return (
         <div className="bg-white rounded-[32px] shadow-sm border border-gray-100 overflow-hidden w-full max-w-md mx-auto">
-            <div className="bg-gradient-to-r from-purple-700 to-indigo-600 p-6 text-center text-white">
+            <div className="bg-gradient-to-r from-purple-700 to-indigo-600 p-6 text-center text-white relative">
                 <h2 className="text-xl font-bold uppercase tracking-wider">Validador OlindAki</h2>
                 <p className="text-sm opacity-80 mt-1">Raspadinha da Sorte</p>
+                <button
+                    onClick={fetchCode}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-white/20 rounded-full transition-colors"
+                    title="Atualizar Código"
+                >
+                    🔄
+                </button>
             </div>
 
             <div className="p-8 flex flex-col items-center text-center">
-                <p className="text-gray-500 font-medium mb-4 uppercase tracking-widest text-xs">Código Atual</p>
+                <div className="flex justify-between w-full items-center mb-4 px-2">
+                    <p className="text-gray-500 font-medium uppercase tracking-widest text-xs">Código Atual</p>
+                    <p className="text-[10px] text-gray-400">Atualizado às {lastUpdated.toLocaleTimeString()}</p>
+                </div>
 
-                <div className="bg-gray-50 border-4 border-dashed border-gray-200 rounded-2xl p-8 mb-6 w-full">
+                <div className="bg-gray-50 border-4 border-dashed border-gray-200 rounded-2xl p-8 mb-6 w-full relative">
                     <span className="text-6xl font-mono font-bold text-gray-800 tracking-[0.2em]">
-                        {code}
+                        {code || '....'}
                     </span>
                 </div>
 
