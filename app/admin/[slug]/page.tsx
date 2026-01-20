@@ -489,9 +489,7 @@ export default function StoreAdmin() {
                         <span className="text-xl">🎲</span> <span className="hidden lg:block">Raspadinha</span>
                     </button>
 
-                    <button onClick={printDailyReport} className={`p-3 rounded-xl transition-all flex items-center gap-3 hover:bg-blue-50 text-gray-600 hover:text-blue-600`}>
-                        <span className="text-xl">🔐</span> <span className="hidden lg:block">Fecho de Loja</span>
-                    </button>
+
 
 
 
