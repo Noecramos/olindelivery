@@ -239,6 +239,7 @@ export default function RaspadinhaPage() {
         if (validationCode.trim() === validCode || validationCode.trim() === MASTER_CODE) {
             setStep('success');
             setValidationError(false);
+            setValidationCode('');
         } else {
             getHourlyCode(); // just to double check logic if debugging
             setValidationError(true);
@@ -371,11 +372,11 @@ export default function RaspadinhaPage() {
                                 <p className={styles.winSub}>Mostre ao caixa:</p>
                                 <div className={styles.couponCode}>{ticketId}-VIP</div>
 
-                                <button className={styles.primaryBtn} onClick={() => window.print()}>
-                                    🖨️ Salvar/Imprimir
+                                <button className={styles.primaryBtn} onClick={generateTicket}>
+                                    🔄 Nova Raspadinha
                                 </button>
-                                <button className={styles.secondaryBtn} onClick={generateTicket}>
-                                    Nova Raspadinha
+                                <button className={styles.secondaryBtn} onClick={() => window.print()}>
+                                    🖨️ Salvar/Imprimir
                                 </button>
                             </>
                         )}
