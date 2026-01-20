@@ -270,6 +270,12 @@ export default function SuperAdmin() {
                         >
                             Customização do App
                         </button>
+                        <button
+                            onClick={() => setTab('raspadinha')}
+                            className={`pb-4 px-2 font-bold transition-all relative ${tab === 'raspadinha' ? 'text-gray-900 border-b-2 border-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
+                        >
+                            Raspadinha
+                        </button>
                     </div>
 
                     {tab === 'restaurants' && (
@@ -369,7 +375,7 @@ export default function SuperAdmin() {
                     )}
 
                     {tab === 'raspadinha' && (
-                        <div className="flex justify-center items-center py-10 fade-in">
+                        <div className="flex justify-center items-center py-10 animate-fade-in">
                             <RaspadinhaValidator />
                         </div>
                     )}
