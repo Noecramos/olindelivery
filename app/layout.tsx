@@ -11,19 +11,19 @@ export const metadata: Metadata = {
   description: "Peça sua comida favorita pelo WhatsApp.",
   manifest: "/manifest.json",
   icons: {
-    icon: 'https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olindelivery-favicon.jpg',
-    apple: 'https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olindelivery-favicon.jpg',
+    icon: '/icon.jpg',
+    apple: '/icon.jpg',
   },
   openGraph: {
     title: 'OlinDelivery',
     description: 'Peça sua comida favorita pelo WhatsApp.',
-    images: ['https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olindelivery-favicon.jpg'],
+    images: ['/icon.jpg'],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'OlinDelivery',
     description: 'Peça sua comida favorita pelo WhatsApp.',
-    images: ['https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olindelivery-favicon.jpg'],
+    images: ['/icon.jpg'],
   },
 };
 
