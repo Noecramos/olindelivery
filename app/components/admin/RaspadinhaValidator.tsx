@@ -7,24 +7,22 @@ export default function RaspadinhaValidator() {
     const [timeLeft, setTimeLeft] = useState(0);
 
     useEffect(() => {
-        useEffect(() => {
-            // Fetch code from API
-            const fetchCode = async () => {
-                try {
-                    const res = await fetch('/api/raspadinha/code');
-                    const data = await res.json();
-                    if (data.code) {
-                        setCode(data.code);
-                    }
-                } catch (e) {
-                    console.error("Failed to fetch code", e);
+        // Fetch code from API
+        const fetchCode = async () => {
+            try {
+                const res = await fetch('/api/raspadinha/code');
+                const data = await res.json();
+                if (data.code) {
+                    setCode(data.code);
                 }
-            };
+            } catch (e) {
+                console.error("Failed to fetch code", e);
+            }
+        };
 
-            fetchCode();
-            const interval = setInterval(fetchCode, 3000); // Poll every 3 seconds
-            return () => clearInterval(interval);
-        }, []);
+        fetchCode();
+        const interval = setInterval(fetchCode, 3000); // Poll every 3 seconds
+        return () => clearInterval(interval);
     }, []);
 
     const formatTime = (seconds: number) => {

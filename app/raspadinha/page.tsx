@@ -44,21 +44,7 @@ export default function RaspadinhaPage() {
         generateTicket();
     }, []);
 
-    const getHourlyCode = () => {
-        const now = new Date();
-        const SALT = "OLIN_DYNA_CODE_v1_SECRET_KEY_8823";
-        const timeComponent = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}-${now.getHours()}`;
-        const input = `${SALT}-${timeComponent}`;
 
-        let hash = 5381;
-        for (let i = 0; i < input.length; i++) {
-            hash = ((hash << 5) + hash) + input.charCodeAt(i); /* hash * 33 + c */
-        }
-
-        // Additional mixing for randomness
-        hash = Math.abs(hash ^ 2747636419);
-        return (hash % 10000).toString().padStart(4, '0');
-    };
 
     const generateTicket = () => {
         const randomId = Math.floor(100000 + Math.random() * 900000);
