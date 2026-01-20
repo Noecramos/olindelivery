@@ -1,0 +1,404 @@
+.pageContainer {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #E0F2F1 0%, #B2DFDB 100%);
+    display: flex;
+    flex-direction: column;
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+}
+
+.header {
+    background: linear-gradient(135deg, #880E4F 0%, #C2185B 100%);
+    color: white;
+    padding: 20px 0 40px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.headerContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    z-index: 2;
+}
+
+.logo {
+    font-size: 3rem;
+    background: white;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border: 3px solid #FFD700;
+}
+
+.header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-transform: uppercase;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.headerCurvedBorder {
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background: inherit;
+    border-radius: 0 0 50% 50%;
+    z-index: 1;
+}
+
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    z-index: 5;
+}
+
+.ticketSection {
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.ticketLabel {
+    background: #333;
+    color: #fff;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.scratchCardContainer {
+    position: relative;
+    width: 320px;
+    height: 320px;
+    /* Square ticket */
+    background: #FFF9C4;
+    /* Light Yellow */
+    border: 4px solid #FFD700;
+    /* Gold */
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    padding: 10px;
+    overflow: hidden;
+}
+
+.gridContainer {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 8px;
+    width: 100%;
+    height: 100%;
+}
+
+.gridItem {
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    border: 1px solid #ddd;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.winnerItem {
+    background: #FFF176;
+    /* Highlight winners */
+    animation: pulse 1s infinite;
+    border: 2px solid #FBC02D;
+}
+
+.scratchCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    /* Just slightly less than container */
+    cursor: grab;
+    touch-action: none;
+    z-index: 10;
+    transition: opacity 0.5s ease;
+}
+
+.timestamp {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 10px;
+    border-top: 1px dashed #aaa;
+    padding-top: 5px;
+    width: 100%;
+    text-align: center;
+}
+
+.fingerHint {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 3rem;
+    transform: translate(-50%, -50%);
+    z-index: 20;
+    pointer-events: none;
+    animation: floatHand 1.5s infinite ease-in-out;
+    filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.3));
+}
+
+.btnOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 30;
+    animation: fadeIn 0.3s ease;
+}
+
+.revealBtn {
+    background: linear-gradient(135deg, #FF6F00 0%, #FFCA28 100%);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    box-shadow: 0 4px 15px rgba(255, 111, 0, 0.4);
+    cursor: pointer;
+    animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-origin: center;
+}
+
+.revealBtn:hover {
+    transform: scale(1.05);
+}
+
+.resultModalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    backdrop-filter: blur(5px);
+    padding: 20px;
+}
+
+.resultModal {
+    background: white;
+    width: 100%;
+    max-width: 320px;
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    animation: slideUp 0.4s ease;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+.winTitle {
+    color: #4CAF50;
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.loseTitle {
+    color: #555;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+.winIcon,
+.loseIcon {
+    font-size: 4rem;
+    margin-bottom: 15px;
+}
+
+.winText,
+.loseText {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.couponCode {
+    font-family: monospace;
+    background: #eee;
+    padding: 10px;
+    border: 2px dashed #333;
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin: 15px 0 25px;
+}
+
+.primaryBtn {
+    width: 100%;
+    background: #00C853;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.secondaryBtn {
+    width: 100%;
+    background: transparent;
+    color: #555;
+    border: 2px solid #ddd;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes floatHand {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    50% {
+        transform: translate(-50%, -60%) rotate(-10deg);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Validation Flow Styles */
+.inputGroup {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.inputGroup label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.inputGroup input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+    font-family: inherit;
+}
+
+.inputGroup input:focus {
+    border-color: #25D366;
+    /* WhatsApp Green */
+}
+
+.whatsappBtn {
+    background-color: #25D366;
+    /* WhatsApp Green */
+    color: white;
+    width: 100%;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.smallHint {
+    font-size: 0.8rem;
+    color: #888;
+    margin-top: 10px;
+}
+
+.validationError {
+    color: #D32F2F;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    display: block;
+}
+
+.winSub {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 15px;
+}
