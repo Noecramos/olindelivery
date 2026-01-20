@@ -7,36 +7,24 @@ export default function RaspadinhaValidator() {
     const [timeLeft, setTimeLeft] = useState(0);
 
     useEffect(() => {
-        // Function to generate the daily code
-        // This MUST match the client-side logic in the raspadinha validation
-        const generateCode = () => {
-            const now = new Date();
-            // Create a seed based on the current hour (e.g. 2023-10-27-14)
-            // This rotates the code every hour for security
-            // Added Salt for better randomness as requested
-            const SALT = "OLIN_DYNA_CODE_v1_SECRET_KEY_8823";
-            const timeComponent = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}-${now.getHours()}`;
-            const input = `${SALT}-${timeComponent}`;
+        useEffect(() => {
+            // Fetch code from API
+            const fetchCode = async () => {
+                try {
+                    const res = await fetch('/api/raspadinha/code');
+                    const data = await res.json();
+                    if (data.code) {
+                        setCode(data.code);
+                    }
+                } catch (e) {
+                    console.error("Failed to fetch code", e);
+                }
+            };
 
-            let hash = 5381;
-            for (let i = 0; i < input.length; i++) {
-                hash = ((hash << 5) + hash) + input.charCodeAt(i); /* hash * 33 + c */
-            }
-
-            // Additional mixing
-            hash = Math.abs(hash ^ 2747636419);
-            const fourDigitCode = (hash % 10000).toString().padStart(4, '0');
-            setCode(fourDigitCode);
-
-            // Calculate time until next rotation (next hour)
-            const nextHour = new Date(now);
-            nextHour.setHours(now.getHours() + 1, 0, 0, 0);
-            setTimeLeft(Math.floor((nextHour.getTime() - now.getTime()) / 1000));
-        };
-
-        generateCode();
-        const interval = setInterval(generateCode, 1000); // Update every second to check rotation/timer
-        return () => clearInterval(interval);
+            fetchCode();
+            const interval = setInterval(fetchCode, 3000); // Poll every 3 seconds
+            return () => clearInterval(interval);
+        }, []);
     }, []);
 
     const formatTime = (seconds: number) => {
@@ -62,7 +50,7 @@ export default function RaspadinhaValidator() {
                 </div>
 
                 <div className="text-sm text-gray-400 font-medium mb-8">
-                    Expira em: <span className="text-orange-500 font-bold">{formatTime(timeLeft)}</span>
+                    <span className="text-orange-500 font-bold">✨ Código Único (Expira ao usar)</span>
                 </div>
 
                 <div className="bg-blue-50 text-blue-800 p-6 rounded-2xl text-left text-sm w-full">

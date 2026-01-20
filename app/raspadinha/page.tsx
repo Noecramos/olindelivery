@@ -232,18 +232,26 @@ export default function RaspadinhaPage() {
         setStep('validate');
     };
 
-    const handleValidation = () => {
-        const validCode = getHourlyCode();
-        const MASTER_CODE = '9999';
+    const handleValidation = async () => {
+        try {
+            const res = await fetch('/api/raspadinha/validate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: validationCode.trim() })
+            });
 
-        if (validationCode.trim() === validCode || validationCode.trim() === MASTER_CODE) {
-            setStep('success');
-            setValidationError(false);
-            setValidationCode('');
-        } else {
-            getHourlyCode(); // just to double check logic if debugging
-            setValidationError(true);
-            setValidationCode('');
+            const data = await res.json();
+
+            if (data.success) {
+                setStep('success');
+                setValidationError(false);
+                setValidationCode('');
+            } else {
+                setValidationError(true);
+                setValidationCode('');
+            }
+        } catch (e) {
+            alert('Erro de conexão ao validar');
         }
     };
 
