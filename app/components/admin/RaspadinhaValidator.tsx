@@ -6,7 +6,12 @@ export default function RaspadinhaValidator() {
     const [code, setCode] = useState("");
     const [timeLeft, setTimeLeft] = useState(0);
 
-    const [lastUpdated, setLastUpdated] = useState(new Date());
+    const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+
+    // Set initial date on mount to avoid hydration mismatch
+    useEffect(() => {
+        setLastUpdated(new Date());
+    }, []);
 
     const fetchCode = async () => {
         try {
@@ -55,7 +60,9 @@ export default function RaspadinhaValidator() {
             <div className="p-8 flex flex-col items-center text-center">
                 <div className="flex justify-between w-full items-center mb-4 px-2">
                     <p className="text-gray-500 font-medium uppercase tracking-widest text-xs">Código Atual</p>
-                    <p className="text-[10px] text-gray-400">Atualizado às {lastUpdated.toLocaleTimeString()}</p>
+                    <p className="text-[10px] text-gray-400">
+                        Atualizado às {lastUpdated ? lastUpdated.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '...'}
+                    </p>
                 </div>
 
                 <div className="bg-gray-50 border-4 border-dashed border-gray-200 rounded-2xl p-8 mb-6 w-full relative">
