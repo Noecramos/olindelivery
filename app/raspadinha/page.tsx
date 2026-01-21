@@ -157,7 +157,7 @@ export default function RaspadinhaPage() {
 
         ctx.globalCompositeOperation = 'destination-out';
         ctx.beginPath();
-        ctx.arc(x, y, 25, 0, Math.PI * 2);
+        ctx.arc(x, y, 45, 0, Math.PI * 2);
         ctx.fill();
 
         if (Math.random() < 0.25) checkProgress();
@@ -183,7 +183,7 @@ export default function RaspadinhaPage() {
         const pct = (transparent / total) * 100;
 
         setScratchProgress(pct);
-        if (pct > 95 && !isRevealed) {
+        if (pct > 60 && !isRevealed) {
             setIsRevealed(true);
         }
     };
@@ -314,7 +314,7 @@ export default function RaspadinhaPage() {
                         {step === 'claim' && result?.type === 'win' && (
                             <>
                                 <h2 className={styles.winTitle}>PARABÉNS!</h2>
-                                <div className={styles.winIcon}>🎉</div>
+                                <div className={styles.winIcon}>{result.prize?.symbol}</div>
                                 <p className={styles.winText}>Você ganhou<br /><strong>{result.prize?.label}</strong></p>
 
                                 <div className={styles.inputGroup}>
