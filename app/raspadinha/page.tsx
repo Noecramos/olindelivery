@@ -160,7 +160,7 @@ export default function RaspadinhaPage() {
         ctx.arc(x, y, 25, 0, Math.PI * 2);
         ctx.fill();
 
-        if (Math.random() < 0.1) checkProgress();
+        if (Math.random() < 0.25) checkProgress();
     };
 
     const checkProgress = () => {
@@ -183,7 +183,7 @@ export default function RaspadinhaPage() {
         const pct = (transparent / total) * 100;
 
         setScratchProgress(pct);
-        if (pct > 40 && !isRevealed) {
+        if (pct > 95 && !isRevealed) {
             setIsRevealed(true);
         }
     };
