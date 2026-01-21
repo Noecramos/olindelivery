@@ -577,12 +577,39 @@ export default function StoreAdmin() {
                                             </div>
                                             <div className="bg-white p-6 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.05)] border border-gray-100 flex flex-col justify-between h-32 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-shadow duration-300">
                                                 <h3 className="text-gray-400 text-xs font-bold uppercase tracking-wider">Total de Pedidos</h3>
-                                                <p className="text-4xl font-bold text-gray-800 tracking-tight">{orders.length}</p>
+                                                <p className="text-4xl font-bold text-gray-800 tracking-tight">
+                                                    {(() => {
+                                                        const today = new Date();
+                                                        return orders.filter(o => {
+                                                            if (!o.createdAt) return false;
+                                                            const d = new Date(o.createdAt);
+                                                            const isToday = d.getDate() === today.getDate() &&
+                                                                d.getMonth() === today.getMonth() &&
+                                                                d.getFullYear() === today.getFullYear();
+                                                            const isValid = o.status !== 'cancelled';
+                                                            return isToday && isValid;
+                                                        }).length;
+                                                    })()}
+                                                </p>
                                             </div>
                                             <div className="bg-white p-6 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.05)] border border-gray-100 flex flex-col justify-between h-32 hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-shadow duration-300">
                                                 <h3 className="text-gray-400 text-xs font-bold uppercase tracking-wider">Ticket Médio</h3>
                                                 <p className="text-4xl font-bold text-green-600 tracking-tight">
-                                                    {(orders.reduce((acc, o) => acc + o.total, 0) / (orders.length || 1)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                                    {(() => {
+                                                        const today = new Date();
+                                                        const todayOrders = orders.filter(o => {
+                                                            if (!o.createdAt) return false;
+                                                            const d = new Date(o.createdAt);
+                                                            const isToday = d.getDate() === today.getDate() &&
+                                                                d.getMonth() === today.getMonth() &&
+                                                                d.getFullYear() === today.getFullYear();
+                                                            const isValid = o.status !== 'cancelled';
+                                                            return isToday && isValid;
+                                                        });
+                                                        const totalSales = todayOrders.reduce((acc, o) => acc + o.total, 0);
+                                                        const avgTicket = todayOrders.length > 0 ? totalSales / todayOrders.length : 0;
+                                                        return avgTicket.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                                                    })()}
                                                 </p>
                                             </div>
                                         </div>
