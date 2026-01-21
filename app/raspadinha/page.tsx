@@ -40,11 +40,12 @@ export default function RaspadinhaPage() {
     const [validationCode, setValidationCode] = useState('');
     const [validationError, setValidationError] = useState(false);
 
+    const [currentTime, setCurrentTime] = useState('');
+
     useEffect(() => {
         generateTicket();
+        setCurrentTime(`${new Date().toLocaleDateString('pt-BR')} • ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`);
     }, []);
-
-
 
     const generateTicket = () => {
         const randomId = Math.floor(100000 + Math.random() * 900000);
@@ -98,7 +99,7 @@ export default function RaspadinhaPage() {
     const initCanvas = useCallback(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
         if (!ctx) return;
 
         const parent = canvas.parentElement;
@@ -138,7 +139,7 @@ export default function RaspadinhaPage() {
     const handleScratch = (e: React.MouseEvent | React.TouchEvent) => {
         const canvas = canvasRef.current;
         if (!canvas) return;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
         if (!ctx) return;
 
         const rect = canvas.getBoundingClientRect();
@@ -165,7 +166,7 @@ export default function RaspadinhaPage() {
     const checkProgress = () => {
         const canvas = canvasRef.current;
         if (!canvas) return;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
         if (!ctx) return;
 
         const w = canvas.width;
@@ -211,7 +212,7 @@ export default function RaspadinhaPage() {
         }
 
         const phone = '558183920320';
-        const msg = `Olá! Acabei de ganhar na Raspadinha da Sorte da OlindAki! 🎉\n\nNome: *${userName}*\nTicket: *${ticketId}*\nPrêmio: *${result?.prize?.label}*\nData: ${new Date().toLocaleString()}\n\nPor favor, valide meu prêmio!`;
+        const msg = `Olá! Acabei de ganhar na Raspadinha da Sorte da OlindAki! 🎉\n\nNome: *${userName}*\nTicket: *${ticketId}*\nPrêmio: *${result?.prize?.label}*\nData: ${currentTime}\n\nPor favor, valide meu prêmio!`;
         const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
 
         window.open(url, '_blank');
@@ -289,7 +290,7 @@ export default function RaspadinhaPage() {
                     </div>
 
                     <div className={styles.timestamp}>
-                        {new Date().toLocaleDateString('pt-BR')} • {new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                        {currentTime}
                     </div>
                 </div>
             </main>
