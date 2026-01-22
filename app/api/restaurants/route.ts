@@ -119,15 +119,49 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const {
+        console.log('Restaurant registration request:', JSON.stringify(body, null, 2));
+
+        let {
             name, slug, responsibleName, email, whatsapp, instagram,
             zipCode, address, hours, type, image, pixKey
         } = body;
 
-        // Check if slug exists
-        const { rows: existing } = await sql`SELECT slug FROM restaurants WHERE slug = ${slug}`;
-        if (existing.length > 0) {
-            return NextResponse.json({ error: "URL (slug) already taken" }, { status: 400 });
+        // Validate required fields
+        if (!name) {
+            console.error('Validation failed: name is missing');
+            return NextResponse.json({ error: 'Nome é obrigatório' }, { status: 400 });
+        }
+
+        if (!slug) {
+            console.error('Validation failed: slug is missing');
+            return NextResponse.json({ error: 'Slug é obrigatório' }, { status: 400 });
+        }
+
+        // Check for duplicate slug and auto-generate unique one if needed
+        let finalSlug = slug;
+        let slugExists = await sql`SELECT id FROM restaurants WHERE slug = ${finalSlug}`;
+
+        if (slugExists.rows.length > 0) {
+            console.log('Slug already exists, generating unique slug...');
+            let counter = 1;
+            let uniqueSlugFound = false;
+
+            while (!uniqueSlugFound && counter < 100) {
+                finalSlug = `${slug}-${counter}`;
+                slugExists = await sql`SELECT id FROM restaurants WHERE slug = ${finalSlug}`;
+
+                if (slugExists.rows.length === 0) {
+                    uniqueSlugFound = true;
+                    console.log('Generated unique slug:', finalSlug);
+                } else {
+                    counter++;
+                }
+            }
+
+            if (!uniqueSlugFound) {
+                console.error('Could not generate unique slug after 100 attempts');
+                return NextResponse.json({ error: 'Não foi possível gerar um link único. Tente outro nome.' }, { status: 409 });
+            }
         }
 
         const { rows } = await sql`
@@ -135,16 +169,25 @@ export async function POST(req: NextRequest) {
                 name, slug, responsible_name, email, whatsapp, instagram, 
                 zip_code, address, hours, type, image, pix_key, approved
             ) VALUES (
-                ${name}, ${slug}, ${responsibleName}, ${email}, ${whatsapp}, ${instagram},
-                ${zipCode}, ${address}, ${hours}, ${type}, ${image}, ${pixKey}, false
+                ${name}, ${finalSlug}, ${responsibleName || null}, ${email || null}, ${whatsapp || null}, ${instagram || null},
+                ${zipCode || null}, ${address || null}, ${hours || null}, ${type || null}, ${image || null}, ${pixKey || null}, false
             ) RETURNING *
         `;
 
-        return NextResponse.json({ success: true, restaurant: rows[0] });
+        console.log('Restaurant registered successfully with slug:', finalSlug);
+        return NextResponse.json({
+            success: true,
+            restaurant: rows[0],
+            slug: finalSlug
+        });
 
-    } catch (error) {
+    } catch (error: any) {
         console.error("Database Error:", error);
-        return NextResponse.json({ error: "Failed to create restaurant" }, { status: 500 });
+        console.error("Error stack:", error.stack);
+        return NextResponse.json({
+            error: "Failed to create restaurant",
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        }, { status: 500 });
     }
 }
 
