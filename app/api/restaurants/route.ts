@@ -93,8 +93,23 @@ export async function GET(req: NextRequest) {
             return NextResponse.json(rows[0]);
         }
 
-        // List all approved restaurants (for public frontend)
-        const { rows } = await sql`
+        // List restaurants
+        // If all=true, return everything (Admin view). Otherwise, return only approved/open (Public view).
+        const showAll = searchParams.get('all') === 'true';
+
+        const { rows } = showAll ? await sql`
+            SELECT 
+                id, name, slug, responsible_name as "responsibleName", 
+                email, whatsapp, instagram, 
+                zip_code as "zipCode", address, hours, type, image, pix_key as "pixKey",
+                latitude, longitude, delivery_radius as "deliveryRadius",
+                delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
+                delivery_time as "deliveryTime", popular_title as "popularTitle",
+                welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
+                created_at as "createdAt", updated_at as "updatedAt"
+            FROM restaurants 
+            ORDER BY created_at DESC
+        ` : await sql`
             SELECT 
                 id, name, slug, responsible_name as "responsibleName", 
                 email, whatsapp, instagram, 
@@ -108,6 +123,7 @@ export async function GET(req: NextRequest) {
             WHERE approved = true AND is_open = true
             ORDER BY created_at DESC
         `;
+
         return NextResponse.json(rows);
 
     } catch (error) {
