@@ -120,7 +120,7 @@ export async function GET(req: NextRequest) {
                 welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
                 created_at as "createdAt", updated_at as "updatedAt"
             FROM restaurants 
-            WHERE approved = true AND is_open = true
+            WHERE approved = true
             ORDER BY created_at DESC
         `;
 

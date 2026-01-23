@@ -86,7 +86,14 @@ function MarketplaceContent() {
   useEffect(() => {
     fetch(`/api/restaurants?_t=${new Date().getTime()}`)
       .then(res => res.json())
-      .then(setRestaurants)
+      .then(data => {
+        if (Array.isArray(data)) {
+          setRestaurants(data);
+        } else {
+          console.error("API did not return an array", data);
+          setRestaurants([]);
+        }
+      })
       .catch(console.error);
 
     fetch('/api/config')
