@@ -44,3 +44,5 @@ next-env.d.ts
 # check_*.js
 # update_*.js
 # migrate_*.js
+
+.vercel

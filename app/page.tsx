@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
-import StarRating from "./components/StarRating";
+
 import { useAuth } from "./context/AuthContext";
 
 function MarketplaceContent() {
@@ -349,7 +349,7 @@ function MarketplaceContent() {
                   <div className="flex-1">
                     <h3 className="font-bold text-gray-800 text-base">{rest.name}</h3>
                     <div className="flex flex-col items-start gap-1 mt-1">
-                      <StarRating restaurantId={rest.id} initialSum={rest.ratingSum} initialCount={rest.ratingCount} readonly={true} />
+
                       <span className="text-xs text-gray-400 font-medium ml-1">
                         {rest.type ? <span className="text-gray-500 mr-2">• {rest.type}</span> : ''}
                         {rest.deliveryTime || '30-45m'}
