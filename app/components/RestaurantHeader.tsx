@@ -34,7 +34,7 @@ export default function RestaurantHeader({ name = "OlinDelivery", image, banner,
     }, []);
 
     const formatAddressForLink = (addr: string) => {
-        return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}`;
+        return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(addr)}`;
     };
 
     return (
