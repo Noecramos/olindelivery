@@ -351,12 +351,30 @@ export default function StoreAdmin() {
         const printWindow = window.open('', '_blank', 'width=400,height=600');
         if (!printWindow) return;
 
-        const itemsHtml = order.items.map((item: any) => `
-            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                <span>${item.quantity}x ${item.name}</span>
-                <span>${(item.price * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+        const itemsHtml = order.items.map((item: any) => {
+            let optionsHtml = '';
+            if (item.selectedOptions && item.selectedOptions.length > 0) {
+                optionsHtml = item.selectedOptions.map((opt: any) => {
+                    if (Array.isArray(opt.selection)) {
+                        return opt.selection.map((s: any) =>
+                            `<div style="font-size: 10px; color: #555; padding-left: 10px;">+ ${s.name} ${s.price > 0 ? `(+R$ ${s.price.toFixed(2)})` : ''}</div>`
+                        ).join('');
+                    } else {
+                        return `<div style="font-size: 10px; color: #555; padding-left: 10px;">• ${opt.name}: ${opt.selection.name} ${opt.selection.price > 0 ? `(+R$ ${opt.selection.price.toFixed(2)})` : ''}</div>`;
+                    }
+                }).join('');
+            }
+
+            return `
+            <div style="margin-bottom: 5px; border-bottom: 1px dashed #eee; padding-bottom: 5px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="font-weight: bold;">${item.quantity}x ${item.name}</span>
+                    <span>${(item.price * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                </div>
+                ${optionsHtml}
+                ${item.observation ? `<div style="font-size: 10px; font-style: italic; margin-top: 2px;">Obs: ${item.observation}</div>` : ''}
             </div>
-        `).join('');
+        `}).join('');
 
         const subtotal = order.subtotal || order.items.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0);
         const deliveryFee = order.deliveryFee || 0;
@@ -717,15 +735,39 @@ export default function StoreAdmin() {
                                                             </div>
 
                                                             {/* Items - Compact List */}
-                                                            <div className="mb-3 space-y-1">
+                                                            <div className="mb-3 space-y-2">
                                                                 {order.items.map((item: any, idx: number) => (
-                                                                    <div key={idx} className="flex justify-between text-xs">
-                                                                        <span className="text-gray-600">
-                                                                            <span className="font-bold text-gray-900">{item.quantity}x</span> {item.name}
-                                                                        </span>
-                                                                        <span className="text-gray-400">
-                                                                            {(item.price * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                                                                        </span>
+                                                                    <div key={idx} className="flex flex-col text-xs border-b border-gray-100 last:border-0 pb-1 last:pb-0">
+                                                                        <div className="flex justify-between">
+                                                                            <span className="text-gray-600">
+                                                                                <span className="font-bold text-gray-900">{item.quantity}x</span> {item.name}
+                                                                            </span>
+                                                                            <span className="text-gray-400">
+                                                                                {(item.price * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                                                            </span>
+                                                                        </div>
+                                                                        {/* Options Display */}
+                                                                        {item.selectedOptions && item.selectedOptions.length > 0 && (
+                                                                            <div className="ml-4 mt-0.5 space-y-0.5">
+                                                                                {item.selectedOptions.map((opt: any, oIdx: number) => {
+                                                                                    if (Array.isArray(opt.selection)) {
+                                                                                        return opt.selection.map((s: any, sIdx: number) => (
+                                                                                            <div key={`${oIdx}-${sIdx}`} className="text-[10px] text-gray-500 flex justify-between">
+                                                                                                <span>+ {s.name}</span>
+                                                                                                {s.price > 0 && <span>+ {s.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>}
+                                                                                            </div>
+                                                                                        ));
+                                                                                    } else {
+                                                                                        return (
+                                                                                            <div key={oIdx} className="text-[10px] text-gray-500 flex justify-between">
+                                                                                                <span>• {opt.name}: {opt.selection.name}</span>
+                                                                                                {opt.selection.price > 0 && <span>+ {opt.selection.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>}
+                                                                                            </div>
+                                                                                        );
+                                                                                    }
+                                                                                })}
+                                                                            </div>
+                                                                        )}
                                                                     </div>
                                                                 ))}
                                                             </div>
