@@ -21,7 +21,19 @@ export async function GET(req: NextRequest) {
             ORDER BY category, name
         `;
 
-        return NextResponse.json(rows);
+        const formattedRows = rows.map(row => {
+            try {
+                return {
+                    ...row,
+                    options: typeof row.options === 'string' ? JSON.parse(row.options) : (row.options || []),
+                    comboItems: typeof row.comboItems === 'string' ? JSON.parse(row.comboItems) : (row.comboItems || [])
+                };
+            } catch (e) {
+                return row;
+            }
+        });
+
+        return NextResponse.json(formattedRows);
 
     } catch (error) {
         console.error("Database Error:", error);
