@@ -515,12 +515,12 @@ export default function CheckoutPage() {
                 `${ICONS.TOTAL} *TOTAL: ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}*\n\n` +
                 (form.observations ? `${ICONS.MEMO} *Observa\u00E7\u00F5es:* ${form.observations}\n\n` : '') +
                 `${ICONS.CARD} *Pagamento:* ${paymentInfo}\n\n` +
-                `_Enviado via OlinDelivery v2 ${ICONS.ROCKET}_`;
+                `_Enviado via OlinDelivery ${ICONS.ROCKET}_`;
 
             // Sanitize phone
             const cleanPhone = restaurantPhone.replace(/\D/g, '');
             const finalPhone = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
-            const link = `https://wa.me/${finalPhone}?text=${encodeURIComponent(message)}`;
+            const link = `https://api.whatsapp.com/send?phone=${finalPhone}&text=${encodeURIComponent(message)}`;
 
             setWhatsappLink(link);
             clearCart();
