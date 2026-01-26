@@ -435,18 +435,17 @@ export default function CheckoutPage() {
             // Format Message
             const getIcon = (cat: string) => {
                 const lower = (cat || '').toLowerCase();
-                if (lower.includes('pizza')) return '🍕';
-                if (lower.includes('lanche') || lower.includes('burger') || lower.includes('hamb')) return '🍔';
-                if (lower.includes('bebida') || lower.includes('suco') || lower.includes('refr')) return '🥤';
-                if (lower.includes('açaí') || lower.includes('doce') || lower.includes('sobremesa')) return '🍧';
-                if (lower.includes('combo')) return '🍱';
-                if (lower.includes('porção') || lower.includes('petisco')) return '🍟';
-                return '🍽️';
+                if (lower.includes('pizza')) return '\uD83C\uDF55'; // Pizza
+                if (lower.includes('lanche') || lower.includes('burger') || lower.includes('hamb')) return '\uD83C\uDF54'; // Burger
+                if (lower.includes('bebida') || lower.includes('suco') || lower.includes('refr')) return '\uD83E\uDD64'; // Drink
+                if (lower.includes('sobremesa') || lower.includes('doce')) return '\uD83C\uDF70'; // Cake
+                if (lower.includes('combo')) return '\uD83C\uDF71'; // Bento/Combo
+                return '\uD83D\uDCE6'; // Package (Default)
             };
 
             const itemsList = cart.map((i: any) => {
+                const itemTotal = (parseFloat(i.price) * i.quantity);
                 const icon = getIcon(i.category);
-                const itemTotal = i.price * i.quantity; // Price already includes extras
 
                 let details = "";
 
@@ -456,46 +455,46 @@ export default function CheckoutPage() {
                         if (Array.isArray(opt.selection)) {
                             opt.selection.forEach((s: any) => details += `\n   + ${s.name}`);
                         } else {
-                            details += `\n   • ${opt.name}: ${opt.selection.name}`;
+                            details += `\n   \u2022 ${opt.name}: ${opt.selection.name}`; // Bullet
                         }
                     });
                 }
 
                 // Add Observation
                 if (i.observation) {
-                    details += `\n   📝 Obs: ${i.observation}`;
+                    details += `\n   \uD83D\uDCDD Obs: ${i.observation}`;
                 }
 
                 return `${icon} *${i.quantity}x ${i.name}* - ${itemTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}${details}`;
             }).join('\n');
 
             const paymentInfo = form.paymentMethod === 'pix' ? 'PIX' :
-                (form.paymentMethod === 'card' ? 'Cartão' :
+                (form.paymentMethod === 'card' ? 'Cart\u00E3o' : // Cartão
                     `Dinheiro (Troco para R$ ${form.changeFor})`);
 
             // Dynamic Header based on Type
-            let typeHeader = "🛵 *ENTREGA*";
-            let locationInfo = `📍 *Endereço:* ${form.address}\n📮 *CEP:* ${form.zipCode}\n`;
+            let typeHeader = "\uD83D\uDEF5 *ENTREGA*"; // Scooter
+            let locationInfo = `\uD83D\uDCCD *Endere\u00E7o:* ${form.address}\n\uD83D\uDCEE *CEP:* ${form.zipCode}\n`; // Pin, Postbox
 
             if (orderType === 'pickup') {
-                typeHeader = "🛍️ *RETIRADA*";
-                locationInfo = "🏪 *Retirada no Balcão*\n";
+                typeHeader = "\uD83D\uDECD\uFE0F *RETIRADA*"; // Bags
+                locationInfo = "\uD83C\uDFEA *Retirada no Balc\u00E3o*\n"; // Store
             } else if (orderType === 'dine_in') {
-                typeHeader = "🍽️ *NA MESA*";
-                locationInfo = `🪑 *Mesa:* ${tableNumber}\n`;
+                typeHeader = "\uD83C\uDF7D\uFE0F *NA MESA*"; // Plate
+                locationInfo = `\uD83E\uDE91 *Mesa:* ${tableNumber}\n`; // Chair
             }
 
-            const message = `🎫 *PEDIDO #${ticketNumber}* - ${typeHeader}\n\n` +
-                `👤 *Cliente:* ${form.name}\n` +
-                `📱 *Telefone:* ${form.phone}\n` +
+            const message = `\uD83C\uDFAB *PEDIDO #${ticketNumber}* - ${typeHeader}\n\n` + // Ticket
+                `\uD83D\uDC64 *Cliente:* ${form.name}\n` + // Bust in Silhouette
+                `\uD83D\uDCF1 *Telefone:* ${form.phone}\n` + // Mobile Phone
                 locationInfo +
-                `\n🛒 *ITENS DO PEDIDO:*\n${itemsList}\n\n` +
-                `💵 *Subtotal:* ${subtotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
-                (orderType === 'delivery' ? `🚚 *Taxa de Entrega:* ${deliveryFee.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` : '') +
-                `💰 *TOTAL: ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}*\n\n` +
-                (form.observations ? `📝 *Observações:* ${form.observations}\n\n` : '') +
-                `💳 *Pagamento:* ${paymentInfo}\n\n` +
-                `_Enviado via OlinShop 🚀_`;
+                `\n\uD83D\uDED2 *ITENS DO PEDIDO:*\n${itemsList}\n\n` + // Cart
+                `\uD83D\uDCB5 *Subtotal:* ${subtotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` + // Banknote
+                (orderType === 'delivery' ? `\uD83D\uDE9A *Taxa de Entrega:* ${deliveryFee.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` : '') + // Truck
+                `\uD83D\uDCB0 *TOTAL: ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}*\n\n` + // Money Bag
+                (form.observations ? `\uD83D\uDCDD *Observa\u00E7\u00F5es:* ${form.observations}\n\n` : '') + // Memo
+                `\uD83D\uDCB3 *Pagamento:* ${paymentInfo}\n\n` + // Credit Card
+                `_Enviado via OlinDelivery \uD83D\uDE80_`; // Rocket
 
             // Sanitize phone
             const cleanPhone = restaurantPhone.replace(/\D/g, '');
