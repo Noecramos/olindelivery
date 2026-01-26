@@ -134,16 +134,21 @@ export default function OptionsBuilder({ initialOptions, onChange }: OptionsBuil
                                     />
                                 </div>
                                 <div className="flex gap-2">
-                                    <div className="flex-1">
+                                    <div className="flex-1 relative">
                                         <label className="text-[10px] uppercase font-bold text-gray-400 block mb-1">Tipo</label>
                                         <select
                                             value={group.type}
                                             onChange={(e) => updateGroup(gIdx, 'type', e.target.value)}
-                                            className="w-full text-sm border-b border-gray-200 focus:border-blue-500 outline-none pb-1 bg-transparent"
+                                            className="w-full text-sm border-b border-gray-200 focus:border-blue-500 outline-none pb-1 bg-transparent appearance-none"
                                         >
                                             <option value="single">Única Escolha (Radio)</option>
                                             <option value="multiple">Múltipla Escolha (Checkbox)</option>
                                         </select>
+                                        <div className="absolute right-0 bottom-2 pointer-events-none">
+                                            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                                            </svg>
+                                        </div>
                                     </div>
                                     <div className="flex items-end pb-1">
                                         <label className="flex items-center gap-2 cursor-pointer">
