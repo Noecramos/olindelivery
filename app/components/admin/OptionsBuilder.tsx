@@ -24,7 +24,6 @@ interface OptionsBuilderProps {
 
 export default function OptionsBuilder({ initialOptions, onChange }: OptionsBuilderProps) {
     const [options, setOptions] = useState<ProductOption[]>([]);
-    const [showJson, setShowJson] = useState(false);
 
     // Parse initial JSON
     useEffect(() => {
@@ -97,13 +96,6 @@ export default function OptionsBuilder({ initialOptions, onChange }: OptionsBuil
             <div className="flex justify-between items-center">
                 <label className="text-xs font-semibold text-gray-500 uppercase">Configuração de Opções</label>
                 <div className="flex gap-2">
-                    <button
-                        type="button"
-                        onClick={() => setShowJson(!showJson)}
-                        className="text-[10px] text-gray-400 hover:text-gray-600 underline"
-                    >
-                        {showJson ? "Ocultar JSON" : "Ver JSON"}
-                    </button>
                     <button
                         type="button"
                         onClick={addGroup}
@@ -207,17 +199,6 @@ export default function OptionsBuilder({ initialOptions, onChange }: OptionsBuil
                             </div>
                         </div>
                     ))}
-                </div>
-            )}
-
-            {showJson && (
-                <div className="mt-4 animate-fade-in">
-                    <label className="text-[10px] font-bold text-gray-400 block mb-1">JSON RAW (Debug)</label>
-                    <textarea
-                        className="w-full h-32 text-xs font-mono bg-gray-800 text-green-400 p-2 rounded-lg"
-                        value={initialOptions}
-                        readOnly
-                    />
                 </div>
             )}
         </div>
