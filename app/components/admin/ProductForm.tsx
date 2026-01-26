@@ -264,7 +264,57 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                                     </button>
                                     <button
                                         type="button"
-                                        className="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded hover:bg-blue-100"
+                                        className="text-[10px] bg-purple-50 text-purple-600 px-2 py-1 rounded hover:bg-purple-100"
+                                        onClick={() => setForm(prev => ({
+                                            ...prev, options: JSON.stringify([
+                                                {
+                                                    "name": "Cor",
+                                                    "type": "single",
+                                                    "required": true,
+                                                    "values": [
+                                                        { "name": "Preto", "price": 0 },
+                                                        { "name": "Branco", "price": 0 },
+                                                        { "name": "Vermelho", "price": 0 }
+                                                    ]
+                                                }
+                                            ], null, 2)
+                                        }))}
+                                    >
+                                        Ex: Cores
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="text-[10px] bg-orange-50 text-orange-600 px-2 py-1 rounded hover:bg-orange-100"
+                                        onClick={() => setForm(prev => ({
+                                            ...prev, options: JSON.stringify([
+                                                {
+                                                    "name": "Tamanho",
+                                                    "type": "single",
+                                                    "required": true,
+                                                    "values": [
+                                                        { "name": "P (36-38)", "price": 0 },
+                                                        { "name": "M (40-42)", "price": 0 },
+                                                        { "name": "G (44-46)", "price": 0 }
+                                                    ]
+                                                },
+                                                {
+                                                    "name": "Cor",
+                                                    "type": "single",
+                                                    "required": true,
+                                                    "values": [
+                                                        { "name": "Preto", "price": 0 },
+                                                        { "name": "Branco", "price": 0 },
+                                                        { "name": "Cinza", "price": 0 }
+                                                    ]
+                                                }
+                                            ], null, 2)
+                                        }))}
+                                    >
+                                        Ex: Tam + Cor
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="text-[10px] bg-green-50 text-green-600 px-2 py-1 rounded hover:bg-green-100"
                                         onClick={() => setForm(prev => ({
                                             ...prev, options: JSON.stringify([
                                                 {
