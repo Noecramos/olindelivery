@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { compressImage } from "@/lib/compress";
+import OptionsBuilder from "./OptionsBuilder";
 
 export default function ProductForm({ restaurantId, onSave, refreshCategories }: { restaurantId: string, onSave: () => void, refreshCategories?: number }) {
     const [loading, setLoading] = useState(false);
@@ -237,113 +238,12 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                             />
                         </div>
 
-                        {/* Options JSON Editor */}
+                        {/* Options UI Builder */}
                         <div>
-                            <div className="flex justify-between items-center mb-1">
-                                <label htmlFor="productOptions" className="text-xs font-semibold text-gray-500 uppercase ml-1">Opções (JSON Avançado)</label>
-                                <div className="flex gap-2">
-                                    <button
-                                        type="button"
-                                        className="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded hover:bg-blue-100"
-                                        onClick={() => setForm(prev => ({
-                                            ...prev, options: JSON.stringify([
-                                                {
-                                                    "name": "Tamanho",
-                                                    "type": "single",
-                                                    "required": true,
-                                                    "values": [
-                                                        { "name": "Pequeno", "price": 0 },
-                                                        { "name": "Médio", "price": 5 },
-                                                        { "name": "Grande", "price": 10 }
-                                                    ]
-                                                }
-                                            ], null, 2)
-                                        }))}
-                                    >
-                                        Ex: Tamanhos
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="text-[10px] bg-purple-50 text-purple-600 px-2 py-1 rounded hover:bg-purple-100"
-                                        onClick={() => setForm(prev => ({
-                                            ...prev, options: JSON.stringify([
-                                                {
-                                                    "name": "Cor",
-                                                    "type": "single",
-                                                    "required": true,
-                                                    "values": [
-                                                        { "name": "Preto", "price": 0 },
-                                                        { "name": "Branco", "price": 0 },
-                                                        { "name": "Vermelho", "price": 0 }
-                                                    ]
-                                                }
-                                            ], null, 2)
-                                        }))}
-                                    >
-                                        Ex: Cores
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="text-[10px] bg-orange-50 text-orange-600 px-2 py-1 rounded hover:bg-orange-100"
-                                        onClick={() => setForm(prev => ({
-                                            ...prev, options: JSON.stringify([
-                                                {
-                                                    "name": "Tamanho",
-                                                    "type": "single",
-                                                    "required": true,
-                                                    "values": [
-                                                        { "name": "P (36-38)", "price": 0 },
-                                                        { "name": "M (40-42)", "price": 0 },
-                                                        { "name": "G (44-46)", "price": 0 }
-                                                    ]
-                                                },
-                                                {
-                                                    "name": "Cor",
-                                                    "type": "single",
-                                                    "required": true,
-                                                    "values": [
-                                                        { "name": "Preto", "price": 0 },
-                                                        { "name": "Branco", "price": 0 },
-                                                        { "name": "Cinza", "price": 0 }
-                                                    ]
-                                                }
-                                            ], null, 2)
-                                        }))}
-                                    >
-                                        Ex: Tam + Cor
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="text-[10px] bg-green-50 text-green-600 px-2 py-1 rounded hover:bg-green-100"
-                                        onClick={() => setForm(prev => ({
-                                            ...prev, options: JSON.stringify([
-                                                {
-                                                    "name": "Adicionais",
-                                                    "type": "multiple",
-                                                    "required": false,
-                                                    "max": 3,
-                                                    "values": [
-                                                        { "name": "Bacon", "price": 3 },
-                                                        { "name": "Queijo", "price": 2 }
-                                                    ]
-                                                }
-                                            ], null, 2)
-                                        }))}
-                                    >
-                                        Ex: Extras
-                                    </button>
-                                </div>
-                            </div>
-                            <textarea
-                                id="productOptions"
-                                name="productOptions"
-                                className="w-full p-3 bg-gray-50 rounded-xl border border-transparent focus:bg-white focus:border-blue-500 outline-none transition-all font-mono text-xs"
-                                placeholder='[{ "name": "...", "values": [...] }]'
-                                rows={6}
-                                value={form.options}
-                                onChange={e => setForm({ ...form, options: e.target.value })}
+                            <OptionsBuilder
+                                initialOptions={form.options}
+                                onChange={(json) => setForm({ ...form, options: json })}
                             />
-                            <p className="text-[10px] text-gray-400 mt-1">Configure tamanhos e variáveis usando JSON.</p>
                         </div>
 
                         <button type="submit" className={`w-full py-4 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform active:scale-95 transition-all ${editingId ? 'bg-blue-600 hover:bg-blue-700' : 'bg-[#EA1D2C] hover:bg-[#C51623]'}`} disabled={loading || uploading}>
