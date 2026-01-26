@@ -432,15 +432,41 @@ export default function CheckoutPage() {
             const order = await res.json();
             const ticketNumber = order.ticketNumber || '###';
 
-            // Format Message
+            // Unicode Icons (Safe approach)
+            const ICONS = {
+                PIZZA: String.fromCodePoint(0x1F355),
+                BURGER: String.fromCodePoint(0x1F354),
+                DRINK: String.fromCodePoint(0x1F964),
+                CAKE: String.fromCodePoint(0x1F370),
+                BENTO: String.fromCodePoint(0x1F371),
+                PACKAGE: String.fromCodePoint(0x1F4E6),
+                TICKET: String.fromCodePoint(0x1F3AB),
+                USER: String.fromCodePoint(0x1F464),
+                PHONE: String.fromCodePoint(0x1F4F1),
+                CART: String.fromCodePoint(0x1F6D2),
+                MONEY: String.fromCodePoint(0x1F4B5),
+                TOTAL: String.fromCodePoint(0x1F4B0),
+                MEMO: String.fromCodePoint(0x1F4DD),
+                CARD: String.fromCodePoint(0x1F4B3),
+                ROCKET: String.fromCodePoint(0x1F680),
+                DELIVERY: String.fromCodePoint(0x1F6F5),
+                PIN: String.fromCodePoint(0x1F4CD),
+                POST: String.fromCodePoint(0x1F4EE),
+                STORE: String.fromCodePoint(0x1F3EA),
+                PLATE: String.fromCodePoint(0x1F37D),
+                CHAIR: String.fromCodePoint(0x1FA91),
+                TRUCK: String.fromCodePoint(0x1F69A),
+                BULLET: String.fromCodePoint(0x2022)
+            };
+
             const getIcon = (cat: string) => {
                 const lower = (cat || '').toLowerCase();
-                if (lower.includes('pizza')) return '\uD83C\uDF55'; // Pizza
-                if (lower.includes('lanche') || lower.includes('burger') || lower.includes('hamb')) return '\uD83C\uDF54'; // Burger
-                if (lower.includes('bebida') || lower.includes('suco') || lower.includes('refr')) return '\uD83E\uDD64'; // Drink
-                if (lower.includes('sobremesa') || lower.includes('doce')) return '\uD83C\uDF70'; // Cake
-                if (lower.includes('combo')) return '\uD83C\uDF71'; // Bento/Combo
-                return '\uD83D\uDCE6'; // Package (Default)
+                if (lower.includes('pizza')) return ICONS.PIZZA;
+                if (lower.includes('lanche') || lower.includes('burger') || lower.includes('hamb')) return ICONS.BURGER;
+                if (lower.includes('bebida') || lower.includes('suco') || lower.includes('refr')) return ICONS.DRINK;
+                if (lower.includes('sobremesa') || lower.includes('doce')) return ICONS.CAKE;
+                if (lower.includes('combo')) return ICONS.BENTO;
+                return ICONS.PACKAGE;
             };
 
             const itemsList = cart.map((i: any) => {
@@ -448,53 +474,48 @@ export default function CheckoutPage() {
                 const icon = getIcon(i.category);
 
                 let details = "";
-
-                // Add Options
                 if (i.selectedOptions && i.selectedOptions.length > 0) {
                     i.selectedOptions.forEach((opt: any) => {
                         if (Array.isArray(opt.selection)) {
                             opt.selection.forEach((s: any) => details += `\n   + ${s.name}`);
                         } else {
-                            details += `\n   \u2022 ${opt.name}: ${opt.selection.name}`; // Bullet
+                            details += `\n   ${ICONS.BULLET} ${opt.name}: ${opt.selection.name}`;
                         }
                     });
                 }
-
-                // Add Observation
                 if (i.observation) {
-                    details += `\n   \uD83D\uDCDD Obs: ${i.observation}`;
+                    details += `\n   ${ICONS.MEMO} Obs: ${i.observation}`;
                 }
 
                 return `${icon} *${i.quantity}x ${i.name}* - ${itemTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}${details}`;
             }).join('\n');
 
             const paymentInfo = form.paymentMethod === 'pix' ? 'PIX' :
-                (form.paymentMethod === 'card' ? 'Cart\u00E3o' : // Cartão
+                (form.paymentMethod === 'card' ? 'Cart\u00E3o' :
                     `Dinheiro (Troco para R$ ${form.changeFor})`);
 
-            // Dynamic Header based on Type
-            let typeHeader = "\uD83D\uDEF5 *ENTREGA*"; // Scooter
-            let locationInfo = `\uD83D\uDCCD *Endere\u00E7o:* ${form.address}\n\uD83D\uDCEE *CEP:* ${form.zipCode}\n`; // Pin, Postbox
+            let typeHeader = `${ICONS.DELIVERY} *ENTREGA*`;
+            let locationInfo = `${ICONS.PIN} *Endere\u00E7o:* ${form.address}\n${ICONS.POST} *CEP:* ${form.zipCode}\n`;
 
             if (orderType === 'pickup') {
-                typeHeader = "\uD83D\uDECD\uFE0F *RETIRADA*"; // Bags
-                locationInfo = "\uD83C\uDFEA *Retirada no Balc\u00E3o*\n"; // Store
+                typeHeader = `${ICONS.STORE} *RETIRADA*`; // Using Store icon for header to differ from Bags
+                locationInfo = `${ICONS.STORE} *Retirada no Balc\u00E3o*\n`;
             } else if (orderType === 'dine_in') {
-                typeHeader = "\uD83C\uDF7D\uFE0F *NA MESA*"; // Plate
-                locationInfo = `\uD83E\uDE91 *Mesa:* ${tableNumber}\n`; // Chair
+                typeHeader = `${ICONS.PLATE} *NA MESA*`;
+                locationInfo = `${ICONS.CHAIR} *Mesa:* ${tableNumber}\n`;
             }
 
-            const message = `\uD83C\uDFAB *PEDIDO #${ticketNumber}* - ${typeHeader}\n\n` + // Ticket
-                `\uD83D\uDC64 *Cliente:* ${form.name}\n` + // Bust in Silhouette
-                `\uD83D\uDCF1 *Telefone:* ${form.phone}\n` + // Mobile Phone
+            const message = `${ICONS.TICKET} *PEDIDO #${ticketNumber}* - ${typeHeader}\n\n` +
+                `${ICONS.USER} *Cliente:* ${form.name}\n` +
+                `${ICONS.PHONE} *Telefone:* ${form.phone}\n` +
                 locationInfo +
-                `\n\uD83D\uDED2 *ITENS DO PEDIDO:*\n${itemsList}\n\n` + // Cart
-                `\uD83D\uDCB5 *Subtotal:* ${subtotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` + // Banknote
-                (orderType === 'delivery' ? `\uD83D\uDE9A *Taxa de Entrega:* ${deliveryFee.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` : '') + // Truck
-                `\uD83D\uDCB0 *TOTAL: ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}*\n\n` + // Money Bag
-                (form.observations ? `\uD83D\uDCDD *Observa\u00E7\u00F5es:* ${form.observations}\n\n` : '') + // Memo
-                `\uD83D\uDCB3 *Pagamento:* ${paymentInfo}\n\n` + // Credit Card
-                `_Enviado via OlinDelivery \uD83D\uDE80_`; // Rocket
+                `\n${ICONS.CART} *ITENS DO PEDIDO:*\n${itemsList}\n\n` +
+                `${ICONS.MONEY} *Subtotal:* ${subtotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
+                (orderType === 'delivery' ? `${ICONS.TRUCK} *Taxa de Entrega:* ${deliveryFee.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` : '') +
+                `${ICONS.TOTAL} *TOTAL: ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}*\n\n` +
+                (form.observations ? `${ICONS.MEMO} *Observa\u00E7\u00F5es:* ${form.observations}\n\n` : '') +
+                `${ICONS.CARD} *Pagamento:* ${paymentInfo}\n\n` +
+                `_Enviado via OlinDelivery ${ICONS.ROCKET}_`;
 
             // Sanitize phone
             const cleanPhone = restaurantPhone.replace(/\D/g, '');
