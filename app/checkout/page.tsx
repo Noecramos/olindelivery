@@ -505,7 +505,10 @@ export default function CheckoutPage() {
                 locationInfo = `${ICONS.CHAIR} *Mesa:* ${tableNumber}\n`;
             }
 
-            const message = `${ICONS.TICKET} *PEDIDO #${ticketNumber}* - ${typeHeader}\n\n` +
+            const storeName = restData.name ? restData.name.toUpperCase() : "OLINDELIVERY";
+
+            const message = `${ICONS.STORE} *${storeName}*\n` +
+                `${ICONS.TICKET} *PEDIDO #${ticketNumber}* - ${typeHeader}\n\n` +
                 `${ICONS.USER} *Cliente:* ${form.name}\n` +
                 `${ICONS.PHONE} *Telefone:* ${form.phone}\n` +
                 locationInfo +
