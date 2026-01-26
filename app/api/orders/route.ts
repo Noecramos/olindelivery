@@ -28,14 +28,8 @@ export async function GET(req: NextRequest) {
         const clearHistory = searchParams.get('clearHistory');
         const customerEmail = searchParams.get('customerEmail');
 
-        if (clearHistory === 'true' && restaurantId && isValidUUID(restaurantId)) {
-            await sql`
-                DELETE FROM orders 
-                WHERE restaurant_id = ${restaurantId} 
-                AND status IN ('delivered', 'cancelled', 'sent')
-            `;
-            return NextResponse.json({ success: true });
-        }
+        // Limit Removed
+
 
         let query;
         if (customerEmail) {
@@ -207,5 +201,32 @@ export async function PUT(req: NextRequest) {
     } catch (error) {
         console.error("Database Error:", error);
         return NextResponse.json({ error: "Failed to update order" }, { status: 500 });
+    }
+}
+
+export async function DELETE(req: NextRequest) {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+    const restaurantId = searchParams.get('restaurantId');
+    const clearHistory = searchParams.get('clearHistory');
+
+    try {
+        if (id && isValidUUID(id)) {
+            await sql`DELETE FROM orders WHERE id = ${id}`;
+            return NextResponse.json({ success: true });
+        }
+
+        if (clearHistory === 'true' && restaurantId && isValidUUID(restaurantId)) {
+            await sql`
+                DELETE FROM orders 
+                WHERE restaurant_id = ${restaurantId} 
+                AND status IN ('delivered', 'cancelled', 'sent')
+            `;
+            return NextResponse.json({ success: true });
+        }
+        return NextResponse.json({ error: "Invalid parameters" }, { status: 400 });
+    } catch (e) {
+        console.error("Delete Error:", e);
+        return NextResponse.json({ error: "Failed to delete" }, { status: 500 });
     }
 }

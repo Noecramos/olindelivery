@@ -347,6 +347,15 @@ export default function StoreAdmin() {
     };
 
 
+    const deleteOrder = async (orderId: string) => {
+        if (!confirm('Tem certeza que deseja apagar este pedido?')) return;
+        try {
+            const res = await fetch(`/api/orders?id=${orderId}`, { method: 'DELETE' });
+            if (res.ok) fetchOrders();
+            else alert('Erro ao apagar');
+        } catch (e) { alert('Erro ao apagar'); }
+    };
+
     const printOrder = (order: any) => {
         const printWindow = window.open('', '_blank', 'width=400,height=600');
         if (!printWindow) return;
@@ -811,6 +820,13 @@ export default function StoreAdmin() {
 
                                                                 {/* Action Buttons - Compact */}
                                                                 <div className="flex gap-2">
+                                                                    <button
+                                                                        onClick={() => deleteOrder(order.id)}
+                                                                        className="p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl transition-colors"
+                                                                        title="Excluir Pedido"
+                                                                    >
+                                                                        <span className="text-2xl">🗑️</span>
+                                                                    </button>
                                                                     <button
                                                                         onClick={() => printOrder(order)}
                                                                         className="p-2 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-xl transition-colors"
