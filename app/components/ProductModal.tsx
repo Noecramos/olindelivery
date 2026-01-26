@@ -165,59 +165,66 @@ export default function ProductModal({ isOpen, onClose, product, onAddToCart }: 
                     </div>
 
                     {/* Options */}
-                    {product.options && Array.isArray(product.options) && product.options.map((opt: ProductOption, idx: number) => {
-                        const safeType = opt.type?.toLowerCase() || 'single';
+                    {(() => {
+                        let opts: ProductOption[] = [];
+                        try {
+                            if (Array.isArray(product.options)) opts = product.options;
+                            else if (typeof product.options === 'string') opts = JSON.parse(product.options);
+                        } catch (e) { opts = []; }
 
-                        return (
-                            <div key={idx} className="space-y-3 pb-4 border-b border-gray-100">
-                                <div className="flex justify-between items-center">
-                                    <h3 className="font-bold text-gray-700">
-                                        {opt.name}
-                                        {opt.required && <span className="ml-2 text-red-500 text-xs uppercase bg-red-50 px-2 py-0.5 rounded-full">Obrigatório</span>}
-                                    </h3>
-                                    {opt.max && safeType === 'multiple' && <span className="text-xs text-gray-400">Max: {opt.max}</span>}
-                                </div>
+                        if (opts && opts.length > 0) {
+                            return opts.map((opt: ProductOption, idx: number) => {
+                                const safeType = opt.type?.toLowerCase() || 'single';
 
-                                <div className="space-y-2">
-                                    {opt.values && opt.values.map((val: OptionValue, vIdx: number) => {
-                                        const isSelected = safeType === 'single'
-                                            ? selectedOptions[opt.name]?.name === val.name
-                                            : (selectedOptions[opt.name] || []).some((v: any) => v.name === val.name);
+                                return (
+                                    <div key={idx} className="space-y-3 pb-4 border-b border-gray-100">
 
-                                        return (
-                                            <label
-                                                key={vIdx}
-                                                className={`flex justify-between items-center p-3 rounded-xl border cursor-pointer transition-all ${isSelected
-                                                        ? 'border-green-500 bg-green-50 ring-1 ring-green-500'
-                                                        : 'border-gray-200 hover:bg-gray-50'
-                                                    }`}
-                                                onClick={(e) => {
-                                                    // Debugging click
-                                                    console.log('Option Click:', opt.name, val.name, safeType);
-                                                }}
-                                            >
-                                                <div className="flex items-center gap-3">
-                                                    <input
-                                                        type={safeType === 'single' ? 'radio' : 'checkbox'}
-                                                        name={`option-${idx}-${opt.name}`} // Unique name per option group
-                                                        className="w-4 h-4 text-green-600 focus:ring-green-500 border-gray-300 pointer-events-none" // pointer-events-none to let label handle click
-                                                        checked={!!isSelected}
-                                                        onChange={() => handleOptionChange(opt.name, val, safeType as any)}
-                                                    />
-                                                    <span className="text-sm font-medium text-gray-700">{val.name}</span>
-                                                </div>
-                                                {val.price > 0 && (
-                                                    <span className="text-xs font-bold text-green-700">
-                                                        + {val.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                                                    </span>
-                                                )}
-                                            </label>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        );
-                    })}
+                                        <div className="flex justify-between items-center">
+                                            <h3 className="font-bold text-gray-700">
+                                                {opt.name}
+                                                {opt.required && <span className="ml-2 text-red-500 text-xs uppercase bg-red-50 px-2 py-0.5 rounded-full">Obrigatório</span>}
+                                            </h3>
+                                            {opt.max && safeType === 'multiple' && <span className="text-xs text-gray-400">Max: {opt.max}</span>}
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            {opt.values && opt.values.map((val: OptionValue, vIdx: number) => {
+                                                const isSelected = safeType === 'single'
+                                                    ? selectedOptions[opt.name]?.name === val.name
+                                                    : (selectedOptions[opt.name] || []).some((v: any) => v.name === val.name);
+
+                                                return (
+                                                    <label
+                                                        key={vIdx}
+                                                        className={`flex justify-between items-center p-3 rounded-xl border cursor-pointer transition-all ${isSelected
+                                                            ? 'border-green-500 bg-green-50 ring-1 ring-green-500'
+                                                            : 'border-gray-200 hover:bg-gray-50'
+                                                            }`}
+                                                    >
+                                                        <div className="flex items-center gap-3">
+                                                            <input
+                                                                type={safeType === 'single' ? 'radio' : 'checkbox'}
+                                                                name={`option-${idx}-${opt.name}`}
+                                                                className="w-4 h-4 text-green-600 focus:ring-green-500 border-gray-300 pointer-events-none"
+                                                                checked={!!isSelected}
+                                                                onChange={() => handleOptionChange(opt.name, val, safeType as any)}
+                                                            />
+                                                            <span className="text-sm font-medium text-gray-700">{val.name}</span>
+                                                        </div>
+                                                        {val.price > 0 && (
+                                                            <span className="text-xs font-bold text-green-700">
+                                                                + {val.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                                            </span>
+                                                        )}
+                                                    </label>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                );
+                            });
+                        }
+                    })()}
 
                     {/* Observations */}
                     <div>
