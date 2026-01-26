@@ -16,7 +16,8 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
         description: "",
         price: "",
         categoryId: "",
-        image: ""
+        image: "",
+        options: "" // JSON String
     });
 
     // Fetch Data
@@ -74,7 +75,24 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
         const selectedCat = categories.find(c => c.id === form.categoryId);
         const categoryName = selectedCat ? selectedCat.name : "Geral";
 
-        const body: any = { ...form, restaurantId, price: parseFloat(form.price), category: categoryName };
+        let parsedOptions = [];
+        try {
+            if (form.options && form.options.trim()) {
+                parsedOptions = JSON.parse(form.options);
+            }
+        } catch (e) {
+            alert("Erro no JSON de Opções. Verifique a formatação.");
+            setLoading(false);
+            return;
+        }
+
+        const body: any = {
+            ...form,
+            restaurantId,
+            price: parseFloat(form.price),
+            category: categoryName,
+            options: parsedOptions
+        };
         if (editingId) body.id = editingId;
 
         try {
@@ -85,7 +103,7 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
 
             if (res.ok) {
                 // Reset
-                setForm({ ...form, name: "", description: "", price: "", image: "" });
+                setForm({ ...form, name: "", description: "", price: "", image: "", options: "" });
                 setEditingId(null);
                 fetchData(); // Refresh list
                 onSave();
@@ -108,14 +126,15 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
             description: prod.description || "",
             price: prod.price,
             categoryId: catId,
-            image: prod.image || ""
+            image: prod.image || "",
+            options: prod.options ? JSON.stringify(prod.options, null, 2) : ""
         });
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleCancel = () => {
         setEditingId(null);
-        setForm({ ...form, name: "", description: "", price: "", image: "" });
+        setForm({ ...form, name: "", description: "", price: "", image: "", options: "" });
     };
 
     const handleDelete = async (id: string) => {
@@ -216,6 +235,65 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                                 value={form.description}
                                 onChange={e => setForm({ ...form, description: e.target.value })}
                             />
+                        </div>
+
+                        {/* Options JSON Editor */}
+                        <div>
+                            <div className="flex justify-between items-center mb-1">
+                                <label htmlFor="productOptions" className="text-xs font-semibold text-gray-500 uppercase ml-1">Opções (JSON Avançado)</label>
+                                <div className="flex gap-2">
+                                    <button
+                                        type="button"
+                                        className="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded hover:bg-blue-100"
+                                        onClick={() => setForm(prev => ({
+                                            ...prev, options: JSON.stringify([
+                                                {
+                                                    "name": "Tamanho",
+                                                    "type": "single",
+                                                    "required": true,
+                                                    "values": [
+                                                        { "name": "Pequeno", "price": 0 },
+                                                        { "name": "Médio", "price": 5 },
+                                                        { "name": "Grande", "price": 10 }
+                                                    ]
+                                                }
+                                            ], null, 2)
+                                        }))}
+                                    >
+                                        Ex: Tamanhos
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="text-[10px] bg-blue-50 text-blue-600 px-2 py-1 rounded hover:bg-blue-100"
+                                        onClick={() => setForm(prev => ({
+                                            ...prev, options: JSON.stringify([
+                                                {
+                                                    "name": "Adicionais",
+                                                    "type": "multiple",
+                                                    "required": false,
+                                                    "max": 3,
+                                                    "values": [
+                                                        { "name": "Bacon", "price": 3 },
+                                                        { "name": "Queijo", "price": 2 }
+                                                    ]
+                                                }
+                                            ], null, 2)
+                                        }))}
+                                    >
+                                        Ex: Extras
+                                    </button>
+                                </div>
+                            </div>
+                            <textarea
+                                id="productOptions"
+                                name="productOptions"
+                                className="w-full p-3 bg-gray-50 rounded-xl border border-transparent focus:bg-white focus:border-blue-500 outline-none transition-all font-mono text-xs"
+                                placeholder='[{ "name": "...", "values": [...] }]'
+                                rows={6}
+                                value={form.options}
+                                onChange={e => setForm({ ...form, options: e.target.value })}
+                            />
+                            <p className="text-[10px] text-gray-400 mt-1">Configure tamanhos e variáveis usando JSON.</p>
                         </div>
 
                         <button type="submit" className={`w-full py-4 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform active:scale-95 transition-all ${editingId ? 'bg-blue-600 hover:bg-blue-700' : 'bg-[#EA1D2C] hover:bg-[#C51623]'}`} disabled={loading || uploading}>

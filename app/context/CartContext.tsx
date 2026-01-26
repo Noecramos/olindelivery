@@ -3,11 +3,14 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 
 type CartItem = {
-    id: string;
+    id: string; // Unique ID (product.id + options hash)
+    productId: string; // Original Product ID
     name: string;
     price: number;
     quantity: number;
     restaurantId?: string;
+    selectedOptions: any[]; // Array of selected options
+    observation?: string;
 };
 
 type CartContextType = {

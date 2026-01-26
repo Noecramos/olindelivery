@@ -446,8 +446,27 @@ export default function CheckoutPage() {
 
             const itemsList = cart.map((i: any) => {
                 const icon = getIcon(i.category);
-                const itemTotal = i.price * i.quantity;
-                return `${icon} *${i.quantity}x ${i.name}* - ${itemTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+                const itemTotal = i.price * i.quantity; // Price already includes extras
+
+                let details = "";
+
+                // Add Options
+                if (i.selectedOptions && i.selectedOptions.length > 0) {
+                    i.selectedOptions.forEach((opt: any) => {
+                        if (Array.isArray(opt.selection)) {
+                            opt.selection.forEach((s: any) => details += `\n   + ${s.name}`);
+                        } else {
+                            details += `\n   • ${opt.name}: ${opt.selection.name}`;
+                        }
+                    });
+                }
+
+                // Add Observation
+                if (i.observation) {
+                    details += `\n   📝 Obs: ${i.observation}`;
+                }
+
+                return `${icon} *${i.quantity}x ${i.name}* - ${itemTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}${details}`;
             }).join('\n');
 
             const paymentInfo = form.paymentMethod === 'pix' ? 'PIX' :
@@ -527,9 +546,34 @@ export default function CheckoutPage() {
                                     <div key={item.id} className="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
                                         <div className="flex-1">
                                             <p className="font-bold text-gray-800">{item.name}</p>
-                                            <p className="text-sm text-gray-500">{(item.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+
+                                            {/* Display Options */}
+                                            {item.selectedOptions && item.selectedOptions.length > 0 && (
+                                                <div className="text-xs text-gray-500 mt-1">
+                                                    {item.selectedOptions.map((opt: any, idx: number) => {
+                                                        if (Array.isArray(opt.selection)) {
+                                                            // Multiple values
+                                                            return opt.selection.map((s: any, sIdx: number) => (
+                                                                <span key={`${idx}-${sIdx}`} className="block">• {s.name} (+{s.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })})</span>
+                                                            ));
+                                                        } else {
+                                                            // Single value
+                                                            return <span key={idx} className="block">• {opt.name}: {opt.selection.name} {(opt.selection.price > 0) ? `(+${opt.selection.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })})` : ''}</span>;
+                                                        }
+                                                    })}
+                                                </div>
+                                            )}
+
+                                            {/* Display Observation */}
+                                            {item.observation && (
+                                                <p className="text-xs text-gray-400 italic mt-1">
+                                                    📝 "{item.observation}"
+                                                </p>
+                                            )}
+
+                                            <p className="text-sm font-semibold text-gray-700 mt-1">{(item.price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
                                         </div>
-                                        <div className="flex items-center gap-3 bg-white p-1 rounded-lg border shadow-sm">
+                                        <div className="flex items-center gap-3 bg-white p-1 rounded-lg border shadow-sm self-start mt-2">
                                             <button
                                                 onClick={() => removeOne(item.id)}
                                                 className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-red-50 text-red-500 font-bold transition-colors"
@@ -538,7 +582,7 @@ export default function CheckoutPage() {
                                             </button>
                                             <span className="font-bold w-4 text-center">{item.quantity}</span>
                                             <button
-                                                onClick={() => addToCart({ ...item, quantity: 1 } as any)}
+                                                onClick={() => addToCart({ ...item, quantity: 1 } as any)} // Using existing addToCart which adds qty to existing ID
                                                 className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-green-50 text-green-500 font-bold transition-colors"
                                             >
                                                 +

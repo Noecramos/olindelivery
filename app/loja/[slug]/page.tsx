@@ -7,6 +7,7 @@ import RestaurantHeader from "../../components/RestaurantHeader";
 import CategoryNav from "../../components/CategoryNav";
 import ProductCard from "../../components/ProductCard";
 import FloatingCart from "../../components/FloatingCart";
+import ProductModal from "../../components/ProductModal";
 
 export const dynamic = 'force-dynamic';
 
@@ -20,6 +21,7 @@ export default function StoreFront() {
     const [activeCategory, setActiveCategory] = useState("Lanches");
     const [toast, setToast] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
+    const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
     useEffect(() => {
         if (!slug) return;
@@ -51,9 +53,13 @@ export default function StoreFront() {
     const categories = Array.from(new Set(filteredProducts.map((item: any) => item.category)))
         .filter((c: any) => c && c.trim() !== "");
 
-    const handleAdd = (item: any) => {
-        addToCart(item);
-        setToast(`${item.name} adicionado!`);
+    const handleProductClick = (item: any) => {
+        setSelectedProduct(item);
+    };
+
+    const handleAddToCartFromModal = (cartItem: any) => {
+        addToCart(cartItem);
+        setToast(`${cartItem.name} adicionado!`);
         setTimeout(() => setToast(null), 2000);
     };
 
@@ -120,7 +126,7 @@ export default function StoreFront() {
                                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-2">
                                     {filteredProducts.filter((item: any) => item.category === cat).map((item: any) => (
                                         <div key={item.id} style={{ opacity: restaurant.isOpen ? 1 : 0.6, pointerEvents: restaurant.isOpen ? 'auto' : 'none' }}>
-                                            <ProductCard item={item} onAdd={() => handleAdd(item)} />
+                                            <ProductCard item={item} onAdd={() => handleProductClick(item)} />
                                         </div>
                                     ))}
                                 </div>
@@ -162,6 +168,13 @@ export default function StoreFront() {
                     {toast}
                 </div>
             )}
+
+            <ProductModal
+                isOpen={!!selectedProduct}
+                onClose={() => setSelectedProduct(null)}
+                product={selectedProduct}
+                onAddToCart={handleAddToCartFromModal}
+            />
         </main>
     );
 }

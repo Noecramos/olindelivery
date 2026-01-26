@@ -14,6 +14,7 @@ export async function GET(req: NextRequest) {
             SELECT 
                 id, restaurant_id as "restaurantId", name, price, category, 
                 image, description, is_combo as "isCombo", combo_items as "comboItems",
+                options,
                 created_at as "createdAt"
             FROM products 
             WHERE restaurant_id = ${restaurantId} 
@@ -31,16 +32,16 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { restaurantId, name, price, category, image, description, is_combo, combo_items } = body;
+        const { restaurantId, name, price, category, image, description, is_combo, combo_items, options } = body;
 
         if (!restaurantId || !name || !price) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
         }
 
         const { rows } = await sql`
-            INSERT INTO products (restaurant_id, name, price, category, image, description, is_combo, combo_items)
-            VALUES (${restaurantId}, ${name}, ${price}, ${category}, ${image}, ${description}, ${is_combo || false}, ${combo_items ? JSON.stringify(combo_items) : null})
-            RETURNING id, restaurant_id as "restaurantId", name, price, category, image, description, is_combo as "isCombo", combo_items as "comboItems"
+            INSERT INTO products (restaurant_id, name, price, category, image, description, is_combo, combo_items, options)
+            VALUES (${restaurantId}, ${name}, ${price}, ${category}, ${image}, ${description}, ${is_combo || false}, ${combo_items ? JSON.stringify(combo_items) : null}, ${options ? JSON.stringify(options) : '[]'})
+            RETURNING id, restaurant_id as "restaurantId", name, price, category, image, description, is_combo as "isCombo", combo_items as "comboItems", options
         `;
 
         return NextResponse.json(rows[0]);
@@ -54,7 +55,7 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
     try {
         const body = await req.json();
-        const { id, name, price, category, image, description, is_combo, combo_items } = body;
+        const { id, name, price, category, image, description, is_combo, combo_items, options } = body;
 
         if (!id) {
             return NextResponse.json({ error: "ID required" }, { status: 400 });
@@ -66,9 +67,10 @@ export async function PUT(req: NextRequest) {
                 image = ${image}, description = ${description}, 
                 is_combo = ${is_combo || false}, 
                 combo_items = ${combo_items ? JSON.stringify(combo_items) : null},
+                options = ${options ? JSON.stringify(options) : '[]'},
                 updated_at = NOW()
             WHERE id = ${id}
-            RETURNING id, restaurant_id as "restaurantId", name, price, category, image, description, is_combo as "isCombo", combo_items as "comboItems"
+            RETURNING id, restaurant_id as "restaurantId", name, price, category, image, description, is_combo as "isCombo", combo_items as "comboItems", options
         `;
 
         return NextResponse.json(rows[0]);
