@@ -139,10 +139,10 @@ export default function OptionsBuilder({ initialOptions, onChange }: OptionsBuil
                                         <select
                                             value={group.type}
                                             onChange={(e) => updateGroup(gIdx, 'type', e.target.value)}
-                                            className="w-full text-sm border-b border-gray-200 focus:border-blue-500 outline-none pb-1 bg-transparent appearance-none"
+                                            className="w-full text-sm border-b border-gray-200 focus:border-blue-500 outline-none pb-1 bg-transparent appearance-none pr-8"
                                         >
-                                            <option value="single">Única Escolha (Radio)</option>
-                                            <option value="multiple">Múltipla Escolha (Checkbox)</option>
+                                            <option value="single">Escolha Única</option>
+                                            <option value="multiple">Escolha Múltipla</option>
                                         </select>
                                         <div className="absolute right-0 bottom-2 pointer-events-none">
                                             <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
