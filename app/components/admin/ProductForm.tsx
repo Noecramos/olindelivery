@@ -108,6 +108,7 @@ export default function ProductForm({ restaurantId, onSave, refreshCategories }:
                 setEditingId(null);
                 fetchData(); // Refresh list
                 onSave();
+                alert('Produto salvo com sucesso!');
             } else {
                 alert('Erro ao salvar');
             }
