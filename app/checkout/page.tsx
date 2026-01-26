@@ -515,7 +515,7 @@ export default function CheckoutPage() {
                 `${ICONS.TOTAL} *TOTAL: ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}*\n\n` +
                 (form.observations ? `${ICONS.MEMO} *Observa\u00E7\u00F5es:* ${form.observations}\n\n` : '') +
                 `${ICONS.CARD} *Pagamento:* ${paymentInfo}\n\n` +
-                `_Enviado via OlinDelivery ${ICONS.ROCKET}_`;
+                `_Enviado via OlinDelivery v2 ${ICONS.ROCKET}_`;
 
             // Sanitize phone
             const cleanPhone = restaurantPhone.replace(/\D/g, '');
