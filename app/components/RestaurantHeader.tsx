@@ -54,7 +54,7 @@ export default function RestaurantHeader({ name = "OlinDelivery", image, banner,
                             if (navigator.share) {
                                 navigator.share({
                                     title: name,
-                                    text: `Confira a loja ${name} no Olindelivery!`,
+                                    text: `Confira restaurante ${name} no Olindaki!`,
                                     url: window.location.href,
                                 })
                                     .catch((error) => console.log('Error sharing', error));
