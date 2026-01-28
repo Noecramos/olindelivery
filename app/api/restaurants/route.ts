@@ -4,6 +4,14 @@ import { sql } from "@vercel/postgres";
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
+
+    // Allow CORS for the landing page
+    const corsHeaders = {
+        'Access-Control-Allow-Origin': '*', // Or specific domain like https://olindaki.com
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    };
+
     try {
         const { searchParams } = new URL(req.url);
         const slug = searchParams.get('slug');
@@ -58,7 +66,7 @@ export async function GET(req: NextRequest) {
                 `;
 
             if (rows.length === 0) {
-                return NextResponse.json({ error: "Restaurant not found" }, { status: 404 });
+                return NextResponse.json({ error: "Restaurant not found" }, { status: 404, headers: corsHeaders });
             }
 
             const restaurant = rows[0];
@@ -68,7 +76,7 @@ export async function GET(req: NextRequest) {
                 deliveryRadius: Number(restaurant.deliveryRadius),
                 latitude: Number(restaurant.latitude),
                 longitude: Number(restaurant.longitude)
-            });
+            }, { headers: corsHeaders });
         }
 
         if (id) {
@@ -88,9 +96,9 @@ export async function GET(req: NextRequest) {
                 LIMIT 1
             `;
             if (rows.length === 0) {
-                return NextResponse.json({ error: "Restaurant not found" }, { status: 404 });
+                return NextResponse.json({ error: "Restaurant not found" }, { status: 404, headers: corsHeaders });
             }
-            return NextResponse.json(rows[0]);
+            return NextResponse.json(rows[0], { headers: corsHeaders });
         }
 
         // List restaurants
@@ -124,12 +132,22 @@ export async function GET(req: NextRequest) {
             ORDER BY created_at DESC
         `;
 
-        return NextResponse.json(rows);
+        return NextResponse.json(rows, { headers: corsHeaders });
 
     } catch (error) {
         console.error("Database Error:", error);
-        return NextResponse.json({ error: "Failed to fetch restaurants" }, { status: 500 });
+        return NextResponse.json({ error: "Failed to fetch restaurants" }, { status: 500 }); // CORS headers not strictly needed on crash but good practice
     }
+}
+
+// Handle CORS Preflight check
+export async function OPTIONS(request: Request) {
+    const corsHeaders = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    };
+    return new NextResponse(null, { status: 200, headers: corsHeaders });
 }
 
 export async function POST(req: NextRequest) {

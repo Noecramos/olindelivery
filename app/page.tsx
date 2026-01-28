@@ -262,6 +262,8 @@ function MarketplaceContent() {
           />
         </div>
 
+
+
         {/* Best Sellers Section (Horizontal Scroll) */}
         <div className="mb-0">
           <div className="px-6 flex justify-between items-end mb-4">
