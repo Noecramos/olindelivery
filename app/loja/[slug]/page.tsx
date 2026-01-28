@@ -14,6 +14,7 @@ export const dynamic = 'force-dynamic';
 export default function StoreFront() {
     const { slug } = useParams();
     const router = useRouter();
+    const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
     const { addToCart, count, total, items } = useCart();
 
     const [restaurant, setRestaurant] = useState<any>(null);
@@ -35,7 +36,16 @@ export default function StoreFront() {
                     // Fetch Products for this restaurant
                     fetch(`/api/products?restaurantId=${data.id}`)
                         .then(res => res.json())
-                        .then(setProducts);
+                        .then(prods => {
+                            setProducts(prods);
+
+                            // Check for product in query param
+                            const productId = searchParams?.get('produto');
+                            if (productId) {
+                                const prod = prods.find((p: any) => p.id.toString() === productId);
+                                if (prod) setSelectedProduct(prod);
+                            }
+                        });
                 }
             });
     }, [slug]);
