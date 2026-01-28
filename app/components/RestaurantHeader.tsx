@@ -84,41 +84,38 @@ export default function RestaurantHeader({ name = "OlinDelivery", image, banner,
                 {/* Text Info */}
                 <div className="text-center md:text-left text-gray-900 flex-1 md:mt-2">
                     <h1 className="text-3xl md:text-5xl font-extrabold mb-2 tracking-tight leading-tight">{name}</h1>
-                    <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-3 text-sm md:text-base font-medium text-gray-600">
+                    <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-3 text-sm md:text-base font-medium text-gray-600 mb-2">
                         <div className="flex items-center gap-3">
                             <span>{deliveryTime}</span>
                         </div>
+                    </div>
+
+                    {/* Action Buttons Row */}
+                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mt-4">
                         {address && (
-                            <>
-                                <span className="hidden md:inline">•</span>
-                                <a
-                                    href={formatAddressForLink(address)}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="opacity-80 text-xs md:text-sm bg-black/5 hover:bg-black/10 transition-colors px-2 py-1 rounded-full backdrop-blur-sm flex items-center gap-1 cursor-pointer"
-                                >
-                                    <span>📍</span>
-                                    <span className="underline decoration-dotted">{address}</span>
-                                </a>
-                            </>
+                            <a
+                                href={formatAddressForLink(address)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm bg-blue-50 hover:bg-blue-100 text-blue-700 hover:text-blue-800 transition-all px-5 py-2.5 rounded-xl flex items-center gap-2 cursor-pointer font-bold shadow-sm hover:shadow active:scale-95 border border-blue-100"
+                            >
+                                <span className="text-lg">📍</span>
+                                <span>Como Chegar</span>
+                            </a>
+                        )}
+
+                        {instagram && (
+                            <a
+                                href={`https://instagram.com/${instagram.replace('@', '').replace('https://instagram.com/', '')}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-sm hover:shadow-md transition-all hover:scale-105 active:scale-95 border border-purple-400"
+                            >
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                                Instagram
+                            </a>
                         )}
                     </div>
-                    {/* Social Links Row */}
-                    {(instagram || whatsapp) && (
-                        <div className="flex items-center justify-center md:justify-start gap-3 mt-3">
-                            {instagram && (
-                                <a
-                                    href={`https://instagram.com/${instagram.replace('@', '').replace('https://instagram.com/', '')}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-sm hover:shadow-md transition-all hover:scale-105"
-                                >
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-                                    Instagram
-                                </a>
-                            )}
-                        </div>
-                    )}
                 </div>
             </div>
         </div>
