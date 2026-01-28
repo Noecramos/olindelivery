@@ -86,6 +86,7 @@ export default function RestaurantHeader({ name = "OlinDelivery", image, banner,
                     <h1 className="text-3xl md:text-5xl font-extrabold mb-2 tracking-tight leading-tight">{name}</h1>
                     <div className="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-3 text-sm md:text-base font-medium text-gray-600 mb-2">
                         <div className="flex items-center gap-3">
+                            <span className="font-semibold text-gray-500 text-xs uppercase tracking-wide">Entrega:</span>
                             <span>{deliveryTime}</span>
                         </div>
                     </div>
