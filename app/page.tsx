@@ -386,9 +386,7 @@ function MarketplaceContent() {
         )}
         <footer className="w-full text-center text-gray-400 text-xs py-8 mt-4 border-t border-gray-100">
           © 2026 Noviapp Mobile Apps • ZAPPY®
-          <div className="mt-2 text-[10px] opacity-50">
-            Debug: {restaurants.length} shops loaded. API Status: {restaurants.length > 0 ? "OK" : "Empty/Error"}
-          </div>
+
         </footer>
       </main>
     </div>
