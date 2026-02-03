@@ -185,6 +185,11 @@ export default function StoreFront() {
                 product={selectedProduct}
                 onAddToCart={handleAddToCartFromModal}
             />
+
+            {/* Footer */}
+            <footer className="w-full text-center text-gray-400 text-xs py-8 mt-8 border-t border-gray-100">
+                © 2026 Noviapp Mobile Apps • ZAPPY®
+            </footer>
         </main>
     );
 }
