@@ -1,7 +1,7 @@
 {
-  "name": "OlinDelivery",
-  "short_name": "OlinDelivery",
-  "description": "Peça sua comida pelo WhatsApp com pagamento Pix.",
+  "name": "ZAPPY",
+  "short_name": "ZAPPY",
+  "description": "Seu pedido é ZAPPY! Peça sua comida pelo WhatsApp com pagamento Pix.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

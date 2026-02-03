@@ -7,22 +7,22 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "OlinDelivery",
-  description: "Peça sua comida favorita pelo WhatsApp.",
+  title: "ZAPPY",
+  description: "Seu pedido é ZAPPY! Peça sua comida favorita pelo WhatsApp.",
   manifest: "/manifest.json",
   icons: {
     icon: '/icon.jpg',
     apple: '/icon.jpg',
   },
   openGraph: {
-    title: 'OlinDelivery',
-    description: 'Peça sua comida favorita pelo WhatsApp.',
+    title: 'ZAPPY',
+    description: 'Seu pedido é ZAPPY! Peça sua comida favorita pelo WhatsApp.',
     images: ['/icon.jpg'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'OlinDelivery',
-    description: 'Peça sua comida favorita pelo WhatsApp.',
+    title: 'ZAPPY',
+    description: 'Seu pedido é ZAPPY! Peça sua comida favorita pelo WhatsApp.',
     images: ['/icon.jpg'],
   },
 };

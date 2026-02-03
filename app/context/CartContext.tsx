@@ -40,7 +40,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             const currentRestaurantId = items[0].restaurantId;
             const newRestaurantId = product.restaurantId;
 
-            console.log('🛒 OlinDelivery AddToCart Check:', { current: currentRestaurantId, new: newRestaurantId });
+            console.log('🛒 ZAPPY AddToCart Check:', { current: currentRestaurantId, new: newRestaurantId });
 
             if (newRestaurantId) {
                 if (currentRestaurantId !== newRestaurantId) {

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-console.log('🚀 OlinDelivery - Quick Setup Check\n');
+console.log('🚀 ZAPPY - Quick Setup Check\n');
 
 const fs = require('fs');
 const path = require('path');

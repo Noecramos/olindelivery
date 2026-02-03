@@ -26,13 +26,13 @@ export async function POST() {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        from: 'OlinDelivery <onboarding@resend.dev>',
+                        from: 'ZAPPY <onboarding@resend.dev>',
                         to: ['noecramos@gmail.com'],
-                        subject: 'OlinDelivery - Nova Senha de Super Admin',
+                        subject: 'ZAPPY - Nova Senha de Super Admin',
                         html: `
                             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                                 <div style="text-align: center; margin-bottom: 20px;">
-                                    <img src="https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olindelivery-favicon.jpg" alt="OlinDelivery Logo" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid #EA1D2C;" />
+                                    <img src="https://rfbwcz2lzvkh4d7s.public.blob.vercel-storage.com/olindelivery-favicon.jpg" alt="ZAPPY Logo" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid #EA1D2C;" />
                                 </div>
                                 <h2 style="color: #EA1D2C; text-align: center;">🔐 Nova Senha de Super Admin</h2>
                                 <p>Sua senha de super administrador foi resetada com sucesso.</p>
@@ -46,7 +46,7 @@ export async function POST() {
                                 </p>
                                 <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
                                 <p style="color: #999; font-size: 12px; text-align: center;">
-                                    © 2025 OlinDelivery - Sistema de Gestão
+                                    © 2026 Noviapp Mobile Apps • ZAPPY®
                                 </p>
                             </div>
                         `

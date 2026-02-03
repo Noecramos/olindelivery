@@ -222,7 +222,7 @@ export default function StoreAdmin() {
 
                     {/* Footer */}
                     <footer className="w-full text-center text-gray-500 text-xs py-6 mt-4">
-                        © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:text-[#EA1D2C] transition-colors">www.noviapp.com.br</a>
+                        © 2026 Noviapp Mobile Apps • ZAPPY®
                     </footer>
                 </div>
             </div>
@@ -324,7 +324,7 @@ export default function StoreAdmin() {
                     
                     <div class="footer">
                         Relatório Gerado por<br>
-                        <strong>OlinDelivery Sistema</strong>
+                        <strong>ZAPPY Sistema</strong>
                     </div>
 
                     <script>
@@ -455,7 +455,7 @@ export default function StoreAdmin() {
 
                     <div class="divider"></div>
                     <div class="footer">
-                        OlinDelivery
+                        ZAPPY
                     </div>
 
                     <script>
@@ -965,7 +965,7 @@ export default function StoreAdmin() {
 
                     {/* Footer Area - Outside the white card */}
                     <footer className="w-full text-center text-gray-500 text-xs py-8 mt-2">
-                        © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:text-[#EA1D2C] transition-colors">www.noviapp.com.br</a> • OlindAki & OlinDelivery
+                        © 2026 Noviapp Mobile Apps • ZAPPY®
                     </footer>
                 </div >
 

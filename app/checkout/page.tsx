@@ -251,7 +251,7 @@ export default function CheckoutPage() {
 
             const geoRes = await fetch(
                 `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(fullAddress)}&format=json&limit=1`,
-                { headers: { 'User-Agent': 'OlinDelivery/1.0' } }
+                { headers: { 'User-Agent': 'ZAPPY/1.0' } }
             );
             const geoData = await geoRes.json();
 
@@ -505,7 +505,7 @@ export default function CheckoutPage() {
                 locationInfo = `${ICONS.CHAIR} *Mesa:* ${tableNumber}\n`;
             }
 
-            const storeName = restData.name ? restData.name.toUpperCase() : "OLINDELIVERY";
+            const storeName = restData.name ? restData.name.toUpperCase() : "ZAPPY";
 
             const message = `${ICONS.STORE} *${storeName}*\n` +
                 `${ICONS.TICKET} *PEDIDO #${ticketNumber}* - ${typeHeader}\n\n` +
@@ -518,7 +518,7 @@ export default function CheckoutPage() {
                 `${ICONS.TOTAL} *TOTAL: ${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}*\n\n` +
                 (form.observations ? `${ICONS.MEMO} *Observa\u00E7\u00F5es:* ${form.observations}\n\n` : '') +
                 `${ICONS.CARD} *Pagamento:* ${paymentInfo}\n\n` +
-                `_Enviado via OlinDelivery ${ICONS.ROCKET}_`;
+                `_Enviado via ZAPPY ${ICONS.ROCKET}_`;
 
             // Sanitize phone
             const cleanPhone = restaurantPhone.replace(/\D/g, '');
@@ -879,7 +879,7 @@ export default function CheckoutPage() {
                 </div>
 
                 <footer className="w-full text-center text-gray-400 text-xs py-6 mt-auto">
-                    © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:underline">www.noviapp.com.br</a> • OlindAki & OlinDelivery
+                    © 2026 Noviapp Mobile Apps • ZAPPY®
                 </footer>
             </div>
 

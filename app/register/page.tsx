@@ -159,7 +159,7 @@ export default function RegisterRestaurant() {
                 <div className="bg-white rounded-b-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] p-8 animate-fade-in-up">
                     <div className="text-center mb-8">
                         <h1 className="text-3xl font-bold text-gray-800">Cadastrar Loja</h1>
-                        <p className="text-gray-600 mt-2 font-medium">Junte-se ao OlinDelivery e expanda seu negócio.</p>
+                        <p className="text-gray-600 mt-2 font-medium">Junte-se ao ZAPPY e expanda seu negócio.</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
@@ -423,7 +423,7 @@ export default function RegisterRestaurant() {
 
                 {/* Footer */}
                 <footer className="w-full text-center text-gray-400 text-xs py-6 mt-4">
-                    © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:underline">www.noviapp.com.br</a> • OlindAki & OlinDelivery
+                    © 2026 Noviapp Mobile Apps • ZAPPY®
                 </footer>
             </div>
         </div>

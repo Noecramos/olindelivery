@@ -23,7 +23,7 @@ async function calculateDistance() {
 
         const geo1 = await fetch(
             `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(addr1)}&format=json&limit=1`,
-            { headers: { 'User-Agent': 'OlinDelivery/1.0' } }
+            { headers: { 'User-Agent': 'ZAPPY/1.0' } }
         );
         const geoData1 = await geo1.json();
 
@@ -51,7 +51,7 @@ async function calculateDistance() {
 
         const geo2 = await fetch(
             `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(addr2)}&format=json&limit=1`,
-            { headers: { 'User-Agent': 'OlinDelivery/1.0' } }
+            { headers: { 'User-Agent': 'ZAPPY/1.0' } }
         );
         const geoData2 = await geo2.json();
 

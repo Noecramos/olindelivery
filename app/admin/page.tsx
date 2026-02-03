@@ -18,7 +18,7 @@ export default function AdminPortal() {
                 <div className="bg-white rounded-b-3xl shadow-2xl p-8 md:p-10 animate-fade-in-up">
                     <div className="text-center mb-10">
                         <h1 className="font-bold text-gray-800 text-3xl md:text-4xl mb-2">Portal do Parceiro</h1>
-                        <p className="text-gray-600 font-medium text-lg">Gerencie seu restaurante no OlinDelivery</p>
+                        <p className="text-gray-600 font-medium text-lg">Gerencie seu restaurante no ZAPPY</p>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full items-stretch">
@@ -80,7 +80,7 @@ export default function AdminPortal() {
 
                 {/* Footer */}
                 <footer className="w-full text-center text-gray-500 text-xs py-6 mt-4">
-                    © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:text-[#EA1D2C] transition-colors">www.noviapp.com.br</a> • OlindAki & OlinDelivery
+                    © 2026 Noviapp Mobile Apps • ZAPPY®
                 </footer>
             </div>
         </div>

@@ -405,7 +405,7 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                             const fetchGeo = async (query: string) => {
                                 console.log('🔍 Searching geo for:', query);
                                 const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&addressdetails=1`, {
-                                    headers: { 'User-Agent': 'OlinDelivery/1.0' }
+                                    headers: { 'User-Agent': 'ZAPPY/1.0' }
                                 });
                                 return await res.json();
                             };

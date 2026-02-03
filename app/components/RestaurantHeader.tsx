@@ -18,7 +18,7 @@ interface HeaderProps {
     whatsapp?: string;
 }
 
-export default function RestaurantHeader({ name = "OlinDelivery", image, banner, rating = "4.9", address, deliveryTime = "30-45 min", restaurantId, ratingSum, ratingCount, instagram, whatsapp }: HeaderProps) {
+export default function RestaurantHeader({ name = "ZAPPY", image, banner, rating = "4.9", address, deliveryTime = "30-45 min", restaurantId, ratingSum, ratingCount, instagram, whatsapp }: HeaderProps) {
     const { user, logout } = useAuth();
     const [config, setConfig] = useState<any>({
         headerBgColor: 'transparent'
@@ -41,10 +41,13 @@ export default function RestaurantHeader({ name = "OlinDelivery", image, banner,
         <div className="relative mb-8">
             {/* Marketplace Top Bar - IDENTICAL TO MAIN PAGE */}
             <div
-                className="relative pt-8 px-6 pb-4 flex justify-center items-center sticky top-0 z-40 bg-opacity-95 backdrop-blur-md transition-all duration-300 shadow-lg rounded-b-3xl bg-center bg-cover bg-no-repeat h-56"
+                className="relative pt-8 px-6 pb-4 flex justify-center items-center sticky top-0 z-40 bg-opacity-95 backdrop-blur-md transition-all duration-300 shadow-lg rounded-b-3xl h-64"
                 style={{
-                    backgroundColor: config.headerBackgroundType === 'image' ? 'transparent' : (config.headerBgColor || 'transparent'),
-                    backgroundImage: config.headerBackgroundType === 'image' ? `url('${config.headerBackgroundImage}')` : 'none',
+                    backgroundColor: '#FFD700',
+                    backgroundImage: `url('${config.headerImage || '/header-zappy.png'}')`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center 40%',
+                    backgroundRepeat: 'no-repeat',
                 }}
             >
                 {/* Share Button - Absolute Positioned Left */}

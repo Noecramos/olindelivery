@@ -67,7 +67,7 @@ export default function SuperAdmin() {
                     if (!cleanPhone.startsWith('55') && cleanPhone.length > 0) {
                         cleanPhone = '55' + cleanPhone;
                     }
-                    const message = `Olá, ${restaurant.responsibleName || 'Parceiro'}! %0A%0ASua loja *${restaurant.name}* foi aprovada no OlinDelivery! 🚀%0A%0AAcesse seu painel administrativo:%0ALink: https://olindelivery.vercel.app/admin/${restaurant.slug}%0A%0A*Suas Credenciais:*%0ALogin: ${restaurant.slug}%0ASenha: ${finalPassword}%0A%0ABoas vendas!`;
+                    const message = `Olá, ${restaurant.responsibleName || 'Parceiro'}! %0A%0ASua loja *${restaurant.name}* foi aprovada no ZAPPY! 🚀%0A%0AAcesse seu painel administrativo:%0ALink: https://olindelivery.vercel.app/admin/${restaurant.slug}%0A%0A*Suas Credenciais:*%0ALogin: ${restaurant.slug}%0ASenha: ${finalPassword}%0A%0ABoas vendas!`;
                     window.open(`https://wa.me/${cleanPhone}?text=${message}`, '_blank');
                 } else {
                     alert('Restaurante aprovado! Senha gerada: ' + finalPassword);
@@ -206,7 +206,7 @@ export default function SuperAdmin() {
 
                     {/* Footer */}
                     <footer className="w-full text-center text-gray-500 text-xs py-6 mt-4">
-                        © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:text-[#EA1D2C] transition-colors">www.noviapp.com.br</a>
+                        © 2026 Noviapp Mobile Apps • ZAPPY®
                     </footer>
                 </div>
             </div>
@@ -221,7 +221,7 @@ export default function SuperAdmin() {
                     <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent" />
                     <div className="absolute bottom-4 left-6 md:left-8 text-white z-10">
                         <h1 className="text-xl md:text-3xl font-extrabold tracking-tight">Gestão Global</h1>
-                        <p className="text-xs md:text-sm font-medium opacity-90">Controle total de parceiros OlinDelivery</p>
+                        <p className="text-xs md:text-sm font-medium opacity-90">Controle total de parceiros ZAPPY</p>
                     </div>
                     <button
                         onClick={handleLogout}
@@ -383,7 +383,7 @@ export default function SuperAdmin() {
 
                 {/* Footer outside the card */}
                 <footer className="footer text-center text-gray-500 text-xs py-10 mt-2">
-                    © 2025 Noviapp Mobile Apps • <a href="http://www.noviapp.com.br" target="_blank" className="hover:text-[#EA1D2C] transition-colors font-medium">www.noviapp.com.br</a> • OlindAki & OlinDelivery
+                    © 2026 Noviapp Mobile Apps • ZAPPY®
                 </footer>
             </div>
         </div>

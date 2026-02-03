@@ -31,7 +31,7 @@ export default function TestWhatsAppPage() {
                 `*Pedido:*\n2x Hambúrguer\n1x Refrigerante\n\n` +
                 `*Total:* R$ 45,00\n` +
                 `*Pagamento:* PIX\n\n` +
-                `_Enviado via OlinDelivery_`;
+                `_Enviado via ZAPPY_`;
 
             // Sanitize and format phone
             const cleanPhone = restaurantPhone.replace(/\D/g, '');

@@ -16,10 +16,10 @@ function MarketplaceContent() {
   const router = useRouter();
   const [showSuccess, setShowSuccess] = useState(false);
   const [config, setConfig] = useState<any>({
-    headerImage: 'https://i.imgur.com/Fyccvly.gif',
+    headerImage: '/header-zappy.png',
     welcomeTitle: 'O que vamos\npedir hoje?',
     welcomeSubtitle: 'Entregar em Casa',
-    footerText: '© 2025 OlindAki Delivery',
+    footerText: '© 2026 Noviapp Mobile Apps • ZAPPY®',
     headerBgColor: 'transparent'
   });
 
@@ -106,9 +106,9 @@ function MarketplaceContent() {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-[#FFD700] flex flex-col items-center justify-center z-[9999]">
-        <div className="w-72 h-32 flex items-center justify-center animate-bounce">
-          <Image src="https://i.imgur.com/Fyccvly.gif" alt="Logo" width={240} height={100} style={{ objectFit: 'contain' }} priority unoptimized />
+      <div className="fixed inset-0 bg-[#D99D1D] flex flex-col items-center justify-center z-[9999]">
+        <div className="w-80 h-80 flex items-center justify-center animate-bounce">
+          <Image src="https://i.imgur.com/ieB8VSu.gif" alt="ZAPPY Logo" width={320} height={320} style={{ objectFit: 'contain' }} priority unoptimized />
         </div>
       </div>
     );
@@ -182,10 +182,13 @@ function MarketplaceContent() {
       <main className="mobile-container relative bg-white pb-20">
         {/* Top Bar */}
         <div
-          className="relative pt-8 px-6 pb-4 flex justify-center items-center sticky top-0 z-40 bg-opacity-95 backdrop-blur-md transition-all duration-300 shadow-lg rounded-b-3xl bg-center bg-cover bg-no-repeat h-56"
+          className="relative pt-8 px-6 pb-4 flex justify-center items-center sticky top-0 z-40 bg-opacity-95 backdrop-blur-md transition-all duration-300 shadow-lg rounded-b-3xl h-64"
           style={{
-            backgroundColor: config.headerBackgroundType === 'image' ? 'transparent' : (config.headerBgColor || 'transparent'),
-            backgroundImage: config.headerBackgroundType === 'image' ? `url('${config.headerBackgroundImage}')` : 'none',
+            backgroundColor: '#FFD700',
+            backgroundImage: `url('${config.headerImage || '/header-zappy.png'}')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center 40%',
+            backgroundRepeat: 'no-repeat',
           }}
         >
           {/* User Profile / Login Button - Absolute Positioned */}
@@ -382,7 +385,7 @@ function MarketplaceContent() {
           </div>
         )}
         <footer className="w-full text-center text-gray-400 text-xs py-8 mt-4 border-t border-gray-100">
-          {config.footerText}
+          © 2026 Noviapp Mobile Apps • ZAPPY®
           <div className="mt-2 text-[10px] opacity-50">
             Debug: {restaurants.length} shops loaded. API Status: {restaurants.length > 0 ? "OK" : "Empty/Error"}
           </div>
