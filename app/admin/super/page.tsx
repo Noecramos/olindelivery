@@ -387,7 +387,7 @@ export default function SuperAdmin() {
 
                 {/* Footer outside the card */}
                 <footer className="footer text-center text-gray-500 text-xs py-10 mt-2">
-                    © 2026 Noviapp Mobile Apps • ZAPPY®
+                    © 2026 Noviapp Mobile Apps • ZAPPY® v1.1
                 </footer>
             </div>
         </div>
