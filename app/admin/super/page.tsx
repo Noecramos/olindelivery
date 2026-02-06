@@ -286,6 +286,7 @@ export default function SuperAdmin() {
                                         <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Restaurante</th>
                                         <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Slug (Login)</th>
                                         <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Senha</th>
+                                        <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider">Data Cadastro</th>
                                         <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider text-center">Status</th>
                                         <th className="p-6 font-bold text-gray-500 text-xs uppercase tracking-wider text-right">Ações</th>
                                     </tr>
@@ -321,6 +322,9 @@ export default function SuperAdmin() {
                                             </td>
                                             <td className="p-6">
                                                 <code className="bg-gray-100 px-3 py-1 rounded-lg text-xs font-bold text-gray-600">{r.password || '---'}</code>
+                                            </td>
+                                            <td className="p-6 text-sm text-gray-600">
+                                                {new Date(r.createdAt).toLocaleDateString('pt-BR')}
                                             </td>
                                             <td className="p-6 text-center">
                                                 <span className={`px-4 py-1.5 rounded-full text-xs font-bold shadow-sm ${r.approved ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-amber-100 text-amber-700 border border-amber-200'}`}>
@@ -362,7 +366,7 @@ export default function SuperAdmin() {
                                     ))}
                                     {restaurants.length === 0 && (
                                         <tr>
-                                            <td colSpan={5} className="p-20 text-center text-gray-400 font-medium">Nenhum restaurante encontrado.</td>
+                                            <td colSpan={6} className="p-20 text-center text-gray-400 font-medium">Nenhum restaurante encontrado.</td>
                                         </tr>
                                     )}
                                 </tbody>
