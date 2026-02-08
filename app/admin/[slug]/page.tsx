@@ -8,6 +8,7 @@ import ProductForm from "../../components/admin/ProductForm";
 import CategoryForm from "../../components/admin/CategoryForm";
 import ComboForm from "../../components/admin/ComboForm";
 import RestaurantSettings from "../../components/admin/RestaurantSettings";
+import SubscriptionManager from "../../components/admin/SubscriptionManager";
 import RaspadinhaValidator from "../../components/admin/RaspadinhaValidator";
 
 export const dynamic = 'force-dynamic';
@@ -514,11 +515,9 @@ export default function StoreAdmin() {
 
                     <button onClick={() => setTab('raspadinha')} className={`p-3 rounded-xl transition-all flex items-center gap-3 ${tab === 'raspadinha' ? 'bg-red-50 text-[#EA1D2C] font-bold shadow-sm' : 'hover:bg-gray-100 text-gray-600'}`}>
                         <span className="text-xl">🎲</span> <span className="hidden lg:block">Raspadinha</span>
+                    </button>                    <button onClick={() => setTab('subscription')} className={`p-3 rounded-xl transition-all flex items-center gap-3 ${tab === 'subscription' ? 'bg-red-50 text-[#EA1D2C] font-bold shadow-sm' : 'hover:bg-gray-100 text-gray-600'}`}>
+                        <span className="text-xl">💳</span> <span className="hidden lg:block">Assinatura</span>
                     </button>
-
-
-
-
 
                     <button onClick={() => setTab('settings')} className={`p-3 rounded-xl transition-all flex items-center gap-3 ${tab === 'settings' ? 'bg-red-50 text-[#EA1D2C] font-bold shadow-sm' : 'hover:bg-gray-100 text-gray-600'}`}>
                         <span className="text-xl">⚙️</span> <span className="hidden lg:block">Configurações</span>
@@ -955,6 +954,11 @@ export default function StoreAdmin() {
                                                         }
                                                     }}
                                                 />
+                                            </div>
+                                        )}
+                                        {tab === 'subscription' && (
+                                            <div className="py-8">
+                                                <SubscriptionManager restaurant={restaurant} />
                                             </div>
                                         )}
                                     </div>

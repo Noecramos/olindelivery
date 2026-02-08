@@ -1,13 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sql } from "@vercel/postgres";
 
-export const dynamic = 'force-dynamic';
-
 export async function GET(req: NextRequest) {
-
-    // Allow CORS for the landing page
     const corsHeaders = {
-        'Access-Control-Allow-Origin': '*', // Or specific domain like https://olindaki.com
+        'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     };
@@ -30,9 +26,9 @@ export async function GET(req: NextRequest) {
         `;
 
         if (slug) {
-            // Fetch restaurant by slug
+            // Fetch store by slug
             // If admin=true, bypass approval check (for restaurant admin panel)
-            // Otherwise, only return approved restaurants (for public frontend)
+            // Otherwise, only return approved stores (for public frontend)
             const { rows } = isAdminAccess
                 ? await sql`
                     SELECT 
@@ -43,14 +39,18 @@ export async function GET(req: NextRequest) {
                         delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
                         delivery_time as "deliveryTime", popular_title as "popularTitle",
                         welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
+                        multistore_enabled as "multistoreEnabled",
+                        booking_enabled as "bookingEnabled",
+                        booking_mode as "bookingMode",
+                        booking_duration as "bookingDuration",
+                        booking_deposit_percent as "bookingDepositPercent",
+                        booking_deposit_percent as "bookingDepositPercent",
                         rating_sum as "ratingSum", rating_count as "ratingCount",
                         subscription_status as "subscription_status",
                         subscription_expires_at as "subscription_expires_at",
                         asaas_subscription_id as "asaas_subscription_id",
-                        asaas_customer_id as "asaas_customer_id",
-                        saas_monthly_price as "saas_monthly_price",
-                        saas_trial_days as "saas_trial_days",
-                        cpf_cnpj as "cpf_cnpj",
+                        saas_monthly_price as "saasMonthlyPrice",
+                        saas_trial_days as "saasTrialDays",
                         created_at as "createdAt", updated_at as "updatedAt"
                     FROM restaurants 
                     WHERE slug = ${slug}
@@ -65,9 +65,17 @@ export async function GET(req: NextRequest) {
                         delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
                         delivery_time as "deliveryTime", popular_title as "popularTitle",
                         welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
+                        multistore_enabled as "multistoreEnabled",
+                        booking_enabled as "bookingEnabled",
+                        booking_mode as "bookingMode",
+                        booking_duration as "bookingDuration",
+                        booking_deposit_percent as "bookingDepositPercent",
                         rating_sum as "ratingSum", rating_count as "ratingCount",
                         subscription_status as "subscription_status",
                         subscription_expires_at as "subscription_expires_at",
+                        asaas_subscription_id as "asaas_subscription_id",
+                        saas_monthly_price as "saasMonthlyPrice",
+                        saas_trial_days as "saasTrialDays",
                         created_at as "createdAt", updated_at as "updatedAt"
                     FROM restaurants 
                     WHERE slug = ${slug} AND approved = true
@@ -79,17 +87,33 @@ export async function GET(req: NextRequest) {
             }
 
             const restaurant = rows[0];
+
+            // MULTI-STORE SUPPORT
+            // If admin access, find other stores with the same email
+            let siblingStores: any[] = [];
+            if (isAdminAccess && restaurant.email) {
+                const { rows: siblings } = await sql`
+                    SELECT id, name, slug, image, approved 
+                    FROM restaurants 
+                    WHERE email = ${restaurant.email} 
+                    AND id != ${restaurant.id}
+                    ORDER BY name ASC
+                `;
+                siblingStores = siblings;
+            }
+
             return NextResponse.json({
                 ...restaurant,
                 deliveryFee: Number(restaurant.deliveryFee),
                 deliveryRadius: Number(restaurant.deliveryRadius),
                 latitude: Number(restaurant.latitude),
-                longitude: Number(restaurant.longitude)
+                longitude: Number(restaurant.longitude),
+                siblingStores // Return the list of related stores
             }, { headers: corsHeaders });
         }
 
         if (id) {
-            // Fetch approved restaurant by id (for public frontend)
+            // Fetch approved store by id (for public frontend)
             const { rows } = await sql`
                 SELECT 
                     id, name, slug, responsible_name as "responsibleName", 
@@ -99,6 +123,7 @@ export async function GET(req: NextRequest) {
                     delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
                     delivery_time as "deliveryTime", popular_title as "popularTitle",
                     welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
+                    rating_sum as "ratingSum", rating_count as "ratingCount",
                     created_at as "createdAt", updated_at as "updatedAt"
                 FROM restaurants 
                 WHERE id = ${id} AND approved = true
@@ -110,11 +135,8 @@ export async function GET(req: NextRequest) {
             return NextResponse.json(rows[0], { headers: corsHeaders });
         }
 
-        // List restaurants
-        // If all=true, return everything (Admin view). Otherwise, return only approved/open (Public view).
-        const showAll = searchParams.get('all') === 'true';
-
-        const { rows } = showAll ? await sql`
+        // List all approved stores (for public frontend)
+        const { rows } = await sql`
             SELECT 
                 id, name, slug, responsible_name as "responsibleName", 
                 email, whatsapp, instagram, 
@@ -123,33 +145,24 @@ export async function GET(req: NextRequest) {
                 delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
                 delivery_time as "deliveryTime", popular_title as "popularTitle",
                 welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
+                rating_sum as "ratingSum", rating_count as "ratingCount",
+                multistore_enabled as "multistoreEnabled",
                 created_at as "createdAt", updated_at as "updatedAt"
             FROM restaurants 
-            ORDER BY created_at DESC
-        ` : await sql`
-            SELECT 
-                id, name, slug, responsible_name as "responsibleName", 
-                email, whatsapp, instagram, 
-                zip_code as "zipCode", address, hours, type, image, pix_key as "pixKey",
-                latitude, longitude, delivery_radius as "deliveryRadius",
-                delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
-                delivery_time as "deliveryTime", popular_title as "popularTitle",
-                welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
-                created_at as "createdAt", updated_at as "updatedAt"
-            FROM restaurants 
-            -- WHERE approved = true
+            WHERE approved = true
             ORDER BY created_at DESC
         `;
-
         return NextResponse.json(rows, { headers: corsHeaders });
 
-    } catch (error) {
+    } catch (error: any) {
         console.error("Database Error:", error);
-        return NextResponse.json({ error: "Failed to fetch restaurants" }, { status: 500 }); // CORS headers not strictly needed on crash but good practice
+        return NextResponse.json({
+            error: "Failed to fetch stores",
+            details: error.message
+        }, { status: 500, headers: corsHeaders });
     }
 }
 
-// Handle CORS Preflight check
 export async function OPTIONS(request: Request) {
     const corsHeaders = {
         'Access-Control-Allow-Origin': '*',
@@ -162,7 +175,7 @@ export async function OPTIONS(request: Request) {
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        console.log('Restaurant registration request:', JSON.stringify(body, null, 2));
+        console.log('Store registration request:', JSON.stringify(body, null, 2));
 
         let {
             name, slug, responsibleName, email, whatsapp, instagram,
@@ -170,14 +183,8 @@ export async function POST(req: NextRequest) {
         } = body;
 
         // Validate required fields
-        if (!name) {
-            console.error('Validation failed: name is missing');
-            return NextResponse.json({ error: 'Nome é obrigatório' }, { status: 400 });
-        }
-
-        if (!slug) {
-            console.error('Validation failed: slug is missing');
-            return NextResponse.json({ error: 'Slug é obrigatório' }, { status: 400 });
+        if (!name || !slug) {
+            return NextResponse.json({ error: 'Nome e slug são obrigatórios' }, { status: 400 });
         }
 
         // Check for duplicate slug and auto-generate unique one if needed
@@ -217,10 +224,10 @@ export async function POST(req: NextRequest) {
             ) RETURNING *
         `;
 
-        console.log('Restaurant registered successfully with slug:', finalSlug);
+        console.log('Store registered successfully with slug:', finalSlug);
         return NextResponse.json({
             success: true,
-            restaurant: rows[0],
+            store: rows[0],
             slug: finalSlug
         });
 
@@ -228,8 +235,8 @@ export async function POST(req: NextRequest) {
         console.error("Database Error:", error);
         console.error("Error stack:", error.stack);
         return NextResponse.json({
-            error: "Failed to create restaurant",
-            details: process.env.NODE_ENV === 'development' ? error.message : undefined
+            error: "Failed to create store",
+            details: error.message
         }, { status: 500 });
     }
 }
@@ -238,15 +245,26 @@ export async function PUT(req: NextRequest) {
     try {
         const body = await req.json();
         const {
-            id, name, email, whatsapp, instagram, zipCode, address, hours, type,
+            id, name, slug, email, whatsapp, instagram, zipCode, address, hours, type,
             deliveryFee, deliveryTime, image, pixKey, approved, password,
             latitude, longitude, deliveryRadius, deliveryFeeTiers,
-            popularTitle, welcomeSubtitle, resetPassword, isOpen,
-            subscription_status, subscription_expires_at, saas_monthly_price, saas_trial_days, cpf_cnpj
+            popularTitle, welcomeSubtitle, resetPassword, isOpen, responsibleName,
+            multistoreEnabled, subscription_status, subscription_expires_at, saasMonthlyPrice, saasTrialDays
+
         } = body;
 
         if (!id) {
             return NextResponse.json({ error: "ID required" }, { status: 400 });
+        }
+
+        // If slug is being updated, check for duplicates
+        if (slug) {
+            const { rows: existing } = await sql`
+                SELECT id FROM restaurants WHERE slug = ${slug} AND id != ${id}
+            `;
+            if (existing.length > 0) {
+                return NextResponse.json({ error: "Este slug já está em uso por outra loja" }, { status: 409 });
+            }
         }
 
         // Generate a random 8-char password
@@ -265,6 +283,8 @@ export async function PUT(req: NextRequest) {
         const { rows } = await sql`
             UPDATE restaurants SET
                 name = COALESCE(${name}, name),
+                slug = COALESCE(${slug}, slug),
+                responsible_name = COALESCE(${responsibleName}, responsible_name),
                 email = COALESCE(${email}, email),
                 whatsapp = COALESCE(${whatsapp}, whatsapp),
                 instagram = COALESCE(${instagram}, instagram),
@@ -285,21 +305,34 @@ export async function PUT(req: NextRequest) {
                 delivery_fee_tiers = COALESCE(${JSON.stringify(deliveryFeeTiers) === undefined ? null : JSON.stringify(deliveryFeeTiers)}, delivery_fee_tiers),
                 popular_title = COALESCE(${popularTitle}, popular_title),
                 welcome_subtitle = COALESCE(${welcomeSubtitle}, welcome_subtitle),
+                multistore_enabled = COALESCE(${multistoreEnabled}, multistore_enabled),
                 subscription_status = COALESCE(${subscription_status}, subscription_status),
+                saas_monthly_price = COALESCE(${saasMonthlyPrice}, saas_monthly_price),
+                saas_trial_days = COALESCE(${saasTrialDays}, saas_trial_days),
                 subscription_expires_at = COALESCE(${subscription_expires_at}, subscription_expires_at),
-                saas_monthly_price = COALESCE(${saas_monthly_price}, saas_monthly_price),
-                saas_trial_days = COALESCE(${saas_trial_days}, saas_trial_days),
-                cpf_cnpj = COALESCE(${cpf_cnpj}, cpf_cnpj),
                 updated_at = NOW()
             WHERE id = ${id}
-            RETURNING *
+            RETURNING 
+                id, name, slug, responsible_name as "responsibleName",
+                email, whatsapp, instagram,
+                zip_code as "zipCode", address, hours, type, image, pix_key as "pixKey",
+                latitude, longitude, delivery_radius as "deliveryRadius",
+                delivery_fee as "deliveryFee", delivery_fee_tiers as "deliveryFeeTiers",
+                delivery_time as "deliveryTime", popular_title as "popularTitle",
+                welcome_subtitle as "welcomeSubtitle", password, approved, is_open as "isOpen",
+                subscription_status as "subscription_status",
+                subscription_expires_at as "subscription_expires_at",
+                asaas_subscription_id as "asaas_subscription_id",
+                saas_monthly_price as "saasMonthlyPrice",
+                saas_trial_days as "saasTrialDays",
+                created_at as "createdAt", updated_at as "updatedAt"
         `;
 
         return NextResponse.json({ success: true, ...rows[0] });
 
-    } catch (error) {
+    } catch (error: any) {
         console.error("Database Error:", error);
-        return NextResponse.json({ error: "Failed to update restaurant" }, { status: 500 });
+        return NextResponse.json({ error: "Failed to update store", details: error.message }, { status: 500 });
     }
 }
 
@@ -314,8 +347,8 @@ export async function DELETE(req: NextRequest) {
 
         return NextResponse.json({ success: true });
 
-    } catch (error) {
+    } catch (error: any) {
         console.error("Database Error:", error);
-        return NextResponse.json({ error: "Failed to delete restaurant" }, { status: 500 });
+        return NextResponse.json({ error: "Failed to delete store", details: error.message }, { status: 500 });
     }
 }

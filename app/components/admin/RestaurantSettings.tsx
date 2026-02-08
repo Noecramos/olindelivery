@@ -252,7 +252,7 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label htmlFor="deliveryTime" className="block text-sm font-bold text-gray-700 mb-1">Tempo de Entrega</label>
                         <input id="deliveryTime" name="deliveryTime" className="w-full p-3 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-all border border-gray-100"
@@ -260,6 +260,39 @@ export default function RestaurantSettings({ restaurant, onUpdate }: { restauran
                             onChange={e => setForm({ ...form, deliveryTime: e.target.value })}
                             placeholder="30-45 min"
                         />
+                    </div>
+                </div>
+
+                <div className="bg-orange-50 p-6 rounded-2xl border border-orange-200">
+                    <h3 className="text-sm font-bold text-orange-900 mb-3 flex items-center gap-2">
+                        <span>💳</span> Configurações de Assinatura e Acesso
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label htmlFor="saas_trial_days" className="block text-sm font-bold text-gray-700 mb-1">Dias de Teste (Trial)</label>
+                            <input id="saas_trial_days" name="saas_trial_days" className="w-full p-3 bg-white rounded-xl outline-none focus:ring-2 focus:ring-orange-500 transition-all border border-gray-200"
+                                type="number"
+                                value={form.saas_trial_days || '7'}
+                                onChange={e => setForm({ ...form, saas_trial_days: e.target.value })}
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="saas_monthly_price" className="block text-sm font-bold text-gray-700 mb-1">Preço Mensal (Base)</label>
+                            <input id="saas_monthly_price" name="saas_monthly_price" className="w-full p-3 bg-white rounded-xl outline-none focus:ring-2 focus:ring-orange-500 transition-all border border-gray-200"
+                                type="number"
+                                step="0.01"
+                                value={form.saas_monthly_price || '49.90'}
+                                onChange={e => setForm({ ...form, saas_monthly_price: e.target.value })}
+                            />
+                        </div>
+                        <div className="md:col-span-2">
+                            <label htmlFor="cpf_cnpj" className="block text-sm font-bold text-gray-700 mb-1">CPF ou CNPJ (para faturamento)</label>
+                            <input id="cpf_cnpj" name="cpf_cnpj" className="w-full p-3 bg-white rounded-xl outline-none focus:ring-2 focus:ring-orange-500 transition-all border border-gray-200"
+                                value={form.cpf_cnpj || ''}
+                                onChange={e => setForm({ ...form, cpf_cnpj: e.target.value })}
+                                placeholder="00.000.000/0000-00"
+                            />
+                        </div>
                     </div>
                 </div>
 
