@@ -143,9 +143,9 @@ export async function GET(req: NextRequest) {
 
         return NextResponse.json(rows, { headers: corsHeaders });
 
-    } catch (error) {
+    } catch (error: any) {
         console.error("Database Error:", error);
-        return NextResponse.json({ error: "Failed to fetch restaurants" }, { status: 500 }); // CORS headers not strictly needed on crash but good practice
+        return NextResponse.json({ error: "Failed to fetch restaurants", message: error.message, stack: error.stack }, { status: 500, headers: corsHeaders });
     }
 }
 
