@@ -101,7 +101,7 @@ export default function RestaurantHeader({ name = "ZAPPY", image, banner, rating
                 {/* Logo */}
                 <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white shadow-xl overflow-hidden bg-white flex-shrink-0">
                     <Image
-                        src={image || "https://i.imgur.com/iWSJGep.png"}
+                        src={image || "/logo.jpg"}
                         alt={name || "Logo"}
                         width={160}
                         height={160}

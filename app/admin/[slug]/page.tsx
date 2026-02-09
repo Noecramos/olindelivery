@@ -172,7 +172,7 @@ export default function StoreAdmin() {
             <div className="min-h-screen bg-gradient-to-br from-[#F5F5F7] to-[#E8E8EA] flex flex-col items-center justify-center py-8 px-4">
                 <div className="w-full max-w-lg">
                     {/* Header Banner - Same width as card */}
-                    <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden shadow-lg" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
+                    <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden shadow-lg" style={{ backgroundImage: "url('/header-zappy.png')" }}>
                         <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-transparent" />
                     </div>
 
@@ -539,7 +539,7 @@ export default function StoreAdmin() {
             <main className="flex-1 overflow-y-auto bg-gradient-to-br from-[#F5F5F7] to-[#E8E8EA] p-4 md:p-8">
                 <div className="max-w-7xl mx-auto w-full flex flex-col items-center">
                     {/* Header Banner - Same width as the content below */}
-                    <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden shadow-xl shrink-0" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
+                    <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden shadow-xl shrink-0" style={{ backgroundImage: "url('/header-zappy.png')" }}>
                         <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-transparent" />
                         <div className="absolute bottom-4 left-6 text-white z-10">
                             <h2 className="text-xl font-bold">{restaurant.name}</h2>

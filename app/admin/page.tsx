@@ -10,7 +10,7 @@ export default function AdminPortal() {
         <div className="min-h-screen bg-gradient-to-br from-[#F5F5F7] to-[#E8E8EA] flex flex-col items-center justify-center py-8 px-4">
             <div className="w-full max-w-6xl">
                 {/* Header Banner - Same width as cards */}
-                <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden shadow-lg" style={{ backgroundImage: "url('https://i.imgur.com/s2H2qZE.png')" }}>
+                <div className="h-32 md:h-40 w-full bg-cover bg-center relative rounded-t-3xl overflow-hidden shadow-lg" style={{ backgroundImage: "url('/header-zappy.png')" }}>
                     <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-transparent" />
                 </div>
 

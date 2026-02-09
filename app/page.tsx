@@ -108,7 +108,7 @@ function MarketplaceContent() {
     return (
       <div className="fixed inset-0 bg-[#D99D1D] flex flex-col items-center justify-center z-[9999]">
         <div className="w-80 h-80 flex items-center justify-center animate-bounce">
-          <Image src="https://i.imgur.com/ieB8VSu.gif" alt="ZAPPY Logo" width={320} height={320} style={{ objectFit: 'contain' }} priority unoptimized />
+          <Image src="/splash-logo.png" alt="ZAPPY Logo" width={320} height={320} style={{ objectFit: 'contain' }} priority />
         </div>
       </div>
     );
